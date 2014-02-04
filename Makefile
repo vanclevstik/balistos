@@ -42,7 +42,7 @@ bin/python:
 tests: .installed.cfg
 	@bin/nosetests -s
 	@bin/flake8 setup.py
-	@bin/flake8 src/balistos
+	@bin/code-analysis
 
 clean:
 	@rm -rf .coverage .installed.cfg .mr.developer.cfg .Python bin build \
