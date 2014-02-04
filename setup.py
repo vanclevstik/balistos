@@ -28,7 +28,7 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
     ],
-    author='Vanc Levstik',
+    author='Vanč Levstik',
     author_email='vanc.levstik@gmail.com',
     keywords='pyramid playlist shared youtube',
     packages=find_packages('src', exclude=['ez_setup']),
