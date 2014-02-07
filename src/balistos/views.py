@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """Application's views."""
 
-from pyramid_layout.layout import layout_config
-from pyramid.view import view_config
 from balistos.static import balistos_assets
+from pyramid.response import Response
+from pyramid.view import view_config
+from pyramid_layout.layout import layout_config
+
+import os
 
 
 @view_config(
@@ -33,3 +36,13 @@ class DefaultLayout(object):
         self.context = context
         self.request = request
         self.current_page = current_page
+
+_here = os.path.dirname(__file__)
+_robots = open(os.path.join(_here, 'static', 'robots.txt')).read()
+_robots_response = Response(content_type='text/plain',
+                            body=_robots)
+
+
+@view_config(name='robots.txt')
+def robotstxt_view(context, request):
+    return _robots_response
