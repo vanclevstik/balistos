@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """TODO: docstring"""
 
-from balistos.models import DBSession
+from pyramid_basemodel import Session
 from balistos.models import RootFactory
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -20,7 +20,7 @@ def notfound(request):
 def main(global_config, **settings):
     """This function returns a Pyramid WSGI application."""
     engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine)
+    Session.configure(bind=engine)
 
     session_factory = UnencryptedCookieSessionFactoryConfig(
         settings.get('session.secret', 'secret'),
@@ -40,6 +40,8 @@ def main(global_config, **settings):
     )
 
     config.include('pyramid_layout')
+    config.include('pyramid_basemodel')
+    config.include('pyramid_fanstatic')
     # routing
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')

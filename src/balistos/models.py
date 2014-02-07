@@ -7,16 +7,11 @@ from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Unicode
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
-from zope.sqlalchemy import ZopeTransactionExtension
-
-DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
-Base = declarative_base()
+from pyramid_basemodel import Base
+from pyramid_basemodel import BaseMixin
 
 
-class User(Base):
+class User(Base, BaseMixin):
     """A class representing a User."""
 
     __tablename__ = 'users'
@@ -44,8 +39,7 @@ class User(Base):
     @classmethod
     def get(self, username):
         """Get a User by username."""
-        session = DBSession()
-        result = session.query(User).filter_by(username=username)
+        result = User.filter_by(username=username)
         if result.count() < 1:
             return None
 
@@ -60,7 +54,7 @@ class User(Base):
         By default, order by User.fullname.
         """
         User = class_
-        q = DBSession.query(User)
+        q = User.query
         q = q.order_by(getattr(User, order_by))
         if filter_by:
             q = q.filter(filter_by)
