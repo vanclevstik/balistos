@@ -17,7 +17,7 @@ htmlcov/index.html: src/balistos/*.py src/balistos/scripts/*.py bin/coverage
 docs: docs/html/index.html
 
 docs/html/index.html: README.rst docs/*.rst src/balistos/*.py bin/sphinx-build
-	@bin/sphinx-build -W docs docs/html
+	@bin/sphinx-build docs docs/html
 	@touch $@
 	@echo "Documentation was generated at '$@'."
 

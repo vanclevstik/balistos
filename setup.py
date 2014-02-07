@@ -59,6 +59,7 @@ setup(
             'flake8',
             'nose',
             'nose-selecttests',
+            'Sphinx',
             'unittest2',
             'webtest',
         ],
