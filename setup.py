@@ -71,5 +71,10 @@ setup(
     entry_points="""\
     [paste.app_factory]
     main = balistos:main
+
+    # Fanstatic resource library
+    [fanstatic.libraries]
+    balistos = balistos.static:lib_balistos
+
     """,
 )
