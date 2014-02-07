@@ -1,15 +1,18 @@
 language: python
 python:
-  - 2.7
-
+- 2.7
 install:
- - $(which echo) -e "[buildout]\nextends = buildout.d/travis.cfg" > buildout.cfg
- - make .installed.cfg
-
+- $(which echo) -e "[buildout]\nextends = buildout.d/travis.cfg" > buildout.cfg
+- make .installed.cfg
 script:
- - make coverage
- - make docs
-
+- make coverage
+- make docs
 after_success:
-  - pip install python-coveralls==2.4.0
-  - coveralls
+- pip install python-coveralls==2.4.0
+- coveralls
+deploy:
+  provider: heroku
+  strategy: git
+  api_key:
+    secure: gFjVK437+u4IYDbVq+n6bT6UTDHWL7iQjV3wAqcRrxcNg9p+vOAhz2ZQ2AV2fxY4BwXOaeuAjGSNfq8yVLiamAIsmm4b1OQ7NMMRfPfzRSGdkqF/kr99ubfm1b2zzupOpvRMe60CXW2tfZgrE5Q/FjV/fE+K8gUskyClKMq7vOI=
+  app: balistos
