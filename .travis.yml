@@ -8,6 +8,7 @@ install:
 
 script:
  - make coverage
+ - make docs
 
 after_success:
   - pip install python-coveralls==2.4.0
