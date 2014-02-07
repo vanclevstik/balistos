@@ -1,0 +1,8 @@
+[report]
+exclude_lines =
+    pragma\: no cover
+
+    if __name__ == '__main__'\:
+    def main\(argv=sys\.argv\)\:
+    def main\(global_config, \*\*settings\)\:
+    def includeme\(config\)\:
