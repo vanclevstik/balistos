@@ -5,8 +5,12 @@
 function showResponse(response) {
     $("#response").html("");
     $.each(response.items, function( index, value ) {
-      $("#response").append("<li><a href='http://www.youtube.com/watch?v="+value.id.videoId+"'><img style='height:80px;width:120px;' src='"+value.snippet.thumbnails.default.url+"'>"+value.snippet.title+"</a></li>");
+
+      $("#response").append("<li data-title='"+value.snippet.title+"' data-image='"+value.snippet.thumbnails.default.url+"' title='Add "+value.snippet.title+" to playlist' data-bind='click: addVideo' data-id='"+value.id.videoId+"' id='video-"+value.id.videoId+"'><img src='"+value.snippet.thumbnails.default.url+"'><div class='title'>"+value.snippet.title+"</div></li>");
+       ko.applyBindings(playlist, $("#video-"+value.id.videoId)[0]);
+        
     });
+    $("#response").show();
 }
 
 // Called automatically when JavaScript client library is loaded.
@@ -28,7 +32,8 @@ function search(query) {
     var request = gapi.client.youtube.search.list({
         part: 'snippet',
         q:query,
-        maxResults:40,
+        type:'video',
+        maxResults:8,
         format:5
     });
 
@@ -87,7 +92,8 @@ function onYouTubeIframeAPIReady() {
     videoId: 'M7lc1UVf-VE',
     playerVars:{
         controls:0,
-        showinfo:0
+        showinfo:0,
+        wmode:'transparent',
     },
     events: {
       'onReady': onPlayerReady,
