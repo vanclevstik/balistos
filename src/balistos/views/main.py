@@ -2,7 +2,7 @@
 """Main views on front page"""
 
 from balistos.static import balistos_assets
-from balistos.static import youtube_js
+from balistos.static import youtube_assets
 from pyramid.view import view_config
 
 
@@ -27,5 +27,5 @@ def home(request):
 def main(request):
     """Main page view"""
     balistos_assets.need()
-    youtube_js.need()
+    youtube_assets.need()
     return {}
