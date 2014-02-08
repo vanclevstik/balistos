@@ -3,12 +3,10 @@
 
 // Helper function to display JavaScript value on HTML page.
 function showResponse(response) {
-	$("#response").html("");
-	$.each(response.items, function( index, value ) {
-	  $("#response").append("<li><a href='http://www.youtube.com/watch?v="+value.id.videoId+"'><img style='height:80px;width:120px;' src='"+value.snippet.thumbnails.default.url+"'>"+value.snippet.title+"</a></li>");
-	  console.log(value.snippet.title);
-	});
-    console.log(response);
+    $("#response").html("");
+    $.each(response.items, function( index, value ) {
+      $("#response").append("<li><a href='http://www.youtube.com/watch?v="+value.id.videoId+"'><img style='height:80px;width:120px;' src='"+value.snippet.thumbnails.default.url+"'>"+value.snippet.title+"</a></li>");
+    });
 }
 
 // Called automatically when JavaScript client library is loaded.
@@ -22,7 +20,7 @@ function onYouTubeApiLoad() {
     // See http://goo.gl/PdPA1 to get a key for your own applications.
     gapi.client.setApiKey('AIzaSyCR5In4DZaTP6IEZQ0r1JceuvluJRzQNLE');
 
-    
+
 }
 
 function search(query) {
@@ -33,7 +31,7 @@ function search(query) {
         maxResults:40,
         format:5
     });
-    
+
     // Send the request to the API server,
     // and invoke onSearchRepsonse() with the response.
     request.execute(onSearchResponse);
@@ -46,25 +44,25 @@ function onSearchResponse(response) {
 
 
 $("#search").blur(function(){
-        			search($(this).val());
-        		});
-        		$("#search2").keyup(function(){
-        			var query=$(this).val();
-	        		$.ajax({
-			            type: "GET",
-			            url: "http://suggestqueries.google.com/complete/search",
-			            contentType: "application/json; charset=utf-8",
-						dataType: "jsonp",
-			            data:{
-			            	"client":"youtube",
-			            	"ds":"yt",
-			            	"q":query
-			            },
-			            success: function(json){
-			            	$("#suggestions").html("");
-			            	$.each(json[1], function( index, value ) {
-							  $("#suggestions").append("<li>"+value[0]+"</li>");
-							});
-			            }
-			        });
-		        });
+                    search($(this).val());
+                });
+                $("#search2").keyup(function(){
+                    var query=$(this).val();
+                    $.ajax({
+                        type: "GET",
+                        url: "http://suggestqueries.google.com/complete/search",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "jsonp",
+                        data:{
+                            "client":"youtube",
+                            "ds":"yt",
+                            "q":query
+                        },
+                        success: function(json){
+                            $("#suggestions").html("");
+                            $.each(json[1], function( index, value ) {
+                              $("#suggestions").append("<li>"+value[0]+"</li>");
+                            });
+                        }
+                    });
+                });
