@@ -14,6 +14,8 @@
                 </div>
             </div>    
             <div class="col-lg-8">
+                <div class="video-title" data-bind="text: firstVideoTitle"></div>
+                <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
                 <div class="video-player">
                     <div id="player"></div>
                 </div>
