@@ -1,0 +1,12 @@
+<metal:block metal:use-macro="main_template">
+     <div metal:fill-slot="content" id="content">
+        <ul tal:condition="users">
+            <li tal:repeat="user users">
+                <p>${user.fullname}</p>
+                <ul>
+                    <li tal:repeat="playlist_user user.playlist_user" tal:content="playlist_user.playlist.title" />
+                </ul>
+            </li>
+        </ul>
+    </div>
+</metal:block>
