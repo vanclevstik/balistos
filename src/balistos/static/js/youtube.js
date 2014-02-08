@@ -43,29 +43,32 @@ function onSearchResponse(response) {
 }
 
 
-$("#search").blur(function(){
-                    search($(this).val());
+$(document).ready(function(){
+    $("#search").keyup(function(){
+    search($(this).val());
+    });
+    $("#search2").keyup(function(){
+        var query=$(this).val();
+        $.ajax({
+            type: "GET",
+            url: "http://suggestqueries.google.com/complete/search",
+            contentType: "application/json; charset=utf-8",
+            dataType: "jsonp",
+            data:{
+                "client":"youtube",
+                "ds":"yt",
+                "q":query
+            },
+            success: function(json){
+                $("#suggestions").html("");
+                $.each(json[1], function( index, value ) {
+                  $("#suggestions").append("<li>"+value[0]+"</li>");
                 });
-                $("#search2").keyup(function(){
-                    var query=$(this).val();
-                    $.ajax({
-                        type: "GET",
-                        url: "http://suggestqueries.google.com/complete/search",
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "jsonp",
-                        data:{
-                            "client":"youtube",
-                            "ds":"yt",
-                            "q":query
-                        },
-                        success: function(json){
-                            $("#suggestions").html("");
-                            $.each(json[1], function( index, value ) {
-                              $("#suggestions").append("<li>"+value[0]+"</li>");
-                            });
-                        }
-                    });
-                });
+            }
+        });
+    });
+});
+
 
 /*
 ** PLAYER Javascript
