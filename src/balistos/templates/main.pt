@@ -1,11 +1,24 @@
 <metal:block metal:use-macro="main_template">
-     <div metal:fill-slot="content" id="content">
-        <input id="search" type="text" placeholder="search"/>
-        <input id="search2" type="text" placeholder="autocomplete" />
-
-        <ul id="suggestions"></ul>
-        <ul id="response"></ul>
-        <div id="player"></div>
+    <div metal:fill-slot="content" id="content">
+        <div class="row">
+            <div class="col-lg-8">
+                <input type="text" class="form-control" id="search" placeholder="Search video" />
+                <ul class="dropdown-menu autocomplete" id="response"></ul>
+            </div>
+            <div class="col-lg-4 playlist pull-right" id="playlist" data-bind="foreach: videos">
+                <div class="video-box">
+                    <img data-bind="attr: { src: image }" />
+                    <div data-bind="text: title" class="title"></div>
+                    <div class="likes">Likes: <span data-bind="text: likes"></span></div>
+                    <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
+                </div>
+            </div>    
+            <div class="col-lg-8">
+                <div class="video-player">
+                    <div id="player"></div>
+                </div>
+            </div>
+        </div>
         <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
     </div>
 </metal:block>

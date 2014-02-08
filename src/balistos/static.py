@@ -48,10 +48,21 @@ youtube_js = Resource(
     depends=[jquery, knockout_js],
 )
 
+playlist_js = Resource(
+    library=lib_balistos,
+    relpath='js/playlist.js',
+    minified='js/playlist.min.js',
+    minifier='jsmin',
+    depends=[jquery, knockout_js],
+    bottom=True,
+)
+
 balistos_assets = Group([
     jquery,
     bootstrap,
     modernizr,
     balistos_js,
     balistos_css,
+    knockout_js,
+    playlist_js
 ])

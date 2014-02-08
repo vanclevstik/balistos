@@ -4,10 +4,4 @@
 (function ($) {
     "use strict";
 
-    function init_chart() {
-    }
-
-    $(document).ready(function () {
-    });
-
 }(jQuery));

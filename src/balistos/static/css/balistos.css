@@ -1,3 +1,61 @@
-body {
-
+.video-player{
+    margin-top:20px;
+}
+.video-player iframe{
+    width:100%;
+}
+ul.autocomplete{
+    width:96%;
+    left:15px;
+    margin-top:0px;
+}
+ul.autocomplete li{
+    width:100%;
+    padding:1px 10px;
+    float:left;
+    cursor:pointer;
+}
+ul.autocomplete li img{
+    float:left;
+    margin-right:10px;
+    height:40px;width:60px;
+}
+ul.autocomplete li .title{
+    line-height:30px;
+    float:left;
+}
+.video-box{
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;
+    width:100%;
+    padding:10px;
+    border:1px #423423 solid;
+    border-radius:5px;
+    float:left;
+}
+.video-box .title{
+    float:right;
+    width:60%;
+    font-size:15px;
+    font-weight:700;
+}
+.video .likes{
+    float:right;
+    width:60%;
+    color:blue;
+    font-size:15px;
+}
+.video-box .addlike{
+    cursor:pointer;
+}
+.video-box img{
+    float:left;
+    border:1px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding:2px;
+    width:35%;
+    margin-right:5%;
 }
