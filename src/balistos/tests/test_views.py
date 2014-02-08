@@ -2,7 +2,8 @@
 """Tests."""
 
 from pyramid import testing
-
+from balistos.testing import createTestDB
+from pyramid_basemodel import Session
 import unittest
 
 
@@ -24,12 +25,18 @@ class TestHome(unittest.TestCase):
 class TestHomeFunctional(unittest.TestCase):
 
     def setUp(self):
-        from balistos import main
-        settings = {'sqlalchemy.url': 'sqlite://'}
-        app = main({}, **settings)
+        from balistos import configure
+        createTestDB()
+        self.config = testing.setUp()
+        configure(self.config)
+        app = self.config.make_wsgi_app()
         from webtest import TestApp
         self.testapp = TestApp(app)
 
+    def tearDown(self):
+        Session.remove()
+        testing.tearDown()
+
     def test_home(self):
         res = self.testapp.get('/home', status=200)
-        self.assertIn(b'balistos!', res.body)
+        self.assertIn(u'balistos!', res.body)
