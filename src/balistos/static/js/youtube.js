@@ -1,26 +1,8 @@
 // Your use of the YouTube API must comply with the Terms of Service:
 // https://developers.google.com/youtube/terms
 
-function onClientLoad() {
-    gapi.client.load('youtube', 'v3', onYouTubeApiLoad);
-}
-
-function onYouTubeApiLoad() {
-    gapi.client.setApiKey('AIzaSyCR5In4DZaTP6IEZQ0r1JceuvluJRzQNLE');
-}
-
-function search(query) {
-    var request = gapi.client.youtube.search.list({
-        part: 'snippet',
-        q:query,
-        type:'video',
-        maxResults:8,
-        format:5
-    });
-    request.execute(onSearchResponse);
-}
-
-function onSearchResponse(response) {
+// Helper function to display JavaScript value on HTML page.
+function showResponse(response) {
     $("#response").html("");
     $.each(response.items, function( index, value ) {
 
@@ -29,6 +11,42 @@ function onSearchResponse(response) {
         
     });
     $("#response").show();
+}
+
+// Called automatically when JavaScript client library is loaded.
+function onClientLoad() {
+    gapi.client.load('youtube', 'v3', onYouTubeApiLoad);
+}
+
+
+
+// Called automatically when YouTube API interface is loaded (see line 9).
+function onYouTubeApiLoad() {
+    // This API key is intended for use only in this lesson.
+    // See http://goo.gl/PdPA1 to get a key for your own applications.
+    gapi.client.setApiKey('AIzaSyCR5In4DZaTP6IEZQ0r1JceuvluJRzQNLE');
+
+
+}
+
+function search(query) {
+    // Use the JavaScript client library to create a search.list() API call.
+    var request = gapi.client.youtube.search.list({
+        part: 'snippet',
+        q:query,
+        type:'video',
+        maxResults:8,
+        format:5
+    });
+
+    // Send the request to the API server,
+    // and invoke onSearchRepsonse() with the response.
+    request.execute(onSearchResponse);
+}
+
+// Called automatically with the response of the YouTube API request.
+function onSearchResponse(response) {
+    showResponse(response);
 }
 
 /*
@@ -40,11 +58,10 @@ tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-
 var player;
 function onYouTubeIframeAPIReady() {
     var video=$("#video-id").text();
-    player = new YT.Player('player', {
+        player = new YT.Player('player', {
         height: '390',
         width: '640',
         videoId: video,
@@ -54,10 +71,10 @@ function onYouTubeIframeAPIReady() {
             wmode:'transparent',
         },
         events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
         }
-    });
+  });
 }
 
 function onPlayerReady(event) {
@@ -71,7 +88,13 @@ function onPlayerStateChange(event) {
         done = true;
     }
 }
-
 function stopVideo() {
     player.stopVideo();
 }
+
+
+$(document).ready(function(){
+    $("#search").keyup(function(){
+        search($(this).val());
+    });
+});
