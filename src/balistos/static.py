@@ -63,6 +63,9 @@ balistos_assets = Group([
     modernizr,
     balistos_js,
     balistos_css,
+])
+youtube_assets = Group([
     knockout_js,
+    youtube_js,
     playlist_js
 ])
