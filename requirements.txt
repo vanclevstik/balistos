@@ -29,6 +29,7 @@ pyramid-layout==0.8
 pyramid-tm==0.7
 repoze.lru==0.6
 requests==2.2.1
+setuptools==0.9.8
 slugify==0.0.1
 transaction==1.4.1
 translationstring==1.1
