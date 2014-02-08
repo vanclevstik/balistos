@@ -18,6 +18,8 @@ function onClientLoad() {
     gapi.client.load('youtube', 'v3', onYouTubeApiLoad);
 }
 
+
+
 // Called automatically when YouTube API interface is loaded (see line 9).
 function onYouTubeApiLoad() {
     // This API key is intended for use only in this lesson.
@@ -47,34 +49,6 @@ function onSearchResponse(response) {
     showResponse(response);
 }
 
-
-$(document).ready(function(){
-    $("#search").keyup(function(){
-    search($(this).val());
-    });
-    $("#search2").keyup(function(){
-        var query=$(this).val();
-        $.ajax({
-            type: "GET",
-            url: "http://suggestqueries.google.com/complete/search",
-            contentType: "application/json; charset=utf-8",
-            dataType: "jsonp",
-            data:{
-                "client":"youtube",
-                "ds":"yt",
-                "q":query
-            },
-            success: function(json){
-                $("#suggestions").html("");
-                $.each(json[1], function( index, value ) {
-                  $("#suggestions").append("<li>"+value[0]+"</li>");
-                });
-            }
-        });
-    });
-});
-
-
 /*
 ** PLAYER Javascript
 */
@@ -86,33 +60,41 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 var player;
 function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    height: '390',
-    width: '640',
-    videoId: 'M7lc1UVf-VE',
-    playerVars:{
-        controls:0,
-        showinfo:0,
-        wmode:'transparent',
-    },
-    events: {
-      'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
-    }
+    var video=$("#video-id").text();
+        player = new YT.Player('player', {
+        height: '390',
+        width: '640',
+        videoId: video,
+        playerVars:{
+            controls:0,
+            showinfo:0,
+            wmode:'transparent',
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
   });
 }
 
 function onPlayerReady(event) {
-  event.target.playVideo();
+    event.target.playVideo();
 }
 
 var done = false;
 function onPlayerStateChange(event) {
-  if (event.data == YT.PlayerState.PLAYING && !done) {
-    setTimeout(stopVideo, 6000);
-    done = true;
-  }
+    if (event.data == YT.PlayerState.PLAYING && !done) {
+        setTimeout(stopVideo, 6000);
+        done = true;
+    }
 }
 function stopVideo() {
-  player.stopVideo();
+    player.stopVideo();
 }
+
+
+$(document).ready(function(){
+    $("#search").keyup(function(){
+        search($(this).val());
+    });
+});
