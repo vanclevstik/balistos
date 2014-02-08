@@ -17,19 +17,35 @@ lib_balistos = Library('balistos', 'static')
 
 balistos_css = Resource(
     library=lib_balistos,
-    relpath='balistos.css',
-    minified='balistos.min.css',
+    relpath='css/balistos.css',
+    minified='css/balistos.min.css',
     minifier='cssmin',
     depends=[bootstrap],
 )
 
 balistos_js = Resource(
     library=lib_balistos,
-    relpath='balistos.js',
-    minified='balistos.min.js',
+    relpath='js/balistos.js',
+    minified='js/balistos.min.js',
     minifier='jsmin',
     depends=[jquery],
     bottom=True,
+)
+
+knockout_js = Resource(
+    library=lib_balistos,
+    relpath='js/knockout.js',
+    minified='js/knockout.min.js',
+    minifier='jsmin',
+    bottom=True,
+)
+
+youtube_js = Resource(
+    library=lib_balistos,
+    relpath='js/youtube.js',
+    minified='js/youtube.min.js',
+    minifier='jsmin',
+    depends=[jquery, knockout_js],
 )
 
 balistos_assets = Group([

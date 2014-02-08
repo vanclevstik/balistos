@@ -1,1 +1,2 @@
-src/balistos/static/knockout-3.0.0.js
+src/balistos/static/js/knockout.js
+src/balistos/static/js/knockout.min.js
