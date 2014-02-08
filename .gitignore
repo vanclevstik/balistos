@@ -1,7 +1,10 @@
+*.egg-info/
+*.py[cod]
 .codeintel
 .coverage
 .installed.cfg
 .mr.developer.cfg
+balistos-app.db
 bin/
 build/
 develop-eggs/
@@ -13,4 +16,3 @@ local/
 man/
 parts
 var
-balistos-app.db

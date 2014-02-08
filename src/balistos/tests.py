@@ -15,7 +15,7 @@ class TestHome(unittest.TestCase):
         testing.tearDown()
 
     def test_home(self):
-        from balistos.views import home
+        from balistos.views.main import home
         request = testing.DummyRequest()
         result = home(request)
         self.assertEqual(result['name'], 'balistos')
@@ -31,5 +31,5 @@ class TestHomeFunctional(unittest.TestCase):
         self.testapp = TestApp(app)
 
     def test_home(self):
-        res = self.testapp.get('/', status=200)
+        res = self.testapp.get('/home', status=200)
         self.assertIn(b'balistos!', res.body)

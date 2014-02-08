@@ -1,0 +1,11 @@
+<metal:block metal:use-macro="main_template">
+     <div metal:fill-slot="content" id="content">
+        <input id="search" type="text" placeholder="search"/>
+        <input id="search2" type="text" placeholder="autocomplete" />
+
+        <ul id="suggestions"></ul>
+        <ul id="response"></ul>
+        <div id="player"></div>
+        <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
+    </div>
+</metal:block>
