@@ -9,18 +9,21 @@ function PlaylistModel(){
                     "id":video.attr('data-id')};
         $.ajax({
             type: "GET",
-            url: "/post/ajax",
+            url: "/playlist_add_video",
             dataType:"json",
             data: videoarray,
-        }).done(function(data ){});
+        }).done(function(data ){
+            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            self.videos(mappedVideos);
+        });
 
-        self.videos.push(new Video({title:video.attr('data-title'),image:video.attr('data-image'),id:video.attr('data-id'),likes:0}));
+        // self.videos.push(new Video({title:video.attr('data-title'),image:video.attr('data-image'),id:video.attr('data-id'),likes:0}));
         $("#response").hide();
     };
 
     $.ajax({
         type: "GET",
-        url: "/playlist_video",
+        url: "/playlist_videos",
         dataType:"json",
     }).done(function(data){
         var mappedVideos=$.map(data,function(item){ return new Video(item);});
@@ -32,7 +35,7 @@ function PlaylistModel(){
     self.firstVideoTitle=ko.computed(function(){
         if(self.videos()[0]){
             return self.videos()[0].title();
-        } 
+        }
     },self);
 
     self.firstVideoId=ko.computed(function(){

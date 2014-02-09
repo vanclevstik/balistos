@@ -49,6 +49,7 @@ def insert_data():
             added=datetime.now(),
             active=True,
             clip=test_clip,
+            playlist=test_playlist,
         )
         Session.add(test_playlist_clip)
 
