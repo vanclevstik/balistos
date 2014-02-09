@@ -35,6 +35,7 @@ def configure(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/home')
     config.add_route('users', '/users')
+    config.add_route('playlist_video', '/playlist_video')
     config.add_route('main', '/')
     config.scan('balistos', ignore=['balistos.tests', 'balistos.testing'])
 

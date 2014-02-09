@@ -4,6 +4,10 @@
 from balistos.static import balistos_assets
 from balistos.static import youtube_assets
 from pyramid.view import view_config
+from pyramid.response import Response
+from balistos.models.clip import PlaylistClip
+
+import json
 
 
 @view_config(
@@ -29,3 +33,22 @@ def main(request):
     balistos_assets.need()
     youtube_assets.need()
     return {}
+
+
+@view_config(
+    route_name='playlist_video',
+)
+def playlist_video(request):
+    pclip = PlaylistClip.get_all()[0]
+    clip = pclip.clip
+    return Response(
+        body=json.dumps(
+            [{
+                'id': clip.youtube_video_id,
+                'title': clip.title,
+                'likes': pclip.likes,
+                'image': clip.image_url
+            }, ]
+        ),
+        content_type='application/json')
+    return
