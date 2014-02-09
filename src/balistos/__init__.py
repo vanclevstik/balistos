@@ -37,6 +37,7 @@ def configure(config):
     config.add_route('users', '/users')
     config.add_route('playlist_video', '/playlist_video')
     config.add_route('main', '/')
+    config.add_route('set_playlist', '/playlist/{playlist}')
     config.scan('balistos', ignore=['balistos.tests', 'balistos.testing'])
 
 

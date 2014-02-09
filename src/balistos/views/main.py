@@ -6,6 +6,7 @@ from balistos.static import youtube_assets
 from pyramid.view import view_config
 from pyramid.response import Response
 from balistos.models.clip import PlaylistClip
+from pyramid.httpexceptions import HTTPFound
 
 import json
 
@@ -51,4 +52,13 @@ def playlist_video(request):
             }, ]
         ),
         content_type='application/json')
-    return
+
+
+@view_config(
+    route_name='set_playlist',
+)
+def set_playlist(request):
+    session = request.session
+    session['playlist'] = request.matchdict.get('playlist')
+    url = request.route_url('main')
+    return HTTPFound(location=url)
