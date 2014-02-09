@@ -4,7 +4,6 @@
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
 from sqlalchemy import Column
-from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Unicode
 
@@ -14,11 +13,6 @@ class User(Base, BaseMixin):
 
     __tablename__ = 'users'
 
-    id = Column(
-        Integer,
-        primary_key=True,
-        nullable=False,
-    )
     username = Column(
         String,
         unique=True,

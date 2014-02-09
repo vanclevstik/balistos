@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Clip model."""
 
+from balistos.models.playlist import Playlist
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
 from sqlalchemy import Boolean
@@ -18,12 +19,6 @@ class Clip(Base, BaseMixin):
     """A class representing a Youtube Clip."""
 
     __tablename__ = 'clips'
-
-    id = Column(
-        Integer,
-        primary_key=True,
-        nullable=False,
-    )
 
     title = Column(
         Unicode,
@@ -46,9 +41,9 @@ class Clip(Base, BaseMixin):
     )
 
     @classmethod
-    def get(self, youtube_id):
-        """Get a Clip by youtu be_id."""
-        result = Clip.filter_by(youtube_id=youtube_id)
+    def get(self, youtube_video_id):
+        """Get a Clip by youtube_id."""
+        result = Clip.query.filter_by(youtube_video_id=youtube_video_id)
         if result.count() < 1:
             return None
 
@@ -75,15 +70,11 @@ class PlaylistClip(Base, BaseMixin):
 
     __tablename__ = 'playlist_clips'
 
-    id = Column(
-        Integer,
-        primary_key=True,
-        nullable=False)
-
     likes = Column(
         Integer,
         unique=False,
-        nullable=False
+        nullable=False,
+        default=0,
     )
 
     added = Column(
@@ -99,19 +90,31 @@ class PlaylistClip(Base, BaseMixin):
     clip_id = Column(Integer, ForeignKey('clips.id'))
     clip = relationship(
         Clip,
-        single_parent=True,
+        single_parent=False,
         backref=backref(
-            'clip',
+            'playlistclip',
             cascade='all, delete-orphan',
             single_parent=False,
-            uselist=False,
+            uselist=True,
+        ),
+    )
+
+    playlist_id = Column(Integer, ForeignKey('playlists.id'))
+    playlist = relationship(
+        Playlist,
+        single_parent=False,
+        backref=backref(
+            'playlistclip',
+            cascade='all, delete-orphan',
+            single_parent=False,
+            uselist=True,
         ),
     )
 
     @classmethod
     def get(self, uri):
         """Get a PlaylistClip by uri."""
-        result = PlaylistClip.filter_by(uri=uri)
+        result = PlaylistClip.query.filter_by(uri=uri)
         if result.count() < 1:
             return None
 
@@ -131,3 +134,22 @@ class PlaylistClip(Base, BaseMixin):
         if filter_by:
             q = q.filter(filter_by)
         return q
+
+    @classmethod
+    def get_by_playlist(self, playlist):
+        """Get all PlaylistClip by Playlist id."""
+        result = PlaylistClip.query.filter_by(playlist=playlist)
+        if result.count() < 1:
+            return None
+
+        return result.all()
+
+    @classmethod
+    def get_by_playlist_and_clip(self, playlist, clip):
+        """Get all PlaylistClip by Playlist and Clip."""
+        result = PlaylistClip.query.filter_by(
+            playlist=playlist).filter_by(clip=clip)
+        if result.count() < 1:
+            return None
+
+        return result.all()

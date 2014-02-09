@@ -18,11 +18,6 @@ class Playlist(Base, BaseMixin):
 
     __tablename__ = 'playlists'
 
-    id = Column(
-        Integer,
-        primary_key=True,
-        nullable=False)
-
     uri = Column(
         String,
         unique=True,
@@ -37,7 +32,7 @@ class Playlist(Base, BaseMixin):
     @classmethod
     def get(self, uri):
         """Get a Playlist by uri."""
-        result = Playlist.filter_by(uri=uri)
+        result = Playlist.query.filter_by(uri=uri)
         if result.count() < 1:
             return None
 
