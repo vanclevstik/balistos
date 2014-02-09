@@ -49,7 +49,7 @@ def playlist_video(request):
                 'title': clip.title,
                 'likes': pclip.likes,
                 'image': clip.image_url
-            }, ]
+            }]
         ),
         content_type='application/json')
 

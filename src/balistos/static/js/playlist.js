@@ -4,7 +4,7 @@ function PlaylistModel(){
 
     self.addVideo=function(model,item){
         video=$(item.currentTarget);
-        video={"title":video.attr('data-title'),
+        videoarray={"title":video.attr('data-title'),
                     "image":video.attr('data-image'),
                     "id":video.attr('data-id')};
         $.ajax({
@@ -22,7 +22,7 @@ function PlaylistModel(){
         type: "GET",
         url: "/playlist_video",
         dataType:"json",
-    }).done(function(data ) {
+    }).done(function(data){
         var mappedVideos=$.map(data,function(item){ return new Video(item);});
         self.videos(mappedVideos);
     });
@@ -30,12 +30,16 @@ function PlaylistModel(){
 
 
     self.firstVideoTitle=ko.computed(function(){
-        return this.videos()[0].title();
-    },this);
+        if(self.videos()[0]){
+            return self.videos()[0].title();
+        } 
+    },self);
 
     self.firstVideoId=ko.computed(function(){
-        return this.videos()[0].id();
-    },this);
+        if(self.videos()[0]){
+            return self.videos()[0].id();
+        }
+    },self);
 
 }
 
