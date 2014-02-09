@@ -67,6 +67,7 @@ class PlaylistUser(Base, BaseMixin):
         Integer,
         nullable=False
     )
+
     playlist_id = Column(Integer, ForeignKey('playlists.id'))
     playlist = relationship(
         Playlist,
