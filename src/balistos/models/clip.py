@@ -3,18 +3,19 @@
 
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
+from sqlalchemy import Boolean
 from sqlalchemy import Column
+from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
-from sqlalchemy import Boolean
 from sqlalchemy import String
-from sqlalchemy import DateTime
+from sqlalchemy import Unicode
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
 
 
 class Clip(Base, BaseMixin):
-    """A class representing a User."""
+    """A class representing a Youtube Clip."""
 
     __tablename__ = 'clips'
 
@@ -22,6 +23,15 @@ class Clip(Base, BaseMixin):
         Integer,
         primary_key=True,
         nullable=False,
+    )
+
+    title = Column(
+        Unicode,
+    )
+
+    image_url = Column(
+        String,
+        nullable=True
     )
 
     likes = Column(
@@ -37,7 +47,7 @@ class Clip(Base, BaseMixin):
 
     @classmethod
     def get(self, youtube_id):
-        """Get a Clip by youtube_id."""
+        """Get a Clip by youtu be_id."""
         result = Clip.filter_by(youtube_id=youtube_id)
         if result.count() < 1:
             return None

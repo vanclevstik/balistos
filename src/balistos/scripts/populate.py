@@ -35,16 +35,20 @@ def insert_data():
             user=test_user,
             permission=0
         )
+
         Session.add(test_playlist_user)
         test_clip = Clip(
+            title=u'fernando torres song with lyric',
+            image_url='http://i1.ytimg.com/vi/cpV0ygkmhP4/mqdefault.jpg',
             likes=0,
-            youtube_video_id='test_id'
+            youtube_video_id='cpV0ygkmhP4',
         )
         Session.add(test_clip)
         test_playlist_clip = PlaylistClip(
             likes=0,
             added=datetime.now(),
-            active=True
+            active=True,
+            clip=test_clip,
         )
         Session.add(test_playlist_clip)
 
