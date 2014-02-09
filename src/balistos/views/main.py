@@ -10,6 +10,7 @@ from balistos.models.playlist import Playlist
 from balistos.models.clip import PlaylistClip
 from balistos.models.clip import Clip
 from pyramid_basemodel import Session
+from pyramid.httpexceptions import HTTPNotFound
 
 import json
 
@@ -52,7 +53,8 @@ def playlist_videos(request):
     :returns: json listing all videos as http response
     :rtype:   pyramid.response.Response
     """
-
+    if not request.is_xhr:
+        return HTTPNotFound()
     playlist = Playlist.get(request.session['playlist'])
     pclips = get_playlist_videos(playlist)
     return Response(body=json.dumps(pclips), content_type='application/json')
@@ -86,7 +88,7 @@ def set_playlist(request):
 )
 def playlist_add_video(request):
     """
-    View that adds video to playlist currentlly in session and returns
+    View that adds video to playlist currently in session and returns
     changed playlist videos list
 
     :param    request: current request
@@ -95,7 +97,8 @@ def playlist_add_video(request):
     :returns: dict for each clip that is part of playlist
     :rtype:   list of dicts
     """
-
+    if not request.is_xhr:
+        return HTTPNotFound()
     title = request.GET['title']
     image_url = request.GET['image']
     youtube_video_id = request.GET['id']
@@ -148,3 +151,4 @@ def get_playlist_videos(playlist):
                 'image': clip.image_url
             },
         )
+    return pclips
