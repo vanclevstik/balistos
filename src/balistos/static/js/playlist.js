@@ -2,37 +2,30 @@ function PlaylistModel(){
     var self=this;
     self.videos=ko.observableArray([]);
 
-    videoarray=[
-        { title: "fernando torres song with lyrics",image:"http://i1.ytimg.com/vi/cpV0ygkmhP4/mqdefault.jpg",id:"cpV0ygkmhP4",likes: 3 },
-        { title: "Fernando Torres song in spanish english subs nike advert",image:"http://i1.ytimg.com/vi/WWgB-PbF9xM/mqdefault.jpg",id:"WWgB-PbF9xM",likes: 0 },
-        { title: "Chelsea FC - Fernando Torres Song",image:"http://i1.ytimg.com/vi/7B5ftOV3FYA/mqdefault.jpg",id:"UPa_y0HIFXw",likes: 0 },
-    ];
-    var mappedVideos=$.map(videoarray,function(item){ return new Video(item);});
-    self.videos(mappedVideos);
-
     self.addVideo=function(model,item){
         video=$(item.currentTarget);
-        video={"title":video.attr('data-title'),
+        videoarray={"title":video.attr('data-title'),
                     "image":video.attr('data-image'),
                     "id":video.attr('data-id')};
         $.ajax({
             type: "GET",
-            url: "/post/ajax",
+            url: "/playlist_add_video",
             dataType:"json",
             data: videoarray,
-        }).done(function(data ) {
-               
+        }).done(function(data ){
+            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            self.videos(mappedVideos);
         });
 
-        self.videos.push(new Video({title:video.attr('data-title'),image:video.attr('data-image'),id:video.attr('data-id'),likes:0}));
+        // self.videos.push(new Video({title:video.attr('data-title'),image:video.attr('data-image'),id:video.attr('data-id'),likes:0}));
         $("#response").hide();
     };
 
     $.ajax({
         type: "GET",
-        url: "/post/ajax",
+        url: "/playlist_videos",
         dataType:"json",
-    }).done(function(data ) {
+    }).done(function(data){
         var mappedVideos=$.map(data,function(item){ return new Video(item);});
         self.videos(mappedVideos);
     });
@@ -40,12 +33,16 @@ function PlaylistModel(){
 
 
     self.firstVideoTitle=ko.computed(function(){
-        return this.videos()[0].title();
-    },this);
+        if(self.videos()[0]){
+            return self.videos()[0].title();
+        }
+    },self);
 
     self.firstVideoId=ko.computed(function(){
-        return this.videos()[0].id();
-    },this);
+        if(self.videos()[0]){
+            return self.videos()[0].id();
+        }
+    },self);
 
 }
 

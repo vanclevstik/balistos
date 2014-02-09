@@ -18,11 +18,6 @@ class Playlist(Base, BaseMixin):
 
     __tablename__ = 'playlists'
 
-    id = Column(
-        Integer,
-        primary_key=True,
-        nullable=False)
-
     uri = Column(
         String,
         unique=True,
@@ -37,7 +32,7 @@ class Playlist(Base, BaseMixin):
     @classmethod
     def get(self, uri):
         """Get a Playlist by uri."""
-        result = Playlist.filter_by(uri=uri)
+        result = Playlist.query.filter_by(uri=uri)
         if result.count() < 1:
             return None
 
@@ -55,7 +50,7 @@ class Playlist(Base, BaseMixin):
         q = Playlist.query
         q = q.order_by(getattr(Playlist, order_by))
         if filter_by:
-            q = q.filter(filter_by)
+            q = q.filter_by(**filter_by)
         return q
 
 
@@ -72,6 +67,7 @@ class PlaylistUser(Base, BaseMixin):
         Integer,
         nullable=False
     )
+
     playlist_id = Column(Integer, ForeignKey('playlists.id'))
     playlist = relationship(
         Playlist,
