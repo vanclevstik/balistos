@@ -49,5 +49,5 @@ class User(Base, BaseMixin):
         q = User.query
         q = q.order_by(getattr(User, order_by))
         if filter_by:
-            q = q.filter(filter_by)
+            q = q.filter_by(**filter_by)
         return q

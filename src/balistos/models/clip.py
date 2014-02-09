@@ -61,7 +61,7 @@ class Clip(Base, BaseMixin):
         q = Clip.query
         q = q.order_by(getattr(Clip, order_by))
         if filter_by:
-            q = q.filter(filter_by)
+            q = q.filter_by(**filter_by)
         return q
 
 
@@ -112,15 +112,6 @@ class PlaylistClip(Base, BaseMixin):
     )
 
     @classmethod
-    def get(self, uri):
-        """Get a PlaylistClip by uri."""
-        result = PlaylistClip.query.filter_by(uri=uri)
-        if result.count() < 1:
-            return None
-
-        return result.one()
-
-    @classmethod
     def get_all(class_, order_by='likes', filter_by=None):
         """Return all PlaylistClips.
 
@@ -132,7 +123,7 @@ class PlaylistClip(Base, BaseMixin):
         q = PlaylistClip.query
         q = q.order_by(getattr(PlaylistClip, order_by))
         if filter_by:
-            q = q.filter(filter_by)
+            q = q.filter_by(**filter_by)
         return q
 
     @classmethod
@@ -152,4 +143,4 @@ class PlaylistClip(Base, BaseMixin):
         if result.count() < 1:
             return None
 
-        return result.all()
+        return result.one()

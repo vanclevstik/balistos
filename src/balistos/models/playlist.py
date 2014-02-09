@@ -50,7 +50,7 @@ class Playlist(Base, BaseMixin):
         q = Playlist.query
         q = q.order_by(getattr(Playlist, order_by))
         if filter_by:
-            q = q.filter(filter_by)
+            q = q.filter_by(**filter_by)
         return q
 
 
