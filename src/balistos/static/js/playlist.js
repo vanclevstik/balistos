@@ -12,9 +12,7 @@ function PlaylistModel(){
             url: "/post/ajax",
             dataType:"json",
             data: videoarray,
-        }).done(function(data ) {
-
-        });
+        }).done(function(data ){});
 
         self.videos.push(new Video({title:video.attr('data-title'),image:video.attr('data-image'),id:video.attr('data-id'),likes:0}));
         $("#response").hide();
