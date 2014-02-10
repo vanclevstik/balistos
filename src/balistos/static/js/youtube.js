@@ -39,10 +39,10 @@ function search(query) {
         format:5
     });
 
-    // Send the request to the API server,
-    // and invoke onSearchRepsonse() with the response.
     request.execute(onSearchResponse);
 }
+
+
 
 // Called automatically with the response of the YouTube API request.
 function onSearchResponse(response) {
@@ -83,10 +83,7 @@ function onPlayerReady(event) {
 
 var done = false;
 function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING && !done) {
-        setTimeout(stopVideo, 6000);
-        done = true;
-    }
+
 }
 function stopVideo() {
     player.stopVideo();
@@ -96,5 +93,11 @@ function stopVideo() {
 $(document).ready(function(){
     $("#search").keyup(function(){
         search($(this).val());
+    });
+
+    $('#video-id').bind("DOMSubtreeModified",function(){
+        if($(this).text()){
+            player.loadVideoById($(this).text(),0, "large");
+        }
     });
 });

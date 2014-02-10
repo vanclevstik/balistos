@@ -11,6 +11,7 @@
                     <div data-bind="text: title" class="title"></div>
                     <div class="likes">Likes: <span data-bind="text: likes"></span></div>
                     <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
+                    <div data-bind="click: removeLike" class="addlike">REMOVE LIKE</div>
                 </div>
             </div>    
             <div class="col-lg-8">
