@@ -1,19 +1,23 @@
+// we create Playlist Model.
 function PlaylistModel(){
     var self=this;
     self.videos=ko.observableArray([]);
 
+    //function for adding videos to the array.
     self.addVideo=function(model,item){
         video=$(item.currentTarget);
+        //we take data from the clicked result and insert it to array.
         videoarray={"title":video.attr('data-title'),
                     "image":video.attr('data-image'),
                     "id":video.attr('data-id')};
-
+        //before sending the request, we inquire YouTube API for song duration.
         var request = gapi.client.youtube.videos.list({
             part: 'contentDetails',
             id:videoarray.id,
             type:'video',
         });
 
+        // we send the request to the server with parameters id,title,image and duration
         request.execute(function(response){
             videoarray.duration=response.items[0].contentDetails.duration;
             $.ajax({
@@ -22,12 +26,11 @@ function PlaylistModel(){
                 dataType:"json",
                 data: videoarray,
             }).done(function(data ){
+                //after recieving response, we sychronise the playlist data
                 var mappedVideos=$.map(data,function(item){ return new Video(item);});
                 self.videos(mappedVideos);
             });
         });
-
-        // self.videos.push(new Video({title:video.attr('data-title'),image:video.attr('data-image'),id:video.attr('data-id'),likes:0}));
         $("#response").hide();
     };
 
@@ -45,6 +48,18 @@ function PlaylistModel(){
     self.firstVideoTitle=ko.computed(function(){
         if(self.videos()[0]){
             return self.videos()[0].title();
+        }
+        else{
+            return "Not yet chosen";
+        }
+    },self);
+
+    self.secondVideoTitle=ko.computed(function(){
+        if(self.videos()[1]){
+            return self.videos()[1].title();
+        }
+        else{
+            return "Not yet chosen";
         }
     },self);
 
@@ -67,8 +82,6 @@ function PlaylistModel(){
     };
 
     self.sync();
-
-
 
 }
 
