@@ -2,9 +2,10 @@
 """Clip model."""
 
 from balistos.models.playlist import Playlist
+from balistos.models.user import User
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
-from sqlalchemy import Boolean
+from pyramid_basemodel import Session
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
@@ -40,6 +41,12 @@ class Clip(Base, BaseMixin):
         unique=True,
     )
 
+    # Duration in seconds
+    duration = Column(
+        Integer,
+        nullable=False
+    )
+
     @classmethod
     def get(self, youtube_video_id):
         """Get a Clip by youtube_id."""
@@ -70,6 +77,32 @@ class PlaylistClip(Base, BaseMixin):
 
     __tablename__ = 'playlist_clips'
 
+    def __init__(
+        self,
+        likes=0,
+        added=False,
+        state=None,
+        clip=None,
+        playlist=None,
+        started=None
+    ):
+        Base.__init__(
+            self,
+            likes=likes,
+            added=added,
+            state=state,
+            clip=clip,
+            playlist=playlist,
+            started=started,
+        )
+        BaseMixin.__init__(self)
+        for playlist_user in playlist.playlist_users:
+            Session.add(PlaylistClipUser(
+                liked=0,
+                user=playlist_user.user,
+                playlist_clip=self,
+            ))
+
     likes = Column(
         Integer,
         unique=False,
@@ -82,9 +115,18 @@ class PlaylistClip(Base, BaseMixin):
         nullable=False
     )
 
-    active = Column(
-        Boolean,
+    # -1 - inactive
+    # 0 - in queue
+    # 1 - next
+    # 2 - playing
+    state = Column(
+        Integer,
         nullable=False
+    )
+
+    started = Column(
+        DateTime,
+        nullable=True,
     )
 
     clip_id = Column(Integer, ForeignKey('clips.id'))
@@ -92,7 +134,7 @@ class PlaylistClip(Base, BaseMixin):
         Clip,
         single_parent=False,
         backref=backref(
-            'playlistclip',
+            'playlistclips',
             cascade='all, delete-orphan',
             single_parent=False,
             uselist=True,
@@ -104,7 +146,7 @@ class PlaylistClip(Base, BaseMixin):
         Playlist,
         single_parent=False,
         backref=backref(
-            'playlistclip',
+            'playlistclips',
             cascade='all, delete-orphan',
             single_parent=False,
             uselist=True,
@@ -130,6 +172,7 @@ class PlaylistClip(Base, BaseMixin):
     def get_by_playlist(self, playlist):
         """Get all PlaylistClip by Playlist id."""
         result = PlaylistClip.query.filter_by(playlist=playlist)
+
         if result.count() < 1:
             return None
 
@@ -138,8 +181,93 @@ class PlaylistClip(Base, BaseMixin):
     @classmethod
     def get_by_playlist_and_clip(self, playlist, clip):
         """Get all PlaylistClip by Playlist and Clip."""
-        result = PlaylistClip.query.filter_by(
-            playlist=playlist).filter_by(clip=clip)
+        result = PlaylistClip.query.filter(
+            PlaylistClip.playlist == playlist,
+            PlaylistClip.clip == clip,
+        )
+        if result.count() < 1:
+            return None
+
+        return result.one()
+
+    @classmethod
+    def get_active_playlist_clip(self, playlist):
+        """Get playlist clip that is currently active"""
+        result = PlaylistClip.query.filter(
+            PlaylistClip.playlist == playlist,
+            PlaylistClip.state == 2,
+        )
+        if result.count() < 1:
+            return None
+        return result.one()
+
+    @classmethod
+    def get_queue_playlist_clip(self, playlist):
+        """Get playlist clip that is currently next in queue"""
+        result = PlaylistClip.query.filter(
+            PlaylistClip.playlist == playlist,
+            PlaylistClip.state == 1,
+        )
+        if result.count() < 1:
+            return None
+        return result.one()
+
+    @classmethod
+    def get_by_playlist_waiting(self, playlist, order_by='added'):
+        """Get all PlaylistClip that are not active or next in queue."""
+        result = result = PlaylistClip.query.filter(
+            PlaylistClip.playlist == playlist,
+            PlaylistClip.state == 0,
+        ).order_by(order_by)
+        if result.count() < 1:
+            return None
+
+        return result.all()
+
+
+class PlaylistClipUser(Base, BaseMixin):
+
+    __tablename__ = 'playlist_clips_users'
+
+    # options are
+    # 0 - neutral
+    # 1 - liked
+    # -1 - disliked
+    liked = Column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+
+    playlist_clip_id = Column(Integer, ForeignKey('playlist_clips.id'))
+    playlist_clip = relationship(
+        PlaylistClip,
+        single_parent=False,
+        backref=backref(
+            'playlist_clips_users',
+            cascade='all, delete-orphan',
+            single_parent=False,
+            uselist=True,
+        )
+    )
+
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(
+        User,
+        single_parent=False,
+        backref=backref(
+            'playlist_clips_users',
+            cascade='all, delete-orphan',
+            single_parent=False,
+            uselist=True,
+        )
+    )
+
+    @classmethod
+    def get_by_playlist_clip_and_user(self, playlist_clip, user):
+        """Get PlaylistClipUser by PlaylistClip and User."""
+        result = PlaylistClipUser.query.filter_by(
+            playlist_clip=playlist_clip).filter_by(user=user)
         if result.count() < 1:
             return None
 
