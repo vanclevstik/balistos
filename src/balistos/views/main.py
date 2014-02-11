@@ -13,6 +13,7 @@ from pyramid_basemodel import Session
 from pyramid.httpexceptions import HTTPNotFound
 
 import json
+import isodate
 
 
 @view_config(
@@ -105,7 +106,7 @@ def playlist_add_video(request):
     title = request.GET['title']
     image_url = request.GET['image']
     youtube_video_id = request.GET['id']
-    duration = time_from_iso_format(request.GET['duration'])
+    duration = isodate.parse_duration(request.GET['duration']).total_seconds()
     playlist = Playlist.get(request.session['playlist'])
     clip = Clip.get(youtube_video_id)
     if not clip:
@@ -213,23 +214,3 @@ def set_next_in_queue(playlist):
     if pclips:
         pclips[0].state = 1
         Session.flush()
-
-
-def time_from_iso_format(date):
-    """
-    Converts iso format to datetime object
-
-    :param    date: 'PT#M#S' formatted date
-    :type     date: str
-
-    :returns: converted date
-    :rtype:   datetime.timedelta
-    """
-
-    date = date.split('PT')[1].split('M')
-    if len(date) > 1:
-        minutes = date[0]
-        seconds = date[1].split('S')[0]
-        return int(minutes)*60 + int(seconds)
-    else:
-        return int(date[0].split('S')[0])
