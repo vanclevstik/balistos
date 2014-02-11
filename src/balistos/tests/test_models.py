@@ -144,7 +144,8 @@ class TestClip(unittest.TestCase):
             youtube_video_id='test',
             title=u'Test',
             likes=5,
-            image_url='test_url'
+            image_url='test_url',
+            duration=1,
         )
         Session.add(clip)
         Session.flush()
@@ -153,23 +154,25 @@ class TestClip(unittest.TestCase):
         self.assertEqual(u'Test', clip.title)
         self.assertEqual(5, clip.likes)
         self.assertEqual('test_url', clip.image_url)
+        self.assertEqual(1, clip.duration)
 
     def test_clip_get_all(self):
         from balistos.models.clip import Clip
         clips = Clip.get_all()
-        self.assertEqual(1, clips.count())
+        self.assertEqual(2, clips.count())
         self.assertEqual('cpV0ygkmhP4', clips[0].youtube_video_id)
 
     def test_clip_get_all_filter_by(self):
         from balistos.models.clip import Clip
         clips = Clip.get_all(filter_by={'likes': 0})
-        self.assertEqual(1, clips.count())
+        self.assertEqual(2, clips.count())
         self.assertEqual('cpV0ygkmhP4', clips[0].youtube_video_id)
 
     def test_clip_get_all_empty(self):
         from balistos.models.clip import Clip
-        clip = Clip.get('cpV0ygkmhP4')
-        Session.delete(clip)
+        clips = Clip.get_all()
+        for clip in clips:
+            Session.delete(clip)
         Session.flush()
         self.assertEqual(0, Clip.get_all().count())
         self.assertIsNone(Clip.get('cpV0ygkmhP4'))
@@ -195,7 +198,7 @@ class TestPlaylistClip(unittest.TestCase):
         pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
         self.assertEqual(playlist, pclip.playlist)
         self.assertEqual(clip, pclip.clip)
-        self.assertTrue(pclip.active)
+        self.assertEqual(2, pclip.state)
         self.assertEqual(0, pclip.likes)
 
     def test_add_pclip(self):
@@ -210,6 +213,7 @@ class TestPlaylistClip(unittest.TestCase):
             title=u'Test',
             likes=5,
             image_url='test_url',
+            duration=1
         )
         Session.add(clip)
         Session.add(playlist)
@@ -219,7 +223,7 @@ class TestPlaylistClip(unittest.TestCase):
             playlist=playlist,
             clip=clip,
             likes=0,
-            active=True,
+            state=0,
             added=datetime.now()
         )
         Session.add(pclip)
@@ -227,13 +231,13 @@ class TestPlaylistClip(unittest.TestCase):
         pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
         self.assertEqual(playlist, pclip.playlist)
         self.assertEqual(clip, pclip.clip)
-        self.assertTrue(pclip.active)
+        self.assertEqual(0, pclip.state)
         self.assertEqual(0, pclip.likes)
 
     def test_pclip_get_all(self):
         from balistos.models.clip import PlaylistClip
         pclips = PlaylistClip.get_all()
-        self.assertEqual(1, pclips.count())
+        self.assertEqual(2, pclips.count())
 
     def test_pclip_get_all_by_playlist(self):
         from balistos.models.clip import PlaylistClip
@@ -241,7 +245,7 @@ class TestPlaylistClip(unittest.TestCase):
 
         playlist = Playlist.get('test_playlist')
         pclips = PlaylistClip.get_by_playlist(playlist)
-        self.assertEqual(1, len(pclips))
+        self.assertEqual(2, len(pclips))
 
     def test_pclip_get_all_by_playlist_empty(self):
         from balistos.models.clip import PlaylistClip
@@ -253,20 +257,13 @@ class TestPlaylistClip(unittest.TestCase):
     def test_pclip_get_all_filter_by(self):
         from balistos.models.clip import PlaylistClip
         pclips = PlaylistClip.get_all(filter_by={'likes': 0})
-        self.assertEqual(1, pclips.count())
+        self.assertEqual(2, pclips.count())
 
     def test_pclip_get_all_empty(self):
         from balistos.models.clip import PlaylistClip
-        from balistos.models.clip import Clip
-        from balistos.models.playlist import Playlist
-
-        playlist = Playlist.get('test_playlist')
-        clip = Clip.get('cpV0ygkmhP4')
-        pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
-
-        Session.delete(pclip)
+        pclips = PlaylistClip.get_all()
+        for pclip in pclips:
+            Session.delete(pclip)
         Session.flush()
         self.assertEqual(0, PlaylistClip.get_all().count())
-        self.assertIsNone(
-            PlaylistClip.get_by_playlist_and_clip(playlist, clip)
-        )
+        self.assertEqual(0, PlaylistClip.get_all().count())
