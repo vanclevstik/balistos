@@ -73,6 +73,7 @@ function onYouTubeIframeAPIReady() {
 function initPlayer(){
     // initialization of the YouTube IFrame API player. If there is no clip in playlist, we instead write a message.
     var video=$("#video-id").text();
+    var start=parseInt($("#video-start").text());
     if(video!==""){
         player = new YT.Player('player', {
             height: '390',
@@ -81,6 +82,7 @@ function initPlayer(){
             playerVars:{
                 controls:0,
                 showinfo:0,
+                start:start,
                 disablekb:1,
                 wmode:'transparent',
             },

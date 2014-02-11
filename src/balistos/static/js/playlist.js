@@ -69,6 +69,14 @@ function PlaylistModel(){
         }
     },self);
 
+    self.firstVideoStart=ko.computed(function(){
+        if(self.videos()[0]){
+            return self.videos()[0].start_time();
+        }
+        else
+            return 0;
+    },self);
+
     self.sync=function(){
         $.ajax({
             type: "GET",
@@ -80,9 +88,7 @@ function PlaylistModel(){
             setTimeout(self.sync,2000);
         });
     };
-
     self.sync();
-
 }
 
 
@@ -91,6 +97,7 @@ function Video(data){
     this.id=ko.observable(data.id);
     this.image=ko.observable(data.image);
     this.likes=ko.observable(data.likes);
+    this.start_time=ko.observable(data.start_time);
 
     this.addLike=function(){
         $.ajax({

@@ -10,6 +10,7 @@
                     <div class="title">Now playing: <span data-bind="text: firstVideoTitle"></span></div>
                     <div class="subtitle">Next: <span data-bind="text: secondVideoTitle"></span></div>
                     <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
+                    <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
                     <div class="player">
                         <div class="overlay"></div>
                         <div id="player"></div>

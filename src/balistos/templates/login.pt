@@ -1,0 +1,141 @@
+<metal:block metal:use-macro="main_template">
+    <div metal:fill-slot="content" id="content">
+        <div class="login">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="login-container">
+                        <div class="position-relative">
+                            <div id="login-box" class="login-box visible widget-box no-border">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <h4 class="header blue lighter bigger">
+                                            Please enter your credentials
+                                        </h4>
+                                        <div class="space-6"></div>
+                                        <form id="loginform" class="form-vertical" method="post" action="/admin/post/login">
+                                            <fieldset>
+                                                <label class="block clearfix">
+                                                    <span class="block input-icon input-icon-right">
+                                                        <input type="text" class="form-control" placeholder="Email" name="email">
+                                                        <i class="icon-user"></i>
+                                                    </span>
+                                                </label>
+
+                                                <label class="block clearfix">
+                                                    <span class="block input-icon input-icon-right">
+                                                        <input type="password" class="form-control" placeholder="Password" name="password">
+                                                        <i class="icon-lock"></i>
+                                                    </span>
+                                                </label>
+                                                <div class="space"></div>
+                                                <div class="clearfix">
+                                                    <label class="inline">
+                                                        <input type="checkbox" class="ace" name="rememberme">
+                                                        <span class="lbl"> Remember me</span>
+                                                    </label>
+                                                    <button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
+                                                        <i class="icon-key"></i>
+                                                        Log in
+                                                    </button>
+                                                </div>
+                                                <div class="space-4"></div>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                    <div class="toolbar clearfix">
+                                        <div>
+                                            <a href="#" onclick="show_box('forgot-box'); return false;" class="forgot-password-link">
+                                                <i class="icon-arrow-left"></i>
+                                                Forgot my password
+                                            </a>
+                                            <a href="#" onclick="show_box('register-box'); return false;" class="forgot-password-link pull-right">
+                                                <i class="icon-arrow-right"></i>
+                                                Register new account
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="forgot-box" class="forgot-box widget-box no-border">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <h4 class="header red lighter bigger">
+                                            <i class="icon-key"></i>
+                                            Retrieve password
+                                        </h4>
+                                        <div class="space-6"></div>
+                                        <p>Enter your email and your password will be reset and sent to you email.  </p>
+
+                                        <form action="/admin/post/forgotpass" id="forgot-pass" method="post">
+                                            <fieldset>
+                                                    <label class="block clearfix">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="email" class="form-control" name="email" placeholder="Email">
+                                                            <i class="icon-envelope"></i>
+                                                        </span>
+                                                    </label>
+
+                                                    <div class="clearfix">
+                                                        <button onclick="$('#forgot-pass').submit();" class="width-35 pull-right btn btn-sm btn-danger">
+                                                            <i class="icon-lightbulb"></i>
+                                                            Send!
+                                                        </button>
+                                                    </div>
+                                            </fieldset>
+                                        </form>
+                                    </div><!--/widget-main-->
+                                    <div class="toolbar center">
+                                        <a href="#" onclick="show_box('login-box'); return false;" class="back-to-login-link">
+                                            Back to login
+                                            <i class="icon-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="register-box" class="forgot-box widget-box no-border">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <h4 class="header red lighter bigger">
+                                            <i class="icon-key"></i>
+                                            Register
+                                        </h4>
+                                        <div class="space-6"></div>
+                                        <p>Register new account</p>
+
+                                        <form action="/admin/post/forgotpass" id="forgot-pass" method="post">
+                                            <fieldset>
+                                                    <label class="block clearfix">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="email" class="form-control" name="email" placeholder="Email">
+                                                            <i class="icon-envelope"></i>
+                                                        </span>
+                                                    </label>
+
+                                                    <div class="clearfix">
+                                                        <button onclick="$('#forgot-pass').submit();" class="width-35 pull-right btn btn-sm btn-danger">
+                                                            <i class="icon-lightbulb"></i>
+                                                            Send!
+                                                        </button>
+                                                    </div>
+                                            </fieldset>
+                                        </form>
+                                    </div><!--/widget-main-->
+                                    <div class="toolbar center">
+                                        <a href="#" onclick="show_box('login-box'); return false;" class="back-to-login-link">
+                                            Back to login
+                                            <i class="icon-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <script type="text/javascript">
+            function show_box(id) {
+             $('.widget-box.visible').removeClass('visible');
+             $('#'+id).addClass('visible');
+            }
+        </script>
+    </div>
+</metal:block>
