@@ -73,7 +73,7 @@ class PlaylistUser(Base, BaseMixin):
         Playlist,
         single_parent=True,
         backref=backref(
-            'playlist_user',
+            'playlist_users',
             cascade='all, delete-orphan',
             single_parent=False,
             uselist=True,
@@ -85,7 +85,7 @@ class PlaylistUser(Base, BaseMixin):
         User,
         single_parent=True,
         backref=backref(
-            'playlist_user',
+            'playlist_users',
             cascade='all, delete-orphan',
             single_parent=False,
             uselist=True,

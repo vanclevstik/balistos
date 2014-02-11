@@ -51,6 +51,7 @@ setup(
         'pyramid_deform',
         'pyramid_fanstatic',
         'pyramid_layout',
+        'isodate',
     ],
     extras_require={
         'test': [
