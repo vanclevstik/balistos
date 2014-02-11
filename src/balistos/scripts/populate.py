@@ -42,16 +42,35 @@ def insert_data():
             image_url='http://i1.ytimg.com/vi/cpV0ygkmhP4/mqdefault.jpg',
             likes=0,
             youtube_video_id='cpV0ygkmhP4',
+            duration=50,
+        )
+
+        test_clip2 = Clip(
+            title=u'nba spoof',
+            image_url='http://i1.ytimg.com/vi/cpV0ygkmhP4/mqdefault.jpg',
+            likes=0,
+            youtube_video_id='hi60QeNjIDk',
+            duration=136,
         )
         Session.add(test_clip)
+        Session.add(test_clip2)
         test_playlist_clip = PlaylistClip(
             likes=0,
             added=datetime.now(),
-            active=True,
+            started=datetime.now(),
+            state=2,
             clip=test_clip,
             playlist=test_playlist,
         )
+        test_playlist_clip2 = PlaylistClip(
+            likes=0,
+            added=datetime.now(),
+            state=1,
+            clip=test_clip2,
+            playlist=test_playlist,
+        )
         Session.add(test_playlist_clip)
+        Session.add(test_playlist_clip2)
 
 
 def main(argv=sys.argv):
