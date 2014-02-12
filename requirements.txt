@@ -9,6 +9,7 @@ colander==1.0b1
 deform==0.9.9
 fanstatic==1.0a4
 inflect==0.2.4
+isodate==0.4.9
 js.bootstrap==3.0.0.1
 js.deform==0.9.8
 js.jquery==1.9.1
