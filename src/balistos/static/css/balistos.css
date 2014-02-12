@@ -50,10 +50,12 @@ html,body{
     background-size:auto 100%;
     opacity:0.4;
 }
-
+.search{
+    position:relative;
+    width:100%;
+}
 ul.autocomplete{
-    width:96%;
-    left:15px;
+    width:100%;
     margin-top:0px;
 }
 ul.autocomplete li{
@@ -62,7 +64,7 @@ ul.autocomplete li{
     float:left;
     cursor:pointer;
 }
-ul.autocomplete li:hover{
+ul.autocomplete li:hover,ul.autocomplete li.active{
     background-color: #f8f8f8;
 }
 ul.autocomplete li img{

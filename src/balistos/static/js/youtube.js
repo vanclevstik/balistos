@@ -23,6 +23,7 @@ function onYouTubeApiLoad() {
 
 //search(query) takes a string query and searches Youtube Data Api for results. It returns 8 hits with only videos which are embeedable.
 function search(query) {
+
     var request = gapi.client.youtube.search.list({
         part: 'snippet',
         q:query,
@@ -46,12 +47,47 @@ var player;
 function onYouTubeIframeAPIReady() {
 
     // when user types a query into search bar, we invoke search method to return results.
-    $("#search").keyup(function(){
+    $("#search").keyup(function(e){
         if($(this).val()===""){
             $("#response").hide();
         }
         else{
-            search($(this).val());
+            var code = (e.keyCode ? e.keyCode : e.which);
+            var idx;
+            if (code == 40) {
+                if($("#response").children("li.active").length<1){
+                    $("#response").children("li:first-child").addClass("active");
+                }
+                else{
+                    idx=$("#response").children("li.active").index()+1;
+                    $("#response").children().removeClass("active");
+                    if(idx>7)
+                        idx=0;
+                    $("#response").children().eq(idx).addClass("active");
+                }
+            } 
+            else if (code == 38) {
+                if($("#response").children("li.active").length<1){
+                    $("#response").children().eq(7).addClass("active");
+                }
+                else{
+                    idx=$("#response").children("li.active").index()-1;
+                    $("#response").children().removeClass("active");
+                    if(idx<0)
+                        idx=7;
+                    $("#response").children().eq(idx).addClass("active");
+                }
+            }
+            else if (code == 13) {
+                if($("#response").children("li.active").length>0){
+                    $("#response").children("li.active").trigger("click");
+                }
+                
+            }
+            else{
+                search($(this).val());
+            }
+            
         }
     });
 
@@ -101,4 +137,3 @@ function initPlayer(){
 function onPlayerReady(event) {
     event.target.playVideo();
 }
-
