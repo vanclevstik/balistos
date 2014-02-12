@@ -18,7 +18,7 @@ function onClientLoad() {
 
 // onYouTubeApiLoad() is called externally when Youtube API is loaded.
 function onYouTubeApiLoad() {
-    gapi.client.setApiKey('AIzaSyCR5In4DZaTP6IEZQ0r1JceuvluJRzQNLE');
+    gapi.client.setApiKey('AIzaSyCnR3Vv-Erxjaa-IJapIXCnvgTOuXLXItA');
 }
 
 //search(query) takes a string query and searches Youtube Data Api for results. It returns 8 hits with only videos which are embeedable.
