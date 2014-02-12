@@ -1,2 +1,3 @@
 src/balistos/static/js/knockout.js
 src/balistos/static/js/knockout.min.js
+src/balistos/static/js/sha256-min.js
