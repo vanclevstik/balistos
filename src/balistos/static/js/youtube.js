@@ -28,7 +28,8 @@ function search(query) {
         q:query,
         type:'video',
         maxResults:8,
-        format:5
+        format:5,
+        key:'AIzaSyCnR3Vv-Erxjaa-IJapIXCnvgTOuXLXItA'
     });
     request.execute(showResponse);
 }

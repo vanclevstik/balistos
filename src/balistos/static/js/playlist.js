@@ -129,4 +129,5 @@ function Video(data){
     };
 }
 
-ko.applyBindings(new PlaylistModel());
+playlist=new PlaylistModel()
+ko.applyBindings(playlist);
