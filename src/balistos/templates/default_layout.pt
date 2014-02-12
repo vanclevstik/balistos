@@ -1,62 +1,67 @@
 <!DOCTYPE html>
-<html lang="en"
-      metal:define-macro="main">
+<html lang="en" metal:define-macro="main">
 
-  <head>
-    <meta charset="utf-8">
-    <title><metal:block define-slot="title">Home</metal:block> - balistos</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Dasilvos!">
-    <meta name="author" content="Balistos">
+    <head>
+        <meta charset="utf-8">
+        <title><metal:block define-slot="title">Home</metal:block> - balistos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Dasilvos!">
+        <meta name="author" content="Balistos">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="../assets/js/html5shiv.js"></script>
-    <![endif]-->
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+          <script src="../assets/js/html5shiv.js"></script>
+        <![endif]-->
 
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../static/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../static/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="../static/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="../static/favicon.ico">
+        <!-- Fav and touch icons -->
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../static/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../static/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="../static/apple-touch-icon-57-precomposed.png">
+        <link rel="shortcut icon" href="../static/favicon.ico">
 
-  </head>
-  <body tal:attributes="class python:econtext['view'].__name__">
-      <nav class="navbar navbar-default" role="navigation">
-        <div class="container">
-          <!-- Brand and toggle get grouped for better mobile display -->
-          <div class="navbar-header">
-            <a class="navbar-brand" href="/">Balistos</a>
-          </div>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login</a>
-              <div class="dropdown-menu login-menu">
-                <input type="text" class="form-control" />
-              </div>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Register</a>
-              <div class="dropdown-menu login-menu">
-                <input type="text" class="form-control" />
-              </div>
-            </li>
-          </ul>
-        </div><!-- /.container-fluid -->
-      </nav>
+    </head>
+    <body tal:attributes="class python:econtext['view'].__name__">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Balistos</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login</a>
+                    <div class="dropdown-menu login-menu">
+                        <input type="text" class="form-control" name="login-username" placeholder="Username" />
+                        <input type="text" class="form-control" name="login-password" placeholder="Password" />
+                        <button type="button" class="btn btn-default">Login</button>
+                  </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Register</a>
+                        <div class="dropdown-menu login-menu">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="register-username" placeholder="Username" />
+                                <input type="text" class="form-control" name="register-password" placeholder="Password" />
+                                <input type="text" class="form-control" name="register-password" placeholder="Repeat password" />
+                                <button type="button" class="btn btn-default">Register</button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-     <div id="wrap">
-        <div class="container">
-            <div metal:define-slot="content" id="content" class="row" ></div>
+        <div id="wrap">
+            <div class="container">
+                <div metal:define-slot="content" id="content" class="row" ></div>
+            </div>
         </div>
-    </div>
 
-    <!--/.fluid-container-->
-    <div id="footer">
-      <div class="container">
-        <p class="text-muted">2014 &copy Balistos</p>
-      </div>
-    </div>
-  </body>
+        <!--/.fluid-container-->
+        <div id="footer">
+            <div class="container">
+                <p class="text-muted">2014 &copy; Balistos</p>
+            </div>
+        </div>
+    </body>
 </html>

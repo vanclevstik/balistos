@@ -2,8 +2,10 @@
     <div metal:fill-slot="content" id="content">
         <div class="row">
             <div class="col-lg-8">
-                <input type="text" class="form-control" id="search" placeholder="Search video" />
-                <ul class="dropdown-menu autocomplete" id="response"></ul>
+                <div class="search">
+                    <input type="text" class="form-control" id="search" placeholder="Search video" autocomplete="off" />
+                    <ul class="dropdown-menu autocomplete" id="response"></ul>
+                </div>
             </div>
             <div class="col-lg-8">
                 <div class="video-player">
@@ -12,7 +14,7 @@
                     <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
                     <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
                     <div class="player">
-                        <div class="overlay"></div>
+                        <div class="overlay mute"></div>
                         <div id="player"></div>
                     </div>
                 </div>

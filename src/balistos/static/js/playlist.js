@@ -32,6 +32,21 @@ function PlaylistModel(){
             });
         });
         $("#response").hide();
+        $("#search").val("");
+    };
+
+    self.removeVideo=function(model,item){
+        video=$(item.currentTarget);
+        $.ajax({
+            type: "GET",
+            url: "/playlist_add_video",
+            dataType:"json",
+            data: video.id,
+        }).done(function(data ){
+            //after recieving response, we sychronise the playlist data
+            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            self.videos(mappedVideos);
+        });
     };
 
     $.ajax({
@@ -129,5 +144,5 @@ function Video(data){
     };
 }
 
-playlist=new PlaylistModel()
+playlist=new PlaylistModel();
 ko.applyBindings(playlist);
