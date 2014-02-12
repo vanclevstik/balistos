@@ -29,22 +29,26 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login</a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="login-dropdown">Login</a>
                     <div class="dropdown-menu login-menu">
-                        <input type="text" class="form-control" name="login-username" placeholder="Username" />
-                        <input type="text" class="form-control" name="login-password" placeholder="Password" />
-                        <button type="button" class="btn btn-default">Login</button>
+                        <div id="login-error"></div>
+                        <form role="form" id="login-form">
+                            <input type="text" class="form-control" name="login-username" placeholder="Username" />
+                            <input type="password" class="form-control" name="login-password" placeholder="Password" />
+                            <button type="submit" class="btn btn-default">Login</button>
+                        </form>
                   </div>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Register</a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="register-dropdown">Register</a>
                         <div class="dropdown-menu login-menu">
-                            <div class="form-group">
+                            <div id="register-error"></div>
+                            <form role="form" id="register-form">
                                 <input type="text" class="form-control" name="register-username" placeholder="Username" />
-                                <input type="text" class="form-control" name="register-password" placeholder="Password" />
-                                <input type="text" class="form-control" name="register-password" placeholder="Repeat password" />
-                                <button type="button" class="btn btn-default">Register</button>
-                            </div>
+                                <input type="password" class="form-control" name="register-password" placeholder="Password" />
+                                <input type="password" class="form-control" name="register-repeat" placeholder="Repeat password" />
+                                <button type="submit" class="btn btn-default">Register</button>
+                            </form>
                         </div>
                     </li>
                 </ul>

@@ -22,12 +22,14 @@
             <div class="col-lg-4 playlist pull-right" >
                 <div class="playlist-title">Playlist</div>
                 <div data-bind="foreach: videos">
-                    <div class="video-box">
-                        <img data-bind="attr: { src: image }" />
-                        <div data-bind="text: title" class="title"></div>
-                        <div class="likes">Likes: <span data-bind="text: likes"></span></div>
-                        <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
-                        <div data-bind="click: removeLike" class="addlike">REMOVE LIKE</div>
+                    <div data-bind="if: $index()>0">
+                        <div class="video-box" data-bind="css: {'second': $index()==1}">
+                            <img data-bind="attr: { src: image }" />
+                            <div data-bind="text: title" class="title"></div>
+                            <div class="likes">Likes: <span data-bind="text: likes"></span></div>
+                            <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
+                            <div data-bind="click: removeLike" class="addlike">REMOVE LIKE</div>
+                        </div>
                     </div>
                 </div>
             </div> 

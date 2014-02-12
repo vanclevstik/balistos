@@ -173,6 +173,6 @@ var typingTimer;
 var doneTypingInterval =300;
 function delaySearch(query){
     clearTimeout(typingTimer);
-        typingTimer = setTimeout(function(){search(query)},doneTypingInterval);
+    typingTimer = setTimeout(function(){search(query);},doneTypingInterval);
     return true;
 }

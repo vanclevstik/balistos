@@ -56,12 +56,14 @@ html,body{
 }
 .video-player .overlay.pause{
     background: white url('../img/pause.png') center no-repeat;
+    opacity:0.4;
 }
 .video-player .overlay.mute{
     background: white url('../img/mute.png') center no-repeat;
 }
 .video-player .overlay.unmute{
     background: white url('../img/unmute.png') center no-repeat;
+    opacity:0.4;
 }
 .video-player .overlay:hover{
     opacity:0.4;
@@ -109,6 +111,9 @@ ul.autocomplete li .title{
     border-radius:5px;
     float:left;
     margin-bottom:5px;
+}
+.video-box.second{
+    background-color: #e7e7e7;
 }
 .video-box .title{
     float:right;
