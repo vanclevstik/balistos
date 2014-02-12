@@ -32,7 +32,7 @@ function PlaylistModel(){
             });
         });
         $("#response").hide();
-        $("#search").show("");
+        $("#search").val("");
     };
 
     self.removeVideo=function(model,item){

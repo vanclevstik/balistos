@@ -14,7 +14,7 @@
                     <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
                     <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
                     <div class="player">
-                        <div class="overlay"></div>
+                        <div class="overlay mute"></div>
                         <div id="player"></div>
                     </div>
                 </div>
