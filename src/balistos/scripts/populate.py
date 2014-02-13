@@ -5,6 +5,7 @@ from datetime import datetime
 from pyramid_basemodel import Base
 from pyramid_basemodel import Session
 from balistos.models.user import User
+from balistos.models.user import Group
 from balistos.models.playlist import Playlist
 from balistos.models.playlist import PlaylistUser
 from balistos.models.clip import Clip
@@ -18,13 +19,19 @@ import transaction
 
 def insert_data():
     with transaction.manager:
+
+        admin_group = Group(name='admins')
+        Session.add(admin_group)
+        Session.flush()
         test_user = User(
             username='test_user',
             email='test@bar.com',
             fullname=u'Test User',
+            # password = 'secret', pregenerated hash to speed up tests
+            password=u'3d91b58504a6cc3a159005ee7b16c7ae503ca6ac2a6a3c893837083c236b864a',  # noqa
+            group=admin_group,
         )
         Session.add(test_user)
-
         test_playlist = Playlist(
             uri='test_playlist',
             title=u'Test Playlist',

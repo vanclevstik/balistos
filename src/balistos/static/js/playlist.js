@@ -119,7 +119,7 @@ function Video(data){
             type: "GET",
             url: "/like_video",
             dataType:"json",
-            data: {"videoid":this.id,
+            data: {"video_id":this.id,
                    "like":1  //for like I will send 1, for unlike -1
                 },
         }).done(function(data ){
@@ -132,9 +132,9 @@ function Video(data){
     this.removeLike=function(){
         $.ajax({
             type: "GET",
-            url: "/unlike_video",
+            url: "/like_video",
             dataType:"json",
-            data: {"videoid":this.id,
+            data: {"video_id":this.id,
                    "like":-1 //for like I will send 1, for unlike -1
             },
         }).done(function(data ){
