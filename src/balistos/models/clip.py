@@ -96,10 +96,10 @@ class PlaylistClip(Base, BaseMixin):
             started=started,
         )
         BaseMixin.__init__(self)
-        for playlist_user in playlist.playlist_users:
+        for user in User.get_all():
             Session.add(PlaylistClipUser(
                 liked=0,
-                user=playlist_user.user,
+                user=user,
                 playlist_clip=self,
             ))
 
@@ -213,12 +213,15 @@ class PlaylistClip(Base, BaseMixin):
         return result.one()
 
     @classmethod
-    def get_by_playlist_waiting(self, playlist, order_by='added'):
+    def get_by_playlist_waiting(self, playlist):
         """Get all PlaylistClip that are not active or next in queue."""
         result = result = PlaylistClip.query.filter(
             PlaylistClip.playlist == playlist,
             PlaylistClip.state == 0,
-        ).order_by(order_by)
+        ).order_by(
+            PlaylistClip.likes.desc(),
+            PlaylistClip.added.asc()
+        )
         if result.count() < 1:
             return None
 

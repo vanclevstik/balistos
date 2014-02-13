@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """Application initiallization"""
 
+from balistos.models.user import User
 from pyramid.security import Allow
 from pyramid.security import Everyone
+from pyramid.security import Authenticated
+from pyramid.security import ALL_PERMISSIONS
 from pyramid_basemodel import Session
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -18,10 +21,20 @@ DEVELOPER_KEY = ''
 class RootFactory(object):
     __acl__ = [
         (Allow, Everyone, 'view'),
+        (Allow, Authenticated, 'user'),
+        (Allow, 'admins', ALL_PERMISSIONS),
     ]
 
     def __init__(self, request):
         pass  # pragma: no cover
+
+
+def groupfinder(username, request):
+    user = User.get_by_username(username)
+    if user and user.group:
+        return [user.group.name, ]
+    else:
+        return []
 
 
 @notfound_view_config()
@@ -38,8 +51,10 @@ def configure(config):
     config.add_route('home', '/home')
     config.add_route('users', '/users')
     config.add_route('login', '/login')
+    config.add_route('register', '/register')
     config.add_route('playlist_videos', '/playlist_videos')
     config.add_route('playlist_add_video', '/playlist_add_video')
+    config.add_route('like_video', '/like_video')
     config.add_route('main', '/')
     config.add_route('set_playlist', '/playlist/{playlist}')
     config.scan('balistos', ignore=['balistos.tests', 'balistos.testing'])
@@ -57,6 +72,7 @@ def main(global_config, **settings):
     authentication_policy = AuthTktAuthenticationPolicy(
         secret=settings.get('authtkt.secret', 'secret'),
         hashalg='sha512',
+        callback=groupfinder,
     )
     authorization_policy = ACLAuthorizationPolicy()
     config = Configurator(
