@@ -8,6 +8,7 @@ WebOb==1.2.3
 colander==1.0b1
 deform==0.9.9
 fanstatic==1.0a4
+gdata==2.0.18
 inflect==0.2.4
 isodate==0.4.9
 js.bootstrap==3.0.0.1

@@ -44,6 +44,7 @@ setup(
         'transaction',
         'zope.sqlalchemy',
         'fanstatic',
+        'gdata',
         'js.bootstrap',
         'js.deform',
         'js.jquery',

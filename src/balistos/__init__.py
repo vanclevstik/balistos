@@ -12,6 +12,8 @@ from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.view import notfound_view_config
 from sqlalchemy import engine_from_config
 
+DEVELOPER_KEY = ''
+
 
 class RootFactory(object):
     __acl__ = [
@@ -65,7 +67,7 @@ def main(global_config, **settings):
         session_factory=session_factory,
     )
     configure(config)
-
+    DEVELOPER_KEY = settings['balistos.youtube_key']  # noqa
     config.include('pyramid_basemodel')
     config.include('pyramid_tm')
     return config.make_wsgi_app()
