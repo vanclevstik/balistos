@@ -56,6 +56,11 @@ playlist_js = Resource(
     depends=[jquery, knockout_js],
     bottom=True,
 )
+sha_js = Resource(
+    library=lib_balistos,
+    relpath='js/sha256-min.js',
+    bottom=True,
+)
 
 balistos_assets = Group([
     jquery,
@@ -63,6 +68,7 @@ balistos_assets = Group([
     modernizr,
     balistos_js,
     balistos_css,
+    sha_js
 ])
 youtube_assets = Group([
     knockout_js,
