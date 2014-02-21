@@ -3,15 +3,21 @@
 
 (function ($) {
     "use strict";
+
+
     $("form#login-form").on("submit",function(event){
         event.preventDefault();
         if($(this).find("input[name='login-username']").val().length<5 ||
          $(this).find("input[name='login-password']").val().length<5){
-            $("#login-error").text("Your username or password is too short.").show();
-            setTimeout(function(){$("#login-error").fadeOut(1000);},2000);
+            $("#login-message")
+                .text("Your username or password is too short.")
+                .show();
+            setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
         }
         else{
-            $(this).find("input[name='login-password']").val(hex_sha256($(this).find("input[name='login-password']").val()));
+            $(this).find("input[name='login-password']").val(
+                hex_sha256($(this).find("input[name='login-password']").val())
+            );
             var formdata=$(this).serialize();
             $.ajax({
                 type: "POST",
@@ -20,12 +26,16 @@
                 data: formdata,
             }).done(function(response){
                 if(response.error){
-                    $("#login-error").text(response.error).show();
+                    $("#login-message").text(response.error).show();
                     $("#login-form").find("input").val("");
-                    setTimeout(function(){$("#login-error").fadeOut(1000);},2000);
+                    setTimeout(function(){
+                        $("#login-message").fadeOut(1000);
+                    },2000);
                 }
                 else{
-                    $("#login-dropdown").trigger("click");
+                    $("#username-string").text(response.success);
+                    $(".not-logged-in").hide();
+                    $(".logged-in").slideDown(1000);
                 }
             });
         }
@@ -36,13 +46,21 @@
         event.preventDefault();
         if($(this).find("input[name='register-username']").val().length<5 ||
           $(this).find("input[name='register-password']").val().length<5){
-            $("#register-error").text("Your username or password is too short.").show();
-            setTimeout(function(){$("#register-error").fadeOut(1000);},2000);
+            $("#register-message")
+                .text("Your username or password is too short.")
+                .show();
+            setTimeout(function(){
+                $("#register-message").fadeOut(1000);
+            },2000);
         }
         else{
             if($(this).find("input[name='register-password']").val()==
             $(this).find("input[name='register-repeat']").val()){
-                $(this).find("input[name='register-password']").val(hex_sha256($(this).find("input[name='register-password']").val()));
+                $(this).find("input[name='register-password']").val(
+                    hex_sha256(
+                        $(this).find("input[name='register-password']").val()
+                    )
+                );
                 $(this).find("input[name='register-repeat']").val("");
                 var formdata=$(this).serialize();
                 $.ajax({
@@ -52,18 +70,25 @@
                     data: formdata,
                 }).done(function(response){
                     if(response.error){
-                        $("#register-error").text(response.error).show();
-                        setTimeout(function(){$("#register-error").fadeOut(1000);},2000);
+                        $("#login-message").text(response.error).show();
+                        $("#login-form").find("input").val("");
+                        setTimeout(function(){
+                            $("#login-message").fadeOut(1000);
+                        },2000);
                     }
                     else{
-                        $("#register-dropdown").trigger("click");
+                        $("#username-string").text(response.success);
+                        $(".not-logged-in").hide();
+                        $(".logged-in").slideDown(1000);
                     }
                 });
             }
             else{
-                $("#register-error").text("Your passwords don't match.").show();
+                $("#register-message")
+                    .text("Your passwords don't match.")
+                    .show();
                 setTimeout(function(){
-                    $("#register-error").fadeOut(1000);
+                    $("#register-message").fadeOut(1000);
                 },2000);
             }
         }

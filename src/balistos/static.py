@@ -56,6 +56,7 @@ playlist_js = Resource(
     depends=[jquery, knockout_js],
     bottom=True,
 )
+
 sha_js = Resource(
     library=lib_balistos,
     relpath='js/sha256-min.js',

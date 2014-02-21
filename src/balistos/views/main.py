@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 """Main views on front page"""
 
+from balistos.models.clip import Clip
+from balistos.models.clip import PlaylistClip
+from balistos.models.playlist import Playlist
+from balistos.playlist import add_playlist_clip
+from balistos.playlist import get_playlist_videos
+from balistos.playlist import remove_playlist_clip
 from balistos.static import balistos_assets
 from balistos.static import youtube_assets
-from balistos.youtube import get_related_video
-from datetime import datetime
-from pyramid.view import view_config
-from pyramid.response import Response
-from balistos.models.playlist import Playlist
-from balistos.models.clip import PlaylistClip
-from balistos.models.clip import PlaylistClipUser
-from balistos.models.clip import Clip
-from balistos.models.user import User
-from pyramid_basemodel import Session
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid.response import Response
 from pyramid.security import authenticated_userid
+from pyramid.view import view_config
 
 
 import json
@@ -29,8 +27,9 @@ import isodate
 def home(request):
     """The home page."""
     balistos_assets.need()
+    username = authenticated_userid(request)
     return {
-        'name': 'balistos',
+        'username': username
     }
 
 
@@ -44,9 +43,12 @@ def main(request):
     balistos_assets.need()
     youtube_assets.need()
     session = request.session
+    username = authenticated_userid(request)
     if not 'playlist' in session or not session['playlist']:
         session['playlist'] = str(Playlist.get_all()[0].uri)
-    return {}
+    return {
+        'username': username
+    }
 
 
 @view_config(
@@ -149,137 +151,37 @@ def like_video(request):
     return Response()
 
 
-def get_playlist_videos(playlist, username=None):
+@view_config(
+    route_name='remove_video'
+)
+def remove_video(request):
     """
-    Method that returns all the clips that are part of playlist
+    Remove video from playlist if you have correct rights
 
-    :param    playlist: playlist of which we want to get videos
-    :type     playlist: balistos.models.playlist.Playlist
+    :param    request: current request
+    :type     request: pyramid.request.Request
 
-    :returns: dict for each clip that is part of playlist
-    :rtype:   list of dicts
+    :returns: success if video was remove correctly, error otherwise
+    :rtype:   pyramid.response.Response
     """
-    result = []
-    pclips = []
-    user = None
-    if username:
-        user = User.get_by_username(username)
-    if check_if_finished(PlaylistClip.get_active_playlist_clip(playlist)):
-        next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
-        if next_pclip:
-            next_pclip.state = 2
-            next_pclip.started = datetime.now()
-            set_next_in_queue(playlist, next_pclip.clip.youtube_video_id)
-            Session.flush()
-
-    pclips.append(PlaylistClip.get_active_playlist_clip(playlist))
-    next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
-    if next_pclip:
-        pclips.append(next_pclip)
-    else:
-        set_next_in_queue(playlist)
-    wait_clips = PlaylistClip.get_by_playlist_waiting(playlist)
-    if wait_clips:
-        pclips = pclips + wait_clips
-    for pclip in pclips:
-        clip = pclip.clip
-        if pclip.state == 2:
-            start_time = (datetime.now() - pclip.started).total_seconds()
-        else:
-            start_time = 0
-        liked = -2
-        if user:
-            pclipuser = PlaylistClipUser.get_by_playlist_clip_and_user(
-                pclip,
-                user
-            )
-            liked = pclipuser.liked
-        result.append(
-            {
-                'id': clip.youtube_video_id,
-                'title': clip.title,
-                'likes': pclip.likes,
-                'image': clip.image_url,
-                'start_time': start_time,
-                'liked': liked
-            },
-        )
-    return result
-
-
-def check_if_finished(pclip):
-    """
-    Check if currently active clip finished playing and remove it from playing,
-    state if it is.
-
-    :param    pclip: active playlist clip
-    :type     pclip: balistos.models.playlist.PlaylistClip
-
-    :returns: True if clip is finished and we removed it, False otherwise
-    :rtype:   boolean
-    """
-    duration = pclip.clip.duration
-    started = pclip.started
-    if (datetime.now()-started).total_seconds() > duration:
-        Session.delete(pclip)
-        Session.flush()
-        return True
-    return False
-
-
-def set_next_in_queue(playlist, youtube_video_id):
-    """
-    Set next video in queue based on likes, time added
-
-    :param    playlist: playlist for which next clip we are setting
-    :type     playlist: balistos.models.playlist.Playlist
-    """
-    pclips = PlaylistClip.get_by_playlist_waiting(playlist)
-    if pclips:
-        pclips[0].state = 1
-        Session.flush()
-    else:
-        video = get_related_video(youtube_video_id)
-        add_playlist_clip(
-            playlist,
-            video['title'],
-            video['image_url'],
-            video['youtube_video_id'],
-            video['duration'],
-            state=1,
+    if not request.is_xhr:
+        return HTTPNotFound()
+    username = authenticated_userid(request)
+    youtube_video_id = request.GET['video_id']
+    playlist = Playlist.get(request.session['playlist'])
+    if not username or not youtube_video_id:
+        return Response(
+            body=json.dumps({'error': ''}),
+            content_type='application/json'
         )
 
-
-def add_playlist_clip(
-    playlist,
-    title,
-    image_url,
-    youtube_video_id,
-    duration,
-    state=0,
-):
-
-    clip = Clip.get(youtube_video_id)
-    if not clip:
-        clip = Clip(
-            title=title,
-            image_url=image_url,
-            youtube_video_id=youtube_video_id,
-            likes=0,
-            duration=duration,
+    if not remove_playlist_clip(playlist, youtube_video_id):
+        return Response(
+            body=json.dumps({'error': ''}),
+            content_type='application/json'
         )
-        Session.add(clip)
-        Session.flush()
-    pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
-    if not pclip:
-        pclip = PlaylistClip(
-            added=datetime.now(),
-            likes=0,
-            state=state,
-            clip=clip,
-            playlist=playlist,
-        )
-        Session.add(pclip)
-        Session.flush()
-    else:
-        pclip.likes += 1
+
+    return Response(
+        body=json.dumps({'success': 'Succesfully removed'}),
+        content_type='application/json'
+    )

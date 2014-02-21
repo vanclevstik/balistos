@@ -1,6 +1,10 @@
 // we create Playlist Model.
 function PlaylistModel(){
     var self=this;
+
+    self.settings=ko.observableArray([]);
+
+
     self.videos=ko.observableArray([]);
 
     //function for adding videos to the array.
@@ -17,7 +21,7 @@ function PlaylistModel(){
             type:'video',
         });
 
-        // we send the request to the server with parameters id,title,image and duration
+        // we send the request to the server with parameters
         request.execute(function(response){
             videoarray.duration=response.items[0].contentDetails.duration;
             $.ajax({
@@ -27,7 +31,9 @@ function PlaylistModel(){
                 data: videoarray,
             }).done(function(data ){
                 //after recieving response, we sychronise the playlist data
-                var mappedVideos=$.map(data,function(item){ return new Video(item);});
+                var mappedVideos=$.map(data,function(item){
+                     return new Video(item);
+                });
                 self.videos(mappedVideos);
             });
         });
@@ -35,19 +41,23 @@ function PlaylistModel(){
         $("#search").val("");
     };
 
-    self.removeVideo=function(model,item){
-        video=$(item.currentTarget);
+
+    self.removeFirstVideo=function(model,item){
+        video=self.videos()[0].id();
         $.ajax({
             type: "GET",
-            url: "/playlist_add_video",
+            url: "/remove_video",
             dataType:"json",
-            data: video.id,
+            data: {video_id: video},
         }).done(function(data ){
             //after recieving response, we sychronise the playlist data
-            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            var mappedVideos=$.map(data,function(item){
+                return new Video(item);
+            });
             self.videos(mappedVideos);
         });
     };
+
 
     $.ajax({
         type: "GET",
@@ -63,15 +73,6 @@ function PlaylistModel(){
     self.firstVideoTitle=ko.computed(function(){
         if(self.videos()[0]){
             return self.videos()[0].title();
-        }
-        else{
-            return "Not yet chosen";
-        }
-    },self);
-
-    self.secondVideoTitle=ko.computed(function(){
-        if(self.videos()[1]){
-            return self.videos()[1].title();
         }
         else{
             return "Not yet chosen";
@@ -98,10 +99,12 @@ function PlaylistModel(){
             url: "/playlist_videos",
             dataType:"json",
         }).done(function(data){
-            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            var mappedVideos=$.map(data,function(item){
+               return new Video(item);
+            });
             self.videos(mappedVideos);
-            setTimeout(self.sync,2000);
         });
+        setTimeout(self.sync,2000);
     };
     self.sync();
 }
@@ -122,10 +125,8 @@ function Video(data){
             data: {"video_id":this.id,
                    "like":1  //for like I will send 1, for unlike -1
                 },
-        }).done(function(data ){
-            var likes=this.likes();
-            this.likes(likes+1);
-        });
+        }).done(function(data ){});
+        playlist.sync();
     };
 
 
@@ -137,10 +138,20 @@ function Video(data){
             data: {"video_id":this.id,
                    "like":-1 //for like I will send 1, for unlike -1
             },
-        }).done(function(data ){
-            var likes=this.likes();
-            this.likes(likes-1);
-        });
+        }).done(function(data ){});
+        playlist.sync();
+    };
+
+    this.removeVideo=function(model,item){
+        $.ajax({
+            type: "GET",
+            url: "/remove_video",
+            dataType:"json",
+            data: {"video_id":this.id},
+        }).done(function(data ){});
+        playlist.sync();
+        $("#response").hide();
+        $("#search").val("");
     };
 }
 

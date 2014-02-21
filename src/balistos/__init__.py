@@ -55,6 +55,7 @@ def configure(config):
     config.add_route('playlist_videos', '/playlist_videos')
     config.add_route('playlist_add_video', '/playlist_add_video')
     config.add_route('like_video', '/like_video')
+    config.add_route('remove_video', '/remove_video')
     config.add_route('main', '/')
     config.add_route('set_playlist', '/playlist/{playlist}')
     config.scan('balistos', ignore=['balistos.tests', 'balistos.testing'])
