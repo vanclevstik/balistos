@@ -15,11 +15,11 @@ class TestHome(unittest.TestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def test_home(self):
+    def test_home_no_user(self):
         from balistos.views.main import home
         request = testing.DummyRequest()
         result = home(request)
-        self.assertEqual(result['name'], 'balistos')
+        self.assertIsNone(result['username'])
 
 
 class TestHomeFunctional(unittest.TestCase):
@@ -39,4 +39,4 @@ class TestHomeFunctional(unittest.TestCase):
 
     def test_home(self):
         res = self.testapp.get('/home', status=200)
-        self.assertIn(u'balistos!', res.body)
+        self.assertIn(u'Join playlist', res.body)
