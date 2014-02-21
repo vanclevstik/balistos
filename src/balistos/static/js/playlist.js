@@ -36,20 +36,6 @@ function PlaylistModel(){
     };
 
 
-    self.removeVideo=function(model,item){
-        video=$(item.currentTarget);
-        $.ajax({
-            type: "GET",
-            url: "/playlist_add_video",
-            dataType:"json",
-            data: video.id,
-        }).done(function(data ){
-            //after recieving response, we sychronise the playlist data
-            var mappedVideos=$.map(data,function(item){ return new Video(item);});
-            self.videos(mappedVideos);
-        });
-    };
-
     $.ajax({
         type: "GET",
         url: "/playlist_videos",
@@ -142,7 +128,7 @@ function Video(data){
 
     this.removeVideo=function(model,item){
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: "/remove_video",
             dataType:"json",
             data: {"video_id":this.id},
