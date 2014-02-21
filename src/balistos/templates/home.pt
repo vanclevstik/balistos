@@ -1,11 +1,27 @@
-<metal:block
-      metal:use-macro="main_template">
-
-  <body>
+<metal:block metal:use-macro="main_template">
     <div metal:fill-slot="content" id="content">
+        <div class="row">
+            <h2>Join playlist</h2>
+            <form action="/join_playlist" method="POST">
+                <input type="text" name="join-playlist" class="form-control" placeholder="Playlist's unique tag"/>
+                 <label>I want to see the video<input type="checkbox" name="join-player" /></label>
+                <button type="submit" class="btn btn-info">Join</button>
+            <form>
+        </div>
 
-      <span tal:replace="name" />!
-
+        <div class="row" id="create-playlist" style="display:none;">
+            <h2>Create playlist</h2>
+            <form action="/create_playlist" method="POST">
+                <input type="text" name="create-playlist-name" class="form-control" placeholder="Playlist's name"/>
+                <input type="text" name="create-playlist-tag" class="form-control" placeholder="Playlist's unique tag"/>
+                <div class="form-group">
+                    <label>Setting 1<input type="checkbox" name="settings1" /></label>
+                    <label>Setting 2<input type="checkbox" name="settings2" /></label>
+                    <label>Setting 3<input type="checkbox" name="settings3" /></label>
+                    <label>Setting 4<input type="checkbox" name="settings4" /></label>
+                </div>
+                <button type="submit" class="btn btn-info">Create</button>
+            <form>
+        </div>
     </div>
-  </body>
 </metal:block>

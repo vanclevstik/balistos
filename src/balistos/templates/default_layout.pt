@@ -24,23 +24,23 @@
     <body tal:attributes="class python:econtext['view'].__name__">
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">Balistos</a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="login-dropdown">Login</a>
-                    <div class="dropdown-menu login-menu">
-                        <div id="login-error"></div>
-                        <form role="form" id="login-form">
-                            <input type="text" class="form-control" name="login-username" placeholder="Username" />
-                            <input type="password" class="form-control" name="login-password" placeholder="Password" />
-                            <button type="submit" class="btn btn-default">Login</button>
-                        </form>
-                  </div>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="register-dropdown">Register</a>
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Balistos</a>
+                </div>
+                <ul class="nav navbar-nav navbar-right" id="login-navbar">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="login-dropdown">Login</a>
+                        <div class="dropdown-menu login-menu">
+                            <div id="login-error"></div>
+                            <form role="form" id="login-form">
+                                <input type="text" class="form-control" name="login-username" placeholder="Username" />
+                                <input type="password" class="form-control" name="login-password" placeholder="Password" />
+                                <button type="submit" class="btn btn-default">Login</button>
+                            </form>
+                      </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="register-dropdown">Register</a>
                         <div class="dropdown-menu login-menu">
                             <div id="register-error"></div>
                             <form role="form" id="register-form">

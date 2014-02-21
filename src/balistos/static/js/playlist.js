@@ -35,6 +35,7 @@ function PlaylistModel(){
         $("#search").val("");
     };
 
+
     self.removeVideo=function(model,item){
         video=$(item.currentTarget);
         $.ajax({
@@ -122,10 +123,8 @@ function Video(data){
             data: {"video_id":this.id,
                    "like":1  //for like I will send 1, for unlike -1
                 },
-        }).done(function(data ){
-            var likes=this.likes();
-            this.likes(likes+1);
-        });
+        }).done(function(data ){});
+        playlist.sync();
     };
 
 
@@ -137,10 +136,20 @@ function Video(data){
             data: {"video_id":this.id,
                    "like":-1 //for like I will send 1, for unlike -1
             },
-        }).done(function(data ){
-            var likes=this.likes();
-            this.likes(likes-1);
-        });
+        }).done(function(data ){});
+        playlist.sync();
+    };
+
+    this.removeVideo=function(model,item){
+        $.ajax({
+            type: "POST",
+            url: "/remove_video",
+            dataType:"json",
+            data: {"video_id":this.id},
+        }).done(function(data ){});
+        playlist.sync();
+        $("#response").hide();
+        $("#search").val("");
     };
 }
 
