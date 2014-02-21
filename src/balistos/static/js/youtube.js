@@ -119,20 +119,21 @@ function onYouTubeIframeAPIReady() {
         player.unMute();
         $(".overlay").removeClass("unmute").addClass("mute");
     });
-
+    
     // we listen to #video-id div, which is dinamically linked to last video id and on change played video. If it was empty before, we first initialize the player.
     $("#video-id").bind("DOMSubtreeModified",function(){
         if($(this).text()!==""){
             if(player){
-                player.loadVideoById($(this).text(),0, "large");
+                var start=parseInt($("#video-start").text());
+                player.loadVideoById($(this).text(),start, "large");
             }
             else{
                 initPlayer();
             }
         }
     });
-    initPlayer();
 
+    initPlayer();
 }
 
 

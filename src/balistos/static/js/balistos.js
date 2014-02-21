@@ -3,6 +3,8 @@
 
 (function ($) {
     "use strict";
+
+
     $("form#login-form").on("submit",function(event){
         event.preventDefault();
         if($(this).find("input[name='login-username']").val().length<5 ||
@@ -25,8 +27,9 @@
                     setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
                 }
                 else{
-                    $("#login-navbar").html("You are logged in as <b>"+response.success+"</b>");
-                    $("#create-playlist").slideDown(500);
+                    $("#username-string").text(response.success);
+                    $(".not-logged-in").hide();
+                    $(".logged-in").slideDown(1000);
                 }
             });
         }
@@ -53,14 +56,14 @@
                     data: formdata,
                 }).done(function(response){
                     if(response.error){
-                        $("#register-error").text(response.error).show();
-                        setTimeout(function(){$("#register-message").fadeOut(1000);},2000);
-                    }
-                    else if(response.success){
-                        setTimeout(function(){$("#register-message").fadeOut(1000);},2000);
+                        $("#login-message").text(response.error).show();
+                        $("#login-form").find("input").val("");
+                        setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
                     }
                     else{
-                        $("#register-dropdown").trigger("click");
+                        $("#username-string").text(response.success);
+                        $(".not-logged-in").hide();
+                        $(".logged-in").slideDown(1000);
                     }
                 });
             }

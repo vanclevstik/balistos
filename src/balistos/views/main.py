@@ -27,8 +27,9 @@ import isodate
 def home(request):
     """The home page."""
     balistos_assets.need()
+    username = authenticated_userid(request)
     return {
-        'name': 'balistos',
+        'username': username
     }
 
 
@@ -42,9 +43,12 @@ def main(request):
     balistos_assets.need()
     youtube_assets.need()
     session = request.session
+    username = authenticated_userid(request)
     if not 'playlist' in session or not session['playlist']:
         session['playlist'] = str(Playlist.get_all()[0].uri)
-    return {}
+    return {
+        'username': username
+    }
 
 
 @view_config(

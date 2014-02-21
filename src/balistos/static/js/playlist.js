@@ -1,6 +1,10 @@
 // we create Playlist Model.
 function PlaylistModel(){
     var self=this;
+
+    self.settings=ko.observableArray([]);
+
+
     self.videos=ko.observableArray([]);
 
     //function for adding videos to the array.
@@ -36,6 +40,23 @@ function PlaylistModel(){
     };
 
 
+<<<<<<< Updated upstream
+=======
+    self.removeFirstVideo=function(model,item){
+        video=self.videos()[0].id();
+        $.ajax({
+            type: "GET",
+            url: "/remove_video",
+            dataType:"json",
+            data: {video_id: video},
+        }).done(function(data ){
+            //after recieving response, we sychronise the playlist data
+            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            self.videos(mappedVideos);
+        });
+    };
+
+>>>>>>> Stashed changes
     $.ajax({
         type: "GET",
         url: "/playlist_videos",
@@ -50,15 +71,6 @@ function PlaylistModel(){
     self.firstVideoTitle=ko.computed(function(){
         if(self.videos()[0]){
             return self.videos()[0].title();
-        }
-        else{
-            return "Not yet chosen";
-        }
-    },self);
-
-    self.secondVideoTitle=ko.computed(function(){
-        if(self.videos()[1]){
-            return self.videos()[1].title();
         }
         else{
             return "Not yet chosen";
@@ -87,8 +99,8 @@ function PlaylistModel(){
         }).done(function(data){
             var mappedVideos=$.map(data,function(item){ return new Video(item);});
             self.videos(mappedVideos);
-            setTimeout(self.sync,2000);
         });
+        setTimeout(self.sync,2000);
     };
     self.sync();
 }
