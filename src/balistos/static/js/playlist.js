@@ -21,7 +21,7 @@ function PlaylistModel(){
             type:'video',
         });
 
-        // we send the request to the server with parameters id,title,image and duration
+        // we send the request to the server with parameters
         request.execute(function(response){
             videoarray.duration=response.items[0].contentDetails.duration;
             $.ajax({
@@ -31,7 +31,9 @@ function PlaylistModel(){
                 data: videoarray,
             }).done(function(data ){
                 //after recieving response, we sychronise the playlist data
-                var mappedVideos=$.map(data,function(item){ return new Video(item);});
+                var mappedVideos=$.map(data,function(item){
+                     return new Video(item);
+                });
                 self.videos(mappedVideos);
             });
         });
@@ -40,8 +42,6 @@ function PlaylistModel(){
     };
 
 
-<<<<<<< Updated upstream
-=======
     self.removeFirstVideo=function(model,item){
         video=self.videos()[0].id();
         $.ajax({
@@ -51,12 +51,14 @@ function PlaylistModel(){
             data: {video_id: video},
         }).done(function(data ){
             //after recieving response, we sychronise the playlist data
-            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            var mappedVideos=$.map(data,function(item){
+                return new Video(item);
+            });
             self.videos(mappedVideos);
         });
     };
 
->>>>>>> Stashed changes
+
     $.ajax({
         type: "GET",
         url: "/playlist_videos",
@@ -97,7 +99,9 @@ function PlaylistModel(){
             url: "/playlist_videos",
             dataType:"json",
         }).done(function(data){
-            var mappedVideos=$.map(data,function(item){ return new Video(item);});
+            var mappedVideos=$.map(data,function(item){
+               return new Video(item);
+            });
             self.videos(mappedVideos);
         });
         setTimeout(self.sync,2000);

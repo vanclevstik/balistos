@@ -9,11 +9,15 @@
         event.preventDefault();
         if($(this).find("input[name='login-username']").val().length<5 ||
          $(this).find("input[name='login-password']").val().length<5){
-            $("#login-message").text("Your username or password is too short.").show();
+            $("#login-message")
+                .text("Your username or password is too short.")
+                .show();
             setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
         }
         else{
-            $(this).find("input[name='login-password']").val(hex_sha256($(this).find("input[name='login-password']").val()));
+            $(this).find("input[name='login-password']").val(
+                hex_sha256($(this).find("input[name='login-password']").val())
+            );
             var formdata=$(this).serialize();
             $.ajax({
                 type: "POST",
@@ -24,7 +28,9 @@
                 if(response.error){
                     $("#login-message").text(response.error).show();
                     $("#login-form").find("input").val("");
-                    setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
+                    setTimeout(function(){
+                        $("#login-message").fadeOut(1000);
+                    },2000);
                 }
                 else{
                     $("#username-string").text(response.success);
@@ -40,13 +46,21 @@
         event.preventDefault();
         if($(this).find("input[name='register-username']").val().length<5 ||
           $(this).find("input[name='register-password']").val().length<5){
-            $("#register-message").text("Your username or password is too short.").show();
-            setTimeout(function(){$("#register-message").fadeOut(1000);},2000);
+            $("#register-message")
+                .text("Your username or password is too short.")
+                .show();
+            setTimeout(function(){
+                $("#register-message").fadeOut(1000);
+            },2000);
         }
         else{
             if($(this).find("input[name='register-password']").val()==
             $(this).find("input[name='register-repeat']").val()){
-                $(this).find("input[name='register-password']").val(hex_sha256($(this).find("input[name='register-password']").val()));
+                $(this).find("input[name='register-password']").val(
+                    hex_sha256(
+                        $(this).find("input[name='register-password']").val()
+                    )
+                );
                 $(this).find("input[name='register-repeat']").val("");
                 var formdata=$(this).serialize();
                 $.ajax({
@@ -58,7 +72,9 @@
                     if(response.error){
                         $("#login-message").text(response.error).show();
                         $("#login-form").find("input").val("");
-                        setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
+                        setTimeout(function(){
+                            $("#login-message").fadeOut(1000);
+                        },2000);
                     }
                     else{
                         $("#username-string").text(response.success);
@@ -68,7 +84,9 @@
                 });
             }
             else{
-                $("#register-message").text("Your passwords don't match.").show();
+                $("#register-message")
+                    .text("Your passwords don't match.")
+                    .show();
                 setTimeout(function(){
                     $("#register-message").fadeOut(1000);
                 },2000);

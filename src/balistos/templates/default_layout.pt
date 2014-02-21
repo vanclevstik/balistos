@@ -31,7 +31,7 @@
                     <li class="dropdown  not-logged-in" tal:attributes="style python: 'display:none' if username else ''">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="login-dropdown">Login</a>
                         <div class="dropdown-menu login-menu">
-                            <div id="login-error"></div>
+                            <div id="login-message"></div>
                             <form role="form" id="login-form">
                                 <input type="text" class="form-control" name="login-username" placeholder="Username" />
                                 <input type="password" class="form-control" name="login-password" placeholder="Password" />
@@ -42,7 +42,7 @@
                     <li class="dropdown not-logged-in" tal:attributes="style python: 'display:none' if username else ''">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="register-dropdown">Register</a>
                         <div class="dropdown-menu login-menu">
-                            <div id="register-error"></div>
+                            <div id="register-message"></div>
                             <form role="form" id="register-form">
                                 <input type="text" class="form-control" name="register-username" placeholder="Username" />
                                 <input type="password" class="form-control" name="register-password" placeholder="Password" />
