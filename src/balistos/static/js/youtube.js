@@ -81,7 +81,7 @@ function onYouTubeIframeAPIReady() {
                     }
                     $("#response").children().eq(idx).addClass("active");
                 }
-            } 
+            }
             else if (code == 38) {
                 if($("#response").children("li.active").length<1){
                     $("#response").children().eq(19).addClass("active");
