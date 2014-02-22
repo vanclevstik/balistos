@@ -76,6 +76,8 @@ html,body{
 ul.autocomplete{
     width:100%;
     margin-top:0px;
+    overflow-y: scroll;
+    height: 428px;
 }
 ul.autocomplete li{
     width:100%;

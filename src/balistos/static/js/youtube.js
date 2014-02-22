@@ -36,7 +36,7 @@ function search(query) {
         part: 'snippet',
         q:query,
         type:'video',
-        maxResults:8,
+        maxResults:20,
         format:5,
         videoEmbeddable:true,
         key:'AIzaSyCnR3Vv-Erxjaa-IJapIXCnvgTOuXLXItA'
@@ -64,6 +64,7 @@ function onYouTubeIframeAPIReady() {
             //we check if user clicks down, up and enter to bind the keys
             var code = (e.keyCode ? e.keyCode : e.which);
             var idx;
+
             if (code == 40) {
                 if($("#response").children("li.active").length<1){
                     $("#response").children("li:first-child").addClass("active");
@@ -71,20 +72,31 @@ function onYouTubeIframeAPIReady() {
                 else{
                     idx=$("#response").children("li.active").index()+1;
                     $("#response").children().removeClass("active");
-                    if(idx>7)
+                    if(idx>19){
                         idx=0;
+                        $(".autocomplete").scrollTop(0);
+                    }
+                    if (idx>9){
+                        $(".autocomplete").scrollTop(((parseInt(idx)-9)*42));
+                    }
                     $("#response").children().eq(idx).addClass("active");
                 }
             } 
             else if (code == 38) {
                 if($("#response").children("li.active").length<1){
-                    $("#response").children().eq(7).addClass("active");
+                    $("#response").children().eq(19).addClass("active");
+                    $(".autocomplete").scrollTop(420);
                 }
                 else{
                     idx=$("#response").children("li.active").index()-1;
                     $("#response").children().removeClass("active");
-                    if(idx<0)
-                        idx=7;
+                    if(idx<0){
+                        idx=19;
+                        $(".autocomplete").scrollTop(420);
+                    }
+                    if (idx<10){
+                        $(".autocomplete").scrollTop(((parseInt(idx))*42));
+                    }
                     $("#response").children().eq(idx).addClass("active");
                 }
             }
@@ -125,8 +137,7 @@ function onYouTubeIframeAPIReady() {
     $("#video-id").bind("DOMSubtreeModified",function(){
         if($(this).text()!==""){
             if(player){
-                var start=parseInt($("#video-start").text());
-                player.loadVideoById($(this).text(),0, "large");
+                player.loadVideoById(playlist.firstVideoId(),0, "large");
             }
             else{
                 initPlayer();
@@ -138,20 +149,16 @@ function onYouTubeIframeAPIReady() {
 }
 
 
-
 function initPlayer(){
-    // initialization of the YouTube IFrame API player. If there is no clip in playlist, we instead write a message.
-    var video=$("#video-id").text();
-    var start=parseInt($("#video-start").text());
-    if(video!==""){
+    if(playlist.firstVideoId()){
         player = new YT.Player("player", {
             height: "390",
             width: "640",
-            videoId: video,
+            videoId: playlist.firstVideoId(),
             playerVars:{
                 controls:0,
                 showinfo:0,
-                start:start,
+                start:parseInt(playlist.firstVideoStart()),
                 disablekb:1,
                 iv_load_policy:3,
                 wmode:"transparent",
@@ -164,8 +171,8 @@ function initPlayer(){
     }
     else{
         $("#player").text("No video currently in the queue.");
+        setTimeout(initPlayer(),500);
     }
-    
 }
 
 function updateProgress(){
