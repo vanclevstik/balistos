@@ -3,6 +3,7 @@
 
 from balistos.youtube import get_related_video
 from datetime import datetime
+from balistos.models.playlist import PlaylistUser
 from balistos.models.clip import PlaylistClip
 from balistos.models.clip import PlaylistClipUser
 from balistos.models.clip import Clip
@@ -22,12 +23,16 @@ def get_playlist_videos(playlist, username=None):
     """
     result = []
     pclips = []
-    user = None
-    if username:
-        user = User.get_by_username(username)
-    if check_if_finished(PlaylistClip.get_active_playlist_clip(playlist)):
-        play_next_clip(playlist)
-
+    user = User.get_by_username(username)
+    if user:
+        playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+        playlist_user.last_active = datetime.now()
+        Session.flush()
+    try:
+        if check_if_finished(PlaylistClip.get_active_playlist_clip(playlist)):
+            play_next_clip(playlist)
+    except Exception:
+        pass
     pclips.append(PlaylistClip.get_active_playlist_clip(playlist))
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
     if next_pclip:
@@ -95,8 +100,8 @@ def play_next_clip(playlist):
     if next_pclip:
         next_pclip.state = 2
         next_pclip.started = datetime.now()
-        Session.flush()
         set_next_in_queue(playlist, next_pclip.clip.youtube_video_id)
+        Session.flush()
 
 
 def check_if_finished(pclip):
@@ -114,7 +119,7 @@ def check_if_finished(pclip):
     started = pclip.started
     if (datetime.now()-started).total_seconds() > duration:
         Session.delete(pclip)
-        Session.flush()
+        #Session.flush()
         return True
     return False
 
@@ -227,3 +232,21 @@ def remove_playlist_clip(playlist, youtube_video_id):
         set_next_in_queue(playlist, youtube_video_id)
     Session.flush()
     return True
+
+
+def get_active_users(playlist):
+    """
+    Get active users for current playlist
+
+    :param    playlist: current playlist
+    :type     playlist: balistos.models.playlist.Playlist
+
+    :returns: active users list
+    :rtype:   list
+    """
+    users = []
+    for playlist_user in PlaylistUser.get_active_users_for_playlist(playlist):
+        user = {}
+        user['username'] = playlist_user.user.username
+        users.append(user)
+    return users

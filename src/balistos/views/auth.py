@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from pyramid.view import view_config
-from pyramid.response import Response
-from balistos.models.user import User
 from balistos.models.clip import PlaylistClip
 from balistos.models.clip import PlaylistClipUser
-from pyramid_basemodel import Session
+from balistos.models.playlist import Playlist
+from balistos.models.playlist import PlaylistUser
+from balistos.models.user import User
+from datetime import datetime
+from passlib.hash import sha256_crypt
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
-from passlib.hash import sha256_crypt
-from pyramid.security import remember
+from pyramid.response import Response
 from pyramid.security import forget
+from pyramid.security import remember
+from pyramid.view import view_config
+from pyramid_basemodel import Session
 
 import json
 
@@ -72,6 +75,15 @@ def register(request):
         )
         Session.add(user)
         Session.flush()
+        #XXX need to only make clips for public playlists
+        for playlist in Playlist.get_all():
+            playlist_user = PlaylistUser(
+                playlist=playlist,
+                user=user,
+                permission=2,
+                last_active=datetime.min,
+            )
+            Session.add(playlist_user)
         for pclip in PlaylistClip.get_all():
             pclipuser = PlaylistClipUser(
                 playlist_clip=pclip,

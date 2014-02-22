@@ -8,6 +8,7 @@ from balistos.playlist import add_playlist_clip
 from balistos.playlist import get_playlist_videos
 from balistos.playlist import remove_playlist_clip
 from balistos.playlist import get_playlist_settings
+from balistos.playlist import get_active_users
 from balistos.static import balistos_assets
 from balistos.static import youtube_assets
 from pyramid.httpexceptions import HTTPNotFound
@@ -71,8 +72,13 @@ def playlist_videos(request):
     username = authenticated_userid(request)
     pclips = get_playlist_videos(playlist, username=username)
     playlist_settings = get_playlist_settings(playlist, username=username)
+    active_users = get_active_users(playlist)
     return Response(
-        body=json.dumps({'settings': playlist_settings, 'videos': pclips}),
+        body=json.dumps({
+            'settings': playlist_settings,
+            'users': active_users,
+            'videos': pclips
+        }),
         content_type='application/json'
     )
 
