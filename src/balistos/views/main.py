@@ -117,7 +117,7 @@ def playlist_add_video(request):
     username = authenticated_userid(request)
     if not request.is_xhr or not username:
         return HTTPNotFound()
-    title = request.GET['title']
+    title = unicode(request.GET['title'])
     image_url = request.GET['image']
     youtube_video_id = request.GET['id']
     duration = isodate.parse_duration(request.GET['duration']).total_seconds()

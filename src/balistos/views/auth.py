@@ -63,7 +63,7 @@ def register(request):
         return HTTPNotFound()
     username = request.POST['register-username']
     password = sha256_crypt.encrypt(request.POST['register-password'])
-    email = request.POST['email']
+    email = request.POST['register-email']
     try:
         user = User(
             username=username,
