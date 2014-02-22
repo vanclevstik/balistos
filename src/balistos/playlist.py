@@ -44,6 +44,8 @@ def get_playlist_videos(playlist, username=None):
         else:
             start_time = 0
         liked = -2
+        owner = PlaylistClipUser.get_playlist_clip_owner(pclip)
+        owner = owner.username if owner else 'related'
         if user:
             pclipuser = PlaylistClipUser.get_by_playlist_clip_and_user(
                 pclip,
@@ -57,10 +59,28 @@ def get_playlist_videos(playlist, username=None):
                 'likes': pclip.likes,
                 'image': clip.image_url,
                 'start_time': start_time,
-                'liked': liked
+                'liked': liked,
+                'owner': owner
             },
         )
     return result
+
+
+def get_playlist_settings(playlist, username=None):
+    """
+    Get settings for current playlist for this user
+
+    :param    playlist: current playlist
+    :type     playlist: balistos.models.playlist.Playlist
+    :param    username: username of current user or None
+    :type     username: str
+
+    :returns: settings of playlist
+    :rtype:   dict
+    """
+    return {
+        'duration_limit': playlist.duration_limit
+    }
 
 
 def play_next_clip(playlist):
@@ -110,7 +130,7 @@ def set_next_in_queue(playlist, youtube_video_id):
     if pclips:
         pclips[0].state = 1
     else:
-        video = get_related_video(youtube_video_id)
+        video = get_related_video(playlist, youtube_video_id)
         add_playlist_clip(
             playlist,
             video['title'],
@@ -128,6 +148,7 @@ def add_playlist_clip(
     image_url,
     youtube_video_id,
     duration,
+    username=None,
     state=0,
 ):
     """
@@ -143,6 +164,8 @@ def add_playlist_clip(
     :type     youtube_video_id: str
     :param    duration:         duration of video
     :type     duration:         int
+    :param    username:         username of user that added this clip
+    :type     username:         str
     :param    state:            state of video to be added
     :type     state:            int
 
