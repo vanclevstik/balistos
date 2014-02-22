@@ -88,8 +88,6 @@ function PlaylistModel(){
         else
             return 0;
     },self);
-
-    
 }
 
 

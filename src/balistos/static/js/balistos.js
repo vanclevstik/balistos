@@ -53,7 +53,8 @@
                 $("#register-message").fadeOut(1000);
             },2000);
         }
-        else if(!validateEmail($(this).find("input[name='register-email']").val())){
+        else if(!validateEmail($(this).find("input[name='register-email']")
+            .val())){
             $("#register-message")
                 .text("You have entered invalid email adress.")
                 .show();
