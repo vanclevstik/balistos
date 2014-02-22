@@ -68,6 +68,7 @@ def insert_data():
             state=2,
             clip=test_clip,
             playlist=test_playlist,
+            username=test_user.username,
         )
         test_playlist_clip2 = PlaylistClip(
             likes=0,
@@ -75,6 +76,7 @@ def insert_data():
             state=1,
             clip=test_clip2,
             playlist=test_playlist,
+            username=test_user.username,
         )
         Session.add(test_playlist_clip)
         Session.add(test_playlist_clip2)
