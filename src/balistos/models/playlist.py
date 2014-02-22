@@ -29,6 +29,12 @@ class Playlist(Base, BaseMixin):
         nullable=False
     )
 
+    duration_limit = Column(
+        Integer,
+        nullable=False,
+        default=600
+    )
+
     @classmethod
     def get(self, uri):
         """Get a Playlist by uri."""
@@ -61,7 +67,7 @@ class PlaylistUser(Base, BaseMixin):
     # permission on playlist
     # 0 - no permission
     # 1 - view and play playlist
-    # 2 - vote, chat on playlist
+    # 2 - add, vote, chat on playlist
     # 3 - admin rights on playlist
     permission = Column(
         Integer,
