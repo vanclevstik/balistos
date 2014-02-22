@@ -30,11 +30,7 @@ function PlaylistModel(){
                 dataType:"json",
                 data: videoarray,
             }).done(function(data ){
-                //after recieving response, we sychronise the playlist data
-                var mappedVideos=$.map(data,function(item){
-                     return new Video(item);
-                });
-                self.videos(mappedVideos);
+                self.sync();
             });
         });
         $("#response").hide();
@@ -50,25 +46,25 @@ function PlaylistModel(){
             dataType:"json",
             data: {video_id: video},
         }).done(function(data ){
-            //after recieving response, we sychronise the playlist data
-            var mappedVideos=$.map(data,function(item){
-                return new Video(item);
-            });
-            self.videos(mappedVideos);
+            self.sync();
         });
     };
 
+    self.sync=function(){
+        $.ajax({
+            type: "GET",
+            url: "/playlist_videos",
+            dataType:"json",
+        }).done(function(data){
+            var mappedVideos=$.map(data.videos,function(item){
+               return new Video(item);
+            });
+            self.videos(mappedVideos);
+        });
+        setTimeout(self.sync,2000);
+    };
 
-    $.ajax({
-        type: "GET",
-        url: "/playlist_videos",
-        dataType:"json",
-    }).done(function(data){
-        var mappedVideos=$.map(data,function(item){ return new Video(item);});
-        self.videos(mappedVideos);
-    });
-
-
+    self.sync();
 
     self.firstVideoTitle=ko.computed(function(){
         if(self.videos()[0]){
@@ -93,20 +89,7 @@ function PlaylistModel(){
             return 0;
     },self);
 
-    self.sync=function(){
-        $.ajax({
-            type: "GET",
-            url: "/playlist_videos",
-            dataType:"json",
-        }).done(function(data){
-            var mappedVideos=$.map(data,function(item){
-               return new Video(item);
-            });
-            self.videos(mappedVideos);
-        });
-        setTimeout(self.sync,2000);
-    };
-    self.sync();
+    
 }
 
 

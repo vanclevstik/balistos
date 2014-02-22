@@ -36,6 +36,12 @@
                         </div>
                     </div>
                 </div>
+                <div class="playlist-title">Users connected to playlist</div>
+                <div data-bind="foreach: users" class="users-list">
+                    <div class="user">
+                        
+                    </div>
+                </div>
             </div> 
         </div>
         <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
