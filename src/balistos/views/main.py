@@ -7,6 +7,8 @@ from balistos.models.playlist import Playlist
 from balistos.playlist import add_playlist_clip
 from balistos.playlist import get_playlist_videos
 from balistos.playlist import remove_playlist_clip
+from balistos.playlist import get_playlist_settings
+from balistos.playlist import get_active_users
 from balistos.static import balistos_assets
 from balistos.static import youtube_assets
 from pyramid.httpexceptions import HTTPNotFound
@@ -69,7 +71,16 @@ def playlist_videos(request):
     playlist = Playlist.get(request.session['playlist'])
     username = authenticated_userid(request)
     pclips = get_playlist_videos(playlist, username=username)
-    return Response(body=json.dumps(pclips), content_type='application/json')
+    playlist_settings = get_playlist_settings(playlist, username=username)
+    active_users = get_active_users(playlist)
+    return Response(
+        body=json.dumps({
+            'settings': playlist_settings,
+            'users': active_users,
+            'videos': pclips
+        }),
+        content_type='application/json'
+    )
 
 
 @view_config(
@@ -109,16 +120,23 @@ def playlist_add_video(request):
     :returns: dict for each clip that is part of playlist
     :rtype:   list of dicts
     """
-    if not request.is_xhr:
+    username = authenticated_userid(request)
+    if not request.is_xhr or not username:
         return HTTPNotFound()
-    title = request.GET['title']
+    title = unicode(request.GET['title'])
     image_url = request.GET['image']
     youtube_video_id = request.GET['id']
     duration = isodate.parse_duration(request.GET['duration']).total_seconds()
     playlist = Playlist.get(request.session['playlist'])
-    add_playlist_clip(playlist, title, image_url, youtube_video_id, duration)
-    pclips = get_playlist_videos(playlist)
-    return Response(body=json.dumps(pclips), content_type='application/json')
+    add_playlist_clip(
+        playlist,
+        title,
+        image_url,
+        youtube_video_id,
+        duration,
+        username=username,
+    )
+    return Response()
 
 
 @view_config(

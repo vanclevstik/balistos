@@ -2,9 +2,12 @@
 """Playlist model."""
 
 from balistos.models.user import User
+from datetime import datetime
+from datetime import timedelta
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
 from sqlalchemy import Column
+from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -27,6 +30,12 @@ class Playlist(Base, BaseMixin):
     title = Column(
         Unicode(200),
         nullable=False
+    )
+
+    duration_limit = Column(
+        Integer,
+        nullable=False,
+        default=600
     )
 
     @classmethod
@@ -61,11 +70,17 @@ class PlaylistUser(Base, BaseMixin):
     # permission on playlist
     # 0 - no permission
     # 1 - view and play playlist
-    # 2 - vote, chat on playlist
+    # 2 - add, vote, chat on playlist
     # 3 - admin rights on playlist
     permission = Column(
         Integer,
         nullable=False
+    )
+
+    last_active = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.now()
     )
 
     playlist_id = Column(Integer, ForeignKey('playlists.id'))
@@ -91,3 +106,27 @@ class PlaylistUser(Base, BaseMixin):
             uselist=True,
         )
     )
+
+    @classmethod
+    def get_by_playlist_and_user(self, playlist, user):
+        """Get PlaylistClipUser by PlaylistClip and User."""
+        result = PlaylistUser.query.filter(
+            PlaylistUser.playlist == playlist,
+            PlaylistUser.user == user
+        )
+        if result.count() < 1:
+            return None
+
+        return result.one()
+
+    @classmethod
+    def get_active_users_for_playlist(self, playlist):
+        """Get a Playlist by uri."""
+        result = PlaylistUser.query.filter(
+            PlaylistUser.playlist == playlist,
+            PlaylistUser.last_active > datetime.now() - timedelta(0, 3)
+        )
+        if result.count() < 1:
+            return []
+
+        return result.all()

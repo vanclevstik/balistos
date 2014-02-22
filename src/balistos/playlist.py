@@ -3,6 +3,7 @@
 
 from balistos.youtube import get_related_video
 from datetime import datetime
+from balistos.models.playlist import PlaylistUser
 from balistos.models.clip import PlaylistClip
 from balistos.models.clip import PlaylistClipUser
 from balistos.models.clip import Clip
@@ -22,12 +23,16 @@ def get_playlist_videos(playlist, username=None):
     """
     result = []
     pclips = []
-    user = None
-    if username:
-        user = User.get_by_username(username)
-    if check_if_finished(PlaylistClip.get_active_playlist_clip(playlist)):
-        play_next_clip(playlist)
-
+    user = User.get_by_username(username)
+    if user:
+        playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+        playlist_user.last_active = datetime.now()
+        Session.flush()
+    try:
+        if check_if_finished(PlaylistClip.get_active_playlist_clip(playlist)):
+            play_next_clip(playlist)
+    except Exception:
+        pass
     pclips.append(PlaylistClip.get_active_playlist_clip(playlist))
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
     if next_pclip:
@@ -44,6 +49,8 @@ def get_playlist_videos(playlist, username=None):
         else:
             start_time = 0
         liked = -2
+        owner = PlaylistClipUser.get_playlist_clip_owner(pclip)
+        owner = owner.username if owner else 'related'
         if user:
             pclipuser = PlaylistClipUser.get_by_playlist_clip_and_user(
                 pclip,
@@ -57,10 +64,28 @@ def get_playlist_videos(playlist, username=None):
                 'likes': pclip.likes,
                 'image': clip.image_url,
                 'start_time': start_time,
-                'liked': liked
+                'liked': liked,
+                'owner': owner
             },
         )
     return result
+
+
+def get_playlist_settings(playlist, username=None):
+    """
+    Get settings for current playlist for this user
+
+    :param    playlist: current playlist
+    :type     playlist: balistos.models.playlist.Playlist
+    :param    username: username of current user or None
+    :type     username: str
+
+    :returns: settings of playlist
+    :rtype:   dict
+    """
+    return {
+        'duration_limit': playlist.duration_limit
+    }
 
 
 def play_next_clip(playlist):
@@ -75,8 +100,8 @@ def play_next_clip(playlist):
     if next_pclip:
         next_pclip.state = 2
         next_pclip.started = datetime.now()
-        Session.flush()
         set_next_in_queue(playlist, next_pclip.clip.youtube_video_id)
+        Session.flush()
 
 
 def check_if_finished(pclip):
@@ -94,7 +119,7 @@ def check_if_finished(pclip):
     started = pclip.started
     if (datetime.now()-started).total_seconds() > duration:
         Session.delete(pclip)
-        Session.flush()
+        #Session.flush()
         return True
     return False
 
@@ -110,7 +135,7 @@ def set_next_in_queue(playlist, youtube_video_id):
     if pclips:
         pclips[0].state = 1
     else:
-        video = get_related_video(youtube_video_id)
+        video = get_related_video(playlist, youtube_video_id)
         add_playlist_clip(
             playlist,
             video['title'],
@@ -128,6 +153,7 @@ def add_playlist_clip(
     image_url,
     youtube_video_id,
     duration,
+    username=None,
     state=0,
 ):
     """
@@ -143,6 +169,8 @@ def add_playlist_clip(
     :type     youtube_video_id: str
     :param    duration:         duration of video
     :type     duration:         int
+    :param    username:         username of user that added this clip
+    :type     username:         str
     :param    state:            state of video to be added
     :type     state:            int
 
@@ -167,6 +195,7 @@ def add_playlist_clip(
             state=state,
             clip=clip,
             playlist=playlist,
+            username=username,
         )
         Session.add(pclip)
         Session.flush()
@@ -203,3 +232,21 @@ def remove_playlist_clip(playlist, youtube_video_id):
         set_next_in_queue(playlist, youtube_video_id)
     Session.flush()
     return True
+
+
+def get_active_users(playlist):
+    """
+    Get active users for current playlist
+
+    :param    playlist: current playlist
+    :type     playlist: balistos.models.playlist.Playlist
+
+    :returns: active users list
+    :rtype:   list
+    """
+    users = []
+    for playlist_user in PlaylistUser.get_active_users_for_playlist(playlist):
+        user = {}
+        user['username'] = playlist_user.user.username
+        users.append(user)
+    return users

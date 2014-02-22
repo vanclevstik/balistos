@@ -7,10 +7,7 @@ import gdata.youtube.service
 from random import randrange
 
 
-MAX_SECONDS = 600
-
-
-def get_related_video(video_id):
+def get_related_video(playlist, video_id):
     """
     Gets related video and its information
 
@@ -24,18 +21,18 @@ def get_related_video(video_id):
     yt_service.ssl = True
 
     yt_service.developer_key = DEVELOPER_KEY
-
+    max_seconds = playlist.duration_limit
     videos = None
     while not videos:
         related_feed = yt_service.GetYouTubeRelatedVideoFeed(video_id=video_id)
-        videos = select_video(related_feed.entry)
+        videos = select_video(related_feed.entry, max_seconds=max_seconds)
         if not videos:
             video_id = related_feed.entry[0].id.text.split('/')[-1]
 
     return videos
 
 
-def select_video(videos):
+def select_video(videos, max_seconds=600):
     """
     Select videos from related videos list according to our options
 
@@ -45,11 +42,11 @@ def select_video(videos):
     :returns: metadata of selected video
     :rtype:   dict
     """
-    videos = [video for video in videos if int(video.media.duration.seconds) < MAX_SECONDS]  # noqa
+    videos = [video for video in videos if int(video.media.duration.seconds) < max_seconds]  # noqa
     if not videos:
         return None
     video = videos[randrange(len(videos)-1)]
-    title = video.title.text
+    title = unicode(video.title.text)
     image_url = video.media.thumbnail[0].url
     duration = video.media.duration.seconds
     youtube_video_id = video.id.text.split('/')[-1]

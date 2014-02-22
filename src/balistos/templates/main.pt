@@ -12,10 +12,13 @@
                     <div class="title">Now playing: <span data-bind="text: firstVideoTitle"></span></div>
                     <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
                     <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
-                    <div data-bind="click: removeFirstVideo" class="addLike">X</div>
+                    <div data-bind="click: removeFirstVideo" class="close-button"></div>
                     <div class="player">
                         <div class="overlay mute"></div>
                         <div id="player"></div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -26,13 +29,33 @@
                         <div class="video-box" data-bind="css: {'second': $index()==1}">
                             <img data-bind="attr: { src: image }" />
                             <div data-bind="text: title" class="title"></div>
+                            <div data-bind="text: owner"></div>
                             <div class="likes">Likes: <span data-bind="text: likes"></span></div>
                             <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
                             <div data-bind="click: removeLike" class="addlike">REMOVE LIKE</div>
-                            <div data-bind="click: removeVideo" class="addLike">X</div>
+                            <span class="close-button" data-bind="click: removeVideo" ></span>
                         </div>
                     </div>
                 </div>
+
+
+                <div class="playlist-title" >Users connected to playlist (<span data-bind="text: getUsersTotal()"></span>)</div>
+                <div class="playlist-title" data-bind="text: getSetting('duration_limit')"></div>
+                <ul data-bind="foreach: users" class="users-list">
+                    <li class="user">
+                        <div class="username" data-bind="text: username"></div>
+                    </li>
+                </ul>
+
+                <div class="playlist-title" >Chat</div>
+                <ul data-bind="foreach: messages" class="users-list">
+                    <li class="chat">
+                        [<span class="type" data-bind="text: time"></span>] 
+                        <span class="username" style="font-weight:700;" data-bind="text: author"></span>:
+                        <span class="username" data-bind="text: message"></span>
+                    </li>
+                </ul>
+
             </div> 
         </div>
         <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>

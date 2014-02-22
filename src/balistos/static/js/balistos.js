@@ -53,6 +53,15 @@
                 $("#register-message").fadeOut(1000);
             },2000);
         }
+        else if(!validateEmail($(this).find("input[name='register-email']")
+            .val())){
+            $("#register-message")
+                .text("You have entered invalid email adress.")
+                .show();
+            setTimeout(function(){
+                $("#register-message").fadeOut(1000);
+            },2000);
+        }
         else{
             if($(this).find("input[name='register-password']").val()==
             $(this).find("input[name='register-repeat']").val()){
@@ -94,5 +103,7 @@
         }
         $("#register-form").find("input").val("");
     });
-
+    function validateEmail(email){
+        return /^.+@.+\..+$/.test(email);
+    }
 }(jQuery));

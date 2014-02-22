@@ -6,6 +6,7 @@ from balistos.models.user import User
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
 from pyramid_basemodel import Session
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
@@ -84,7 +85,8 @@ class PlaylistClip(Base, BaseMixin):
         state=None,
         clip=None,
         playlist=None,
-        started=None
+        started=None,
+        username=None,
     ):
         Base.__init__(
             self,
@@ -97,10 +99,12 @@ class PlaylistClip(Base, BaseMixin):
         )
         BaseMixin.__init__(self)
         for user in User.get_all():
+            owner = user.username == username
             Session.add(PlaylistClipUser(
                 liked=0,
                 user=user,
                 playlist_clip=self,
+                owner=owner
             ))
 
     likes = Column(
@@ -242,6 +246,12 @@ class PlaylistClipUser(Base, BaseMixin):
         default=0,
     )
 
+    owner = Column(
+        Boolean,
+        nullable=False,
+        default=False
+    )
+
     playlist_clip_id = Column(Integer, ForeignKey('playlist_clips.id'))
     playlist_clip = relationship(
         PlaylistClip,
@@ -269,9 +279,23 @@ class PlaylistClipUser(Base, BaseMixin):
     @classmethod
     def get_by_playlist_clip_and_user(self, playlist_clip, user):
         """Get PlaylistClipUser by PlaylistClip and User."""
-        result = PlaylistClipUser.query.filter_by(
-            playlist_clip=playlist_clip).filter_by(user=user)
+        result = PlaylistClipUser.query.filter(
+            PlaylistClipUser.playlist_clip == playlist_clip,
+            PlaylistClipUser.user == user
+        )
         if result.count() < 1:
             return None
 
         return result.one()
+
+    @classmethod
+    def get_playlist_clip_owner(self, playlist_clip):
+        """Get  owner"""
+        result = PlaylistClipUser.query.filter(
+            PlaylistClipUser.playlist_clip == playlist_clip,
+            PlaylistClipUser.owner == True  # noqa
+        )
+        if result.count() < 1:
+            return None
+
+        return result.one().user

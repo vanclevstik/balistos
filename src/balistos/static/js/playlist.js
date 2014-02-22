@@ -2,10 +2,21 @@
 function PlaylistModel(){
     var self=this;
 
-    self.settings=ko.observableArray([]);
-
-
+    self.settings=ko.observableArray([
+        {duration_limit:600}
+    ]);
     self.videos=ko.observableArray([]);
+    self.users=ko.observableArray([
+        { username: "Bungle", type: "2"},
+        { username: "George", type: "1"},
+        { username: "Zippy", type: "0"}
+    ]);
+
+    self.messages=ko.observableArray([
+        { author: "neykomir", time: "12:12",message:"ti si peder"},
+        { author: "jerry", time: "12:32",message:"ti si tud peder"},
+        { author: "vanč", time: "12:33",message:"ti si pa čist peder"},
+    ]);
 
     //function for adding videos to the array.
     self.addVideo=function(model,item){
@@ -30,17 +41,23 @@ function PlaylistModel(){
                 dataType:"json",
                 data: videoarray,
             }).done(function(data ){
-                //after recieving response, we sychronise the playlist data
-                var mappedVideos=$.map(data,function(item){
-                     return new Video(item);
-                });
-                self.videos(mappedVideos);
+                self.sync();
             });
         });
         $("#response").hide();
         $("#search").val("");
     };
 
+    self.getUsersTotal=function(){
+        return self.users().length;
+    }
+
+    self.getSetting=function(key){
+        if(self.settings()[key])
+            return self.settings()[key]
+        else
+            return false;
+    }
 
     self.removeFirstVideo=function(model,item){
         video=self.videos()[0].id();
@@ -50,24 +67,36 @@ function PlaylistModel(){
             dataType:"json",
             data: {video_id: video},
         }).done(function(data ){
-            //after recieving response, we sychronise the playlist data
-            var mappedVideos=$.map(data,function(item){
-                return new Video(item);
-            });
-            self.videos(mappedVideos);
+            self.sync();
         });
     };
 
+    self.sync=function(){
+        $.ajax({
+            type: "GET",
+            url: "/playlist_videos",
+            dataType:"json",
+        }).done(function(data){
+            var mappedVideos=$.map(data.videos,function(item){
+               return new Video(item);
+            });
+            self.videos(mappedVideos);
+            self.settings(data.settings);
+            var mappedUsers=$.map(data.users,function(item){
+               return new User(item);
+            });
+            self.users(mappedUsers);
+            /*
+            var mappedUMessages=$.map(data.messages,function(item){
+               return new Message(item);
+            });
+            self.messages(mappedMessages);
+            */
+        });
+        setTimeout(self.sync,2000);
+    };
 
-    $.ajax({
-        type: "GET",
-        url: "/playlist_videos",
-        dataType:"json",
-    }).done(function(data){
-        var mappedVideos=$.map(data,function(item){ return new Video(item);});
-        self.videos(mappedVideos);
-    });
-
+    self.sync();
 
 
     self.firstVideoTitle=ko.computed(function(){
@@ -87,26 +116,12 @@ function PlaylistModel(){
 
     self.firstVideoStart=ko.computed(function(){
         if(self.videos()[0]){
-            return self.videos()[0].start_time();
+            return parseInt(self.videos()[0].start_time());
         }
         else
             return 0;
     },self);
 
-    self.sync=function(){
-        $.ajax({
-            type: "GET",
-            url: "/playlist_videos",
-            dataType:"json",
-        }).done(function(data){
-            var mappedVideos=$.map(data,function(item){
-               return new Video(item);
-            });
-            self.videos(mappedVideos);
-        });
-        setTimeout(self.sync,2000);
-    };
-    self.sync();
 }
 
 
@@ -115,6 +130,7 @@ function Video(data){
     this.id=ko.observable(data.id);
     this.image=ko.observable(data.image);
     this.likes=ko.observable(data.likes);
+    this.owner=ko.observable(data.owner);
     this.start_time=ko.observable(data.start_time);
 
     this.addLike=function(){
@@ -154,6 +170,29 @@ function Video(data){
         $("#search").val("");
     };
 }
+
+function User(data){
+    this.username = ko.observable(data.username);
+    //this.type=ko.observable(data.type);
+    this.grantRights=function(model,item){
+        $.ajax({
+            type: "GET",
+            url: "/grant_rights",
+            dataType:"json",
+            data: {
+                "user_id":this.id
+            },
+        }).done(function(data ){});
+        playlist.sync();
+    }
+}
+
+function Message(data){
+    this.author = ko.observable(data.author);
+    this.time=ko.observable(data.time);
+    this.message=ko.observable(data.message);
+}
+
 
 playlist=new PlaylistModel();
 ko.applyBindings(playlist);
