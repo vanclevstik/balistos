@@ -29,15 +29,16 @@ function onYouTubeApiLoad() {
     gapi.client.setApiKey('AIzaSyCnR3Vv-Erxjaa-IJapIXCnvgTOuXLXItA');
 }
 
-//search(query) takes a string query and searches Youtube Data Api for results. It returns 8 hits with only videos which are embeedable.
+//search(query) takes a string query and searches Youtube Data Api for results.
+//It returns 8 hits with only videos which are embeedable.
 function search(query) {
-
     var request = gapi.client.youtube.search.list({
         part: 'snippet',
         q:query,
         type:'video',
         maxResults:8,
         format:5,
+        videoEmbeddable:true,
         key:'AIzaSyCnR3Vv-Erxjaa-IJapIXCnvgTOuXLXItA'
     });
     request.execute(showResponse);
@@ -125,7 +126,7 @@ function onYouTubeIframeAPIReady() {
         if($(this).text()!==""){
             if(player){
                 var start=parseInt($("#video-start").text());
-                player.loadVideoById($(this).text(),start, "large");
+                player.loadVideoById($(this).text(),0, "large");
             }
             else{
                 initPlayer();
@@ -152,7 +153,9 @@ function initPlayer(){
                 showinfo:0,
                 start:start,
                 disablekb:1,
+                iv_load_policy:3,
                 wmode:"transparent",
+                rel:0
             },
             events: {
                 "onReady": onPlayerReady
@@ -162,11 +165,31 @@ function initPlayer(){
     else{
         $("#player").text("No video currently in the queue.");
     }
+    
+}
+
+function updateProgress(){
+    var percent=player.getCurrentTime()/player.getDuration()*100;
+    $(".progress-bar").width(percent+"%")
+    .text(convertToTime(
+        player.getCurrentTime())+" / "+convertToTime(player.getDuration())
+    );
+    setTimeout(updateProgress,1000);
+}
+
+function convertToTime(seconds){
+    var minutes=parseInt(seconds/60);
+    seconds=parseInt(seconds%60);
+    if (seconds<10)
+        seconds="0"+seconds;
+    
+    return minutes+":"+seconds;
 }
 
 // when player is initialized, we automatically play the video.
 function onPlayerReady(event) {
     event.target.playVideo();
+    updateProgress();
 }
 
 //Detect keystroke and only execute after the user has finish typing

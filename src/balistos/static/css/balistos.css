@@ -24,6 +24,7 @@ html,body{
     border:1px solid #e7e7e7;
     padding:10px;
     margin-bottom:20px;
+    position:relative;
 }
 .video-player .title{
     width:100%;
@@ -111,6 +112,7 @@ ul.autocomplete li .title{
     border-radius:5px;
     float:left;
     margin-bottom:5px;
+    position:relative;
 }
 .video-box.second{
     background-color: #e7e7e7;
@@ -146,4 +148,13 @@ ul.autocomplete li .title{
     min-width:280px;
     padding:20px;
 
+}
+.close-button{
+    position:absolute;
+    width:30px;
+    height:30px;
+    right:-15px;
+    top:-15px;
+    background:url('../img/close-button.png');
+    cursor:pointer;
 }
