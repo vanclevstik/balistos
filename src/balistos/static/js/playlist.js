@@ -3,9 +3,12 @@ function PlaylistModel(){
     var self=this;
 
     self.settings=ko.observableArray([]);
-
-
     self.videos=ko.observableArray([]);
+    self.users=ko.observableArray([
+        { username: "Bungle", type: "2"},
+        { username: "George", type: "1"},
+        { username: "Zippy", type: "0"}
+    ]);
 
     //function for adding videos to the array.
     self.addVideo=function(model,item){
@@ -66,6 +69,7 @@ function PlaylistModel(){
 
     self.sync();
 
+
     self.firstVideoTitle=ko.computed(function(){
         if(self.videos()[0]){
             return self.videos()[0].title();
@@ -88,6 +92,7 @@ function PlaylistModel(){
         else
             return 0;
     },self);
+
 }
 
 
@@ -96,6 +101,7 @@ function Video(data){
     this.id=ko.observable(data.id);
     this.image=ko.observable(data.image);
     this.likes=ko.observable(data.likes);
+    this.owner=ko.observable(data.owner);
     this.start_time=ko.observable(data.start_time);
 
     this.addLike=function(){

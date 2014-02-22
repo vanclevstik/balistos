@@ -29,6 +29,7 @@
                         <div class="video-box" data-bind="css: {'second': $index()==1}">
                             <img data-bind="attr: { src: image }" />
                             <div data-bind="text: title" class="title"></div>
+                            <div data-bind="text: owner"></div>
                             <div class="likes">Likes: <span data-bind="text: likes"></span></div>
                             <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
                             <div data-bind="click: removeLike" class="addlike">REMOVE LIKE</div>
@@ -36,12 +37,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="playlist-title">Users connected to playlist</div>
-                <div data-bind="foreach: users" class="users-list">
-                    <div class="user">
-                        
-                    </div>
-                </div>
+
+
+                <div class="playlist-title" >Users connected to playlist</div>
+                <ul data-bind="foreach: users" class="users-list">
+                    <li class="user"><div class="username" data-bind="text: username"></div><div class="type" data-bind="text: type"></div></li>
+                </ul>
+
             </div> 
         </div>
         <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
