@@ -12,10 +12,13 @@
                     <div class="title">Now playing: <span data-bind="text: firstVideoTitle"></span></div>
                     <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
                     <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
-                    <div data-bind="click: removeFirstVideo" class="addLike">X</div>
+                    <div data-bind="click: removeFirstVideo" class="close-button"></div>
                     <div class="player">
                         <div class="overlay mute"></div>
                         <div id="player"></div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -29,7 +32,7 @@
                             <div class="likes">Likes: <span data-bind="text: likes"></span></div>
                             <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
                             <div data-bind="click: removeLike" class="addlike">REMOVE LIKE</div>
-                            <div data-bind="click: removeVideo" class="addLike">X</div>
+                            <span class="close-button" data-bind="click: removeVideo" ></span>
                         </div>
                     </div>
                 </div>
