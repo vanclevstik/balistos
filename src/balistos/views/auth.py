@@ -6,9 +6,11 @@ from balistos.models.user import User
 from balistos.models.clip import PlaylistClip
 from balistos.models.clip import PlaylistClipUser
 from pyramid_basemodel import Session
+from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from passlib.hash import sha256_crypt
 from pyramid.security import remember
+from pyramid.security import forget
 
 import json
 
@@ -18,7 +20,7 @@ import json
 )
 def login(request):
     """
-    View that returns videos of our playlist in json format
+    View that logs user in
 
     :param    request: current request
     :type     request: pyramid.request.Request
@@ -34,14 +36,14 @@ def login(request):
     if user and sha256_crypt.verify(password, user.password):
         headers = remember(request, username)
         msg = {'success': username}
+        Response(body=json.dumps(msg), content_type='application/json')
     else:
-        msg = {'error': "Your username and password are not valid."}
-
-    return Response(
-        body=json.dumps(msg),
-        content_type='application/json',
-        headers=headers
-    )
+        msg = {'error': 'Your username and password are not valid.'}
+        return Response(
+            body=json.dumps(msg),
+            content_type='application/json',
+            headers=headers
+        )
 
 
 @view_config(
@@ -49,7 +51,7 @@ def login(request):
 )
 def register(request):
     """
-    View that returns videos of our playlist in json format
+    View that registers user
 
     :param    request: current request
     :type     request: pyramid.request.Request
@@ -74,7 +76,7 @@ def register(request):
                 user=user
             )
             Session.add(pclipuser)
-        msg = {'message': 'success'}
+        msg = {'success': username}
         headers = remember(request, username)
         return Response(
             body=json.dumps(msg),
@@ -83,5 +85,23 @@ def register(request):
         )
 
     except Exception:
-        msg = {'message': 'error'}
+        msg = {'error': ''}
         return Response(body=json.dumps(msg), content_type='application/json')
+
+
+@view_config(
+    route_name='logout',
+)
+def logout(request):
+    """
+    View that logs user out
+
+    :param    request: current request
+    :type     request: pyramid.request.Request
+
+    :returns: json with message about login
+    :rtype:   pyramid.response.Response
+    """
+    headers = forget(request)
+    url = request.route_url('home')
+    return HTTPFound(location=url, headers=headers)
