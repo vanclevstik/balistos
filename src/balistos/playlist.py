@@ -190,6 +190,7 @@ def add_playlist_clip(
             state=state,
             clip=clip,
             playlist=playlist,
+            username=username,
         )
         Session.add(pclip)
         Session.flush()
