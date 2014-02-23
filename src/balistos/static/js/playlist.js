@@ -90,12 +90,12 @@ function PlaylistModel(){
                return new User(item);
             });
             self.users(mappedUsers);
-            /*
-            var mappedUMessages=$.map(data.messages,function(item){
+
+            var mappedMessages=$.map(data.messages,function(item){
                return new Message(item);
             });
             self.messages(mappedMessages);
-            */
+
         });
 
         $("#chat-div").scrollTop($("#chat-div")[0].scrollHeight);
