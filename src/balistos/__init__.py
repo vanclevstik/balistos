@@ -59,6 +59,7 @@ def configure(config):
     config.add_route('remove_video', '/remove_video')
     config.add_route('main', '/')
     config.add_route('set_playlist', '/playlist/{playlist}')
+    config.add_route('chat_message', '/chat_message')
     config.scan('balistos', ignore=['balistos.tests', 'balistos.testing'])
 
 

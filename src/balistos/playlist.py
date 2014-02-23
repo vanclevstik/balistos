@@ -4,6 +4,7 @@
 from balistos.youtube import get_related_video
 from datetime import datetime
 from balistos.models.playlist import PlaylistUser
+from balistos.models.playlist import ChatMessage
 from balistos.models.clip import PlaylistClip
 from balistos.models.clip import PlaylistClipUser
 from balistos.models.clip import Clip
@@ -33,12 +34,14 @@ def get_playlist_videos(playlist, username=None):
             play_next_clip(playlist)
     except Exception:
         pass
-    pclips.append(PlaylistClip.get_active_playlist_clip(playlist))
+    active = PlaylistClip.get_active_playlist_clip(playlist)
+    if active:
+        pclips.append(active)
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
     if next_pclip:
         pclips.append(next_pclip)
     else:
-        set_next_in_queue(playlist)
+        pclips.append(set_next_in_queue(playlist))
     wait_clips = PlaylistClip.get_by_playlist_waiting(playlist)
     if wait_clips:
         pclips = pclips + wait_clips
@@ -133,10 +136,11 @@ def set_next_in_queue(playlist, youtube_video_id):
     """
     pclips = PlaylistClip.get_by_playlist_waiting(playlist)
     if pclips:
-        pclips[0].state = 1
+        queue_video = pclips[0]
+        queue_video.state = 1
     else:
         video = get_related_video(playlist, youtube_video_id)
-        add_playlist_clip(
+        queue_video = add_playlist_clip(
             playlist,
             video['title'],
             video['image_url'],
@@ -145,6 +149,7 @@ def set_next_in_queue(playlist, youtube_video_id):
             state=1,
         )
     Session.flush()
+    return queue_video
 
 
 def add_playlist_clip(
@@ -199,6 +204,7 @@ def add_playlist_clip(
         )
         Session.add(pclip)
         Session.flush()
+        return pclip
     else:
         pclip.likes += 1
 
@@ -250,3 +256,45 @@ def get_active_users(playlist):
         user['username'] = playlist_user.user.username
         users.append(user)
     return users
+
+
+def add_chat_message(playlist, username, message):
+    """
+    Add chat message to playlist
+
+    :param    playlist: current playlist
+    :type     playlist: balistos.models.playlist.Playlist
+    :param    username: username of user who added msg
+    :type     username: str
+    :param    message:  chat message
+    :type     message:  str
+    """
+    chat_message = ChatMessage(
+        user=User.get_by_username(username),
+        playlist=playlist,
+        message=message,
+        posted=datetime.now(),
+    )
+    Session.add(chat_message)
+    Session.flush()
+
+
+def get_chat_messages(playlist):
+    """
+    Get chat messages for current playlist
+
+    :param    playlist: current playlist
+    :type     playlist: balistos.models.playlist.Playlist
+
+    :returns: chat messages of current playlist with time and user
+    :rtype:   list of dicts
+    """
+    messages = []
+    chat_messages = ChatMessage.get_by_playlist(playlist)
+    for chat_message in chat_messages:
+        messages.append({
+            'author': chat_message.user.username,
+            'time': chat_message.posted.strftime('%H:%M:%S'),
+            'message': chat_message.message
+        })
+    return messages
