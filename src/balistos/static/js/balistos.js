@@ -35,11 +35,13 @@
                 else{
                     $("#username-string").text(response.success);
                     $(".not-logged-in").hide();
+                    $("#hidden-search").hide();
+                    $("#search").slideDown(1000);
                     $(".logged-in").slideDown(1000);
                 }
             });
         }
-        $("#login-form").find("input").val("");
+        $("#login-form").find("input[type='password'").val("");
     });
 
     $("form#register-form").on("submit",function(event){
@@ -88,6 +90,8 @@
                     else{
                         $("#username-string").text(response.success);
                         $(".not-logged-in").hide();
+                        $("#hidden-search").hide();
+                        $("#search").slideDown(1000);
                         $(".logged-in").slideDown(1000);
                     }
                 });
@@ -101,8 +105,22 @@
                 },2000);
             }
         }
-        $("#register-form").find("input").val("");
+        $("#register-form").find("input[type='password'").val("");
     });
+
+    $("#chat-form").submit(function(){
+        $.ajax({
+            type: "POST",
+            url: "/chat_message",
+            dataType:"json",
+            data: $(this).serialize(),
+        }).done(function(response){});
+        $(this).find("input").val("");
+        return false;
+
+    });
+
+
     function validateEmail(email){
         return /^.+@.+\..+$/.test(email);
     }

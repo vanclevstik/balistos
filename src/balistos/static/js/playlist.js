@@ -15,7 +15,11 @@ function PlaylistModel(){
     self.messages=ko.observableArray([
         { author: "neykomir", time: "12:12",message:"ti si peder"},
         { author: "jerry", time: "12:32",message:"ti si tud peder"},
-        { author: "vanč", time: "12:33",message:"ti si pa čist peder"},
+        { author: "vanč", time: "12:33",message:"ti si pa čist peder hoho"},
+        { author: "lasč", time: "13:23",message:"ti si pa čist peder za čist"},
+        { author: "košir", time: "14:13",message:"ti si pa čist peder nea"},
+        { author: "jurc", time: "12:31",message:"ti si pa čist peder kaj ti je"},
+        { author: "dasd", time: "12:31",message:"ti si pa čist peder tak"},
     ]);
 
     //function for adding videos to the array.
@@ -93,6 +97,8 @@ function PlaylistModel(){
             self.messages(mappedMessages);
             */
         });
+
+        $("#chat-div").scrollTop($("#chat-div")[0].scrollHeight);
         setTimeout(self.sync,2000);
     };
 
@@ -111,6 +117,9 @@ function PlaylistModel(){
     self.firstVideoId=ko.computed(function(){
         if(self.videos()[0]){
             return self.videos()[0].id();
+        }
+        else{
+            return false;
         }
     },self);
 
@@ -191,6 +200,8 @@ function Message(data){
     this.author = ko.observable(data.author);
     this.time=ko.observable(data.time);
     this.message=ko.observable(data.message);
+
+    this.sendMessage
 }
 
 
