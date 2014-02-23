@@ -54,14 +54,14 @@ function PlaylistModel(){
 
     self.getUsersTotal=function(){
         return self.users().length;
-    }
+    };
 
     self.getSetting=function(key){
         if(self.settings()[key])
-            return self.settings()[key]
+            return self.settings()[key];
         else
             return false;
-    }
+    };
 
     self.removeFirstVideo=function(model,item){
         video=self.videos()[0].id();
@@ -193,7 +193,7 @@ function User(data){
             },
         }).done(function(data ){});
         playlist.sync();
-    }
+    };
 }
 
 function Message(data){
@@ -201,7 +201,6 @@ function Message(data){
     this.time=ko.observable(data.time);
     this.message=ko.observable(data.message);
 
-    this.sendMessage
 }
 
 
