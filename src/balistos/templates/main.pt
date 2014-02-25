@@ -33,8 +33,8 @@
                                 <div class="video-right">
                                     <div data-bind="text: title" class="title"></div>
                                     <div class="arrows logged-in" tal:attributes="style python: 'display:none' if not username else ''">
-                                        <div data-bind="click: addLike" class="arrow-up"></div>
-                                        <div data-bind="click: removeLike" class="arrow-down"></div>
+                                        <div data-bind="click: addLike, css: { 'active': liked()>0 }" class="arrow-up"></div>
+                                        <div data-bind="click: removeLike , css: { 'active': liked()<0 }" class="arrow-down"></div>
                                     </div>
                                     <div data-bind="text: likes" class="likes"></div>
                                     <div class="added-by">

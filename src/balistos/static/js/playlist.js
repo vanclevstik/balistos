@@ -139,6 +139,7 @@ function Video(data){
     this.id=ko.observable(data.id);
     this.image=ko.observable(data.image);
     this.likes=ko.observable(data.likes);
+    this.liked=ko.observable(data.liked);
     this.owner=ko.observable(data.owner);
     this.start_time=ko.observable(data.start_time);
 
