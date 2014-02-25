@@ -35,8 +35,6 @@ balistos_js = Resource(
 knockout_js = Resource(
     library=lib_balistos,
     relpath='js/knockout.js',
-    minified='js/knockout.min.js',
-    minifier='jsmin',
     bottom=True,
 )
 
