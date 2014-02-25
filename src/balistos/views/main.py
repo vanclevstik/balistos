@@ -166,8 +166,15 @@ def like_video(request):
         Clip.get(youtube_video_id)
     )
     pclip_user = PlaylistClipUser.get_by_playlist_clip_and_user(pclip, user)
-    pclip_user.liked = like
-    pclip.likes += like
+    if pclip_user.liked == like:
+        pclip.likes += like * (-1)
+        pclip_user.liked = 0
+    elif pclip_user.liked == 0:
+        pclip.likes += like
+        pclip_user.liked = like
+    elif pclip_user.liked != 0:
+        pclip.likes += 2*like
+        pclip_user.liked = like
     return Response()
 
 
