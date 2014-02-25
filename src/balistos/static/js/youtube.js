@@ -13,7 +13,7 @@ $(document).on("click","#response",function(event){
 function showResponse(response) {
     $("#response").html("");
     $.each(response.items, function( index, value ) {
-        $("#response").append("<li data-title='"+value.snippet.title+"' data-image='"+value.snippet.thumbnails.default.url+"' title='Add "+value.snippet.title.substring(80)+" to playlist' data-bind='click: addVideo' data-id='"+value.id.videoId+"' id='video-"+value.id.videoId+"'><img src='"+value.snippet.thumbnails.default.url+"'><div class='title'>"+value.snippet.title.substring(80)+"</div></li>");
+        $("#response").append('<li data-title="'+value.snippet.title+'" data-image="'+value.snippet.thumbnails.default.url+'"" title="Add '+value.snippet.title+' to playlist" data-bind="click: addVideo" data-id="'+value.id.videoId+'" id="video-'+value.id.videoId+'"><img src="'+value.snippet.thumbnails.default.url+'"><div class="title">'+value.snippet.title+'</div></li>');
         ko.applyBindings(playlist, $("#video-"+value.id.videoId)[0]);
     });
     $("#response").show();
@@ -154,29 +154,31 @@ function onYouTubeIframeAPIReady() {
 
 
 function initPlayer(){
-    if(playlist.firstVideoId()){
-        $("title").text("Balistos - "+playlist.firstVideoTitle());
-        player = new YT.Player("player", {
-            height: "390",
-            width: "640",
-            videoId: playlist.firstVideoId(),
-            playerVars:{
-                controls:0,
-                showinfo:0,
-                start:parseInt(playlist.firstVideoStart()),
-                disablekb:1,
-                iv_load_policy:3,
-                wmode:"transparent",
-                rel:0
-            },
-            events: {
-                "onReady": onPlayerReady
-            }
-        });
-    }
-    else{
-        $("#player").text("No video currently in the queue.");
-        setTimeout(initPlayer,500);
+    if(!player){
+        if(playlist.firstVideoId() && playlist.firstVideoStart()){
+            $("title").text("Balistos - "+playlist.firstVideoTitle());
+            player = new YT.Player("player", {
+                height: "390",
+                width: "640",
+                videoId: playlist.firstVideoId(),
+                playerVars:{
+                    controls:0,
+                    showinfo:0,
+                    start:parseInt(playlist.firstVideoStart()),
+                    disablekb:1,
+                    iv_load_policy:3,
+                    wmode:"transparent",
+                    rel:0
+                },
+                events: {
+                    "onReady": onPlayerReady
+                }
+            });
+        }
+        else{
+            $("#player").text("No video currently in the queue.");
+            setTimeout(initPlayer,500);
+        }
     }
 }
 

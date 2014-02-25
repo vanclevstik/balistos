@@ -41,7 +41,7 @@
                 }
             });
         }
-        $("#login-form").find("input[type='password'").val("");
+        $("#login-form").find("input[type='password']").val("");
     });
 
     $("form#register-form").on("submit",function(event){
@@ -105,7 +105,7 @@
                 },2000);
             }
         }
-        $("#register-form").find("input[type='password'").val("");
+        $("#register-form").find("input[type='password']").val("");
     });
 
     $("#chat-form").submit(function(){

@@ -118,18 +118,17 @@ ul.autocomplete li .title{
 }
 .video-box .title{
     display:inline-block;
-    width:60%;
     font-size:15px;
     font-weight:700;
 }
 .video .likes{
     display:inline-block;
-    width:60%;
     color:blue;
     font-size:15px;
 }
 .video-box .video-right{
     display:inline-block;
+    width:60%;
 }
 .video-box .addlike{
     cursor:pointer;
@@ -154,12 +153,12 @@ ul.autocomplete li .title{
 }
 .close-button{
     position:absolute;
-    width: 20px;
-    height: 20px;
-    right:-10px;
-    top:-10px;
+    width: 16px;
+    height: 16px;
+    right:1px;
+    top:1px;
     background:url('../img/close-button.png');
-    background-size: 20px 20px;
+    background-size: 16px 16px;
     cursor:pointer;
 }
 
