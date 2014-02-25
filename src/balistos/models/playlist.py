@@ -184,10 +184,10 @@ class ChatMessage(Base, BaseMixin):
 
     @classmethod
     def get_by_playlist(self, playlist):
-        """Get Chatmessages of playlist."""
+        """Get latest Chatmessages of playlist."""
         result = ChatMessage.query.filter(
             ChatMessage.playlist == playlist,
-        ).order_by('posted')
+        ).order_by('posted').limit(20)
         if result.count() < 1:
             return []
 
