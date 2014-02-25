@@ -65,11 +65,12 @@ def register(request):
     if not request.is_xhr:
         return HTTPNotFound()
     username = request.POST['register-username']
-    if User.get_by_username(username):
-        msg = {'error': 'User with that username already exist'}
+    email = request.POST['register-email']
+    if User.get_by_username(username) or User.get_by_email(email):
+        msg = {'error': 'User with that username or email already exist'}
         return Response(body=json.dumps(msg), content_type='application/json')
     password = sha256_crypt.encrypt(request.POST['register-password'])
-    email = request.POST['register-email']
+
     try:
         user = User(
             username=username,

@@ -98,6 +98,15 @@ class User(Base, BaseMixin):
         return result.one()
 
     @classmethod
+    def get_by_email(self, email):
+        """Get a User by email."""
+        result = User.query.filter_by(email=email)
+        if result.count() < 1:
+            return None
+
+        return result.one()
+
+    @classmethod
     def get_all(class_, order_by='fullname', filter_by=None):
         """Return all users.
 
