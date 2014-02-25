@@ -32,7 +32,7 @@
                                 <img data-bind="attr: { src: image }" />
                                 <div class="video-right">
                                     <div data-bind="text: title" class="title"></div>
-                                    <div class="arrows logged-in" tal:attributes="style python: 'display:none' if not username else ''">
+                                    <div class="arrows logged-in" data-bind="if: liked() > -2">
                                         <div data-bind="click: addLike, css: { 'active': liked()>0 }" class="arrow-up"></div>
                                         <div data-bind="click: removeLike , css: { 'active': liked()<0 }" class="arrow-down"></div>
                                     </div>
