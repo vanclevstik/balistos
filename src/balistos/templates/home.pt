@@ -9,7 +9,7 @@
             <form>
         </div>
 
-        <div class="row" id="create-playlist" tal:attributes="style python: 'display:none' if not username else ''">
+        <div class="row logged-in" id="create-playlist" tal:attributes="style python: 'display:none' if not username else ''">
             <h2>Create playlist</h2>
             <form action="/create_playlist" method="POST">
                 <input type="text" name="create-playlist-name" class="form-control" placeholder="Playlist's name"/>

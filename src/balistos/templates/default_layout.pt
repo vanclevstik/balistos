@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8">
-        <title><metal:block define-slot="title">Home</metal:block> - balistos</title>
+        <title>Balistos</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Dasilvos!">
         <meta name="author" content="Balistos">
@@ -71,7 +71,8 @@
         <!--/.fluid-container-->
         <div id="footer">
             <div class="container">
-                <p class="text-muted">2014 &copy; Balistos</p>
+                <div class="copyright">2014 &copy; Balistos</div>
+                <a href="http://www.youtube.com" target="_blank" class="powered-by">YouTube</a>
             </div>
         </div>
     </body>

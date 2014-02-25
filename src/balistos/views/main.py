@@ -3,12 +3,16 @@
 
 from balistos.models.clip import Clip
 from balistos.models.clip import PlaylistClip
+from balistos.models.clip import PlaylistClipUser
+from balistos.models.user import User
 from balistos.models.playlist import Playlist
 from balistos.playlist import add_playlist_clip
+from balistos.playlist import add_chat_message
 from balistos.playlist import get_playlist_videos
 from balistos.playlist import remove_playlist_clip
 from balistos.playlist import get_playlist_settings
 from balistos.playlist import get_active_users
+from balistos.playlist import get_chat_messages
 from balistos.static import balistos_assets
 from balistos.static import youtube_assets
 from pyramid.httpexceptions import HTTPNotFound
@@ -53,9 +57,7 @@ def main(request):
     }
 
 
-@view_config(
-    route_name='playlist_videos',
-)
+@view_config(route_name='playlist_videos')
 def playlist_videos(request):
     """
     View that returns videos of our playlist in json format
@@ -72,11 +74,13 @@ def playlist_videos(request):
     username = authenticated_userid(request)
     pclips = get_playlist_videos(playlist, username=username)
     playlist_settings = get_playlist_settings(playlist, username=username)
+    chat_messages = get_chat_messages(playlist)
     active_users = get_active_users(playlist)
     return Response(
         body=json.dumps({
             'settings': playlist_settings,
             'users': active_users,
+            'messages': chat_messages,
             'videos': pclips
         }),
         content_type='application/json'
@@ -106,9 +110,7 @@ def set_playlist(request):
     return {}
 
 
-@view_config(
-    route_name='playlist_add_video',
-)
+@view_config(route_name='playlist_add_video')
 def playlist_add_video(request):
     """
     View that adds video to playlist currently in session and returns
@@ -139,9 +141,7 @@ def playlist_add_video(request):
     return Response()
 
 
-@view_config(
-    route_name='like_video',
-)
+@view_config(route_name='like_video')
 def like_video(request):
     """
     Like/unlike a selected video but only if user is logged in
@@ -155,8 +155,8 @@ def like_video(request):
     """
     if not request.is_xhr:
         return HTTPNotFound()
-    username = authenticated_userid(request)
-    if not username:
+    user = User.get_by_username(authenticated_userid(request))
+    if not user:
         return Response()
     like = int(request.GET['like'])
     youtube_video_id = request.GET['video_id']
@@ -165,13 +165,20 @@ def like_video(request):
         playlist,
         Clip.get(youtube_video_id)
     )
-    pclip.likes += like
+    pclip_user = PlaylistClipUser.get_by_playlist_clip_and_user(pclip, user)
+    if pclip_user.liked == like:
+        pclip.likes += like * (-1)
+        pclip_user.liked = 0
+    elif pclip_user.liked == 0:
+        pclip.likes += like
+        pclip_user.liked = like
+    elif pclip_user.liked != 0:
+        pclip.likes += 2*like
+        pclip_user.liked = like
     return Response()
 
 
-@view_config(
-    route_name='remove_video'
-)
+@view_config(route_name='remove_video')
 def remove_video(request):
     """
     Remove video from playlist if you have correct rights
@@ -203,3 +210,25 @@ def remove_video(request):
         body=json.dumps({'success': 'Succesfully removed'}),
         content_type='application/json'
     )
+
+
+@view_config(route_name='chat_message')
+def chat_message(request):
+    """
+    Add chat message to playlist chat
+
+    :param    request: current request
+    :type     request: pyramid.request.Request
+
+    :returns: success if video was remove correctly, error otherwise
+    :rtype:   pyramid.response.Response
+    """
+    if not request.is_xhr:
+        return HTTPNotFound()
+    username = authenticated_userid(request)
+    if not username:
+        return Response()
+    message = request.POST['message']
+    playlist = Playlist.get(request.session['playlist'])
+    add_chat_message(playlist, username, message)
+    return Response()

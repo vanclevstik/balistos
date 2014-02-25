@@ -15,7 +15,11 @@ function PlaylistModel(){
     self.messages=ko.observableArray([
         { author: "neykomir", time: "12:12",message:"ti si peder"},
         { author: "jerry", time: "12:32",message:"ti si tud peder"},
-        { author: "vanč", time: "12:33",message:"ti si pa čist peder"},
+        { author: "vanč", time: "12:33",message:"ti si pa čist peder hoho"},
+        { author: "lasč", time: "13:23",message:"ti si pa čist peder za čist"},
+        { author: "košir", time: "14:13",message:"ti si pa čist peder nea"},
+        { author: "jurc", time: "12:31",message:"ti si pa čist peder kaj ti je"},
+        { author: "dasd", time: "12:31",message:"ti si pa čist peder tak"},
     ]);
 
     //function for adding videos to the array.
@@ -50,14 +54,14 @@ function PlaylistModel(){
 
     self.getUsersTotal=function(){
         return self.users().length;
-    }
+    };
 
     self.getSetting=function(key){
         if(self.settings()[key])
-            return self.settings()[key]
+            return self.settings()[key];
         else
             return false;
-    }
+    };
 
     self.removeFirstVideo=function(model,item){
         video=self.videos()[0].id();
@@ -86,13 +90,15 @@ function PlaylistModel(){
                return new User(item);
             });
             self.users(mappedUsers);
-            /*
-            var mappedUMessages=$.map(data.messages,function(item){
+
+            var mappedMessages=$.map(data.messages,function(item){
                return new Message(item);
             });
             self.messages(mappedMessages);
-            */
+
         });
+
+        $("#chat-div").scrollTop($("#chat-div")[0].scrollHeight);
         setTimeout(self.sync,2000);
     };
 
@@ -112,6 +118,9 @@ function PlaylistModel(){
         if(self.videos()[0]){
             return self.videos()[0].id();
         }
+        else{
+            return false;
+        }
     },self);
 
     self.firstVideoStart=ko.computed(function(){
@@ -130,6 +139,7 @@ function Video(data){
     this.id=ko.observable(data.id);
     this.image=ko.observable(data.image);
     this.likes=ko.observable(data.likes);
+    this.liked=ko.observable(data.liked);
     this.owner=ko.observable(data.owner);
     this.start_time=ko.observable(data.start_time);
 
@@ -184,13 +194,14 @@ function User(data){
             },
         }).done(function(data ){});
         playlist.sync();
-    }
+    };
 }
 
 function Message(data){
     this.author = ko.observable(data.author);
     this.time=ko.observable(data.time);
     this.message=ko.observable(data.message);
+
 }
 
 
