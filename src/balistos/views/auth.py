@@ -39,7 +39,7 @@ def login(request):
     if user and sha256_crypt.verify(password, user.password):
         headers = remember(request, username)
         msg = {'success': username}
-        Response(body=json.dumps(msg), content_type='application/json')
+        return Response(body=json.dumps(msg), content_type='application/json')
     else:
         msg = {'error': 'Your username and password are not valid.'}
         return Response(
