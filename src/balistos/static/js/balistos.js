@@ -15,15 +15,16 @@
             setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
         }
         else{
-            $(this).find("input[name='login-password']").val(
-                hex_sha256($(this).find("input[name='login-password']").val())
-            );
-            var formdata=$(this).serialize();
             $.ajax({
                 type: "POST",
                 url: "/login",
                 dataType:"json",
-                data: formdata,
+                data:{
+                    "login-username": $(this)
+                        .find("input[name='login-username']").val(),
+                    "login-password": hex_sha256($(this)
+                        .find("input[name='login-password']").val())
+                },
             }).done(function(response){
                 if(response.error){
                     $("#login-message").text(response.error).show();
@@ -67,18 +68,19 @@
         else{
             if($(this).find("input[name='register-password']").val()==
             $(this).find("input[name='register-repeat']").val()){
-                $(this).find("input[name='register-password']").val(
-                    hex_sha256(
-                        $(this).find("input[name='register-password']").val()
-                    )
-                );
                 $(this).find("input[name='register-repeat']").val("");
-                var formdata=$(this).serialize();
                 $.ajax({
                     type: "POST",
                     url: "/register",
                     dataType:"json",
-                    data: formdata,
+                    data:{
+                        "register-username": $(this)
+                            .find("input[name='register-username']").val(),
+                        "register-password":
+            hex_sha256($(this).find("input[name='register-password']").val()),
+                        "register-email": $(this).
+                            find("input[name='register-email']").val(),
+                    },
                 }).done(function(response){
                     if(response.error){
                         $("#login-message").text(response.error).show();
