@@ -71,7 +71,8 @@
         <!--/.fluid-container-->
         <div id="footer">
             <div class="container">
-                <p class="text-muted">2014 &copy; Balistos</p>
+                <div class="copyright">2014 &copy; Balistos</div>
+                <a href="http://www.youtube.com" target="_blank" class="powered-by">YouTube</a>
             </div>
         </div>
     </body>

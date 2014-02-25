@@ -244,3 +244,14 @@ ul.autocomplete li .title{
     float:left;
     padding: 0px 5px;
 }
+.powered-by{
+    background:url('../img/poweredbyyoutube.png') no-repeat center;
+    background-size:cover;
+    width:123px;
+    height:60px;
+    float:right;
+    font-size:0px;
+}
+.copyright{
+    float:left;
+}
