@@ -23,8 +23,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-12">
-                <div class="col-lg-12 col-md-6 playlist" >
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <div class="col-lg-12 col-md-4 col-sm-6 col-xs-12  playlist" >
                     <div class="playlist-title">Playlist</div>
                     <div data-bind="foreach: videos">
                         <div data-bind="if: $index()>0">
@@ -32,17 +32,22 @@
                                 <img data-bind="attr: { src: image }" />
                                 <div class="video-right">
                                     <div data-bind="text: title" class="title"></div>
-                                    <div data-bind="text: owner"></div>
-                                    <div class="likes">Likes: <span data-bind="text: likes"></span></div>
-                                    <div data-bind="click: addLike" class="addlike">ADD LIKE</div>
-                                    <div data-bind="click: removeLike" class="addlike">REMOVE LIKE</div>
+                                    <div class="arrows logged-in" tal:attributes="style python: 'display:none' if not username else ''">
+                                        <div data-bind="click: addLike" class="arrow-up"></div>
+                                        <div data-bind="click: removeLike" class="arrow-down"></div>
+                                    </div>
+                                    <div data-bind="text: likes" class="likes"></div>
+                                    <div class="added-by">
+                                        added by  
+                                        <span data-bind="text: owner"></span>
+                                    </div>
                                     <span class="close-button" data-bind="click: removeVideo" ></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-12 col-md-6 playlist pull-right" >
+                <div class="col-lg-12 col-md-4 col-sm-6 col-xs-12 playlist pull-right" >
                     <div class="sidebox">
                         <div class="header" >
                             <span class="badge pull-right" data-bind="text: getUsersTotal()"></span>
@@ -55,7 +60,7 @@
                         </ul>
                     </div>
                 </div>
-                 <div class="col-lg-12 col-md-6 playlist pull-right" >
+                <div class="col-lg-12 col-md-4 col-sm-6 col-xs-12 playlist pull-right" >
                     <div class="sidebox">
                         <div class="header">Chat</div>
                         <div class="chat-container" id="chat-div">
@@ -67,7 +72,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <form id="chat-form" class="form-inline" role="form" style="padding:10px 20px;">
+                        <form id="chat-form" class="form-inline logged-in" role="form" style="padding:10px 20px;" tal:attributes="style python: 'display:none' if not username else ''">
                             <div class="input-group">
                                 <input name="message" type="text" class="form-control" />
                                 <span class="input-group-btn">

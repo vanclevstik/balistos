@@ -108,7 +108,7 @@ ul.autocomplete li .title{
     box-sizing: border-box;
     background-color: #f8f8f8;
     width:100%;
-    padding:10px;
+    padding:3%;
     border-radius:5px;
     margin-bottom:5px;
     position:relative;
@@ -117,21 +117,16 @@ ul.autocomplete li .title{
     background-color: #e7e7e7;
 }
 .video-box .title{
-    display:inline-block;
+    display:block;
+    width:100%;
     font-size:15px;
     font-weight:700;
-}
-.video .likes{
-    display:inline-block;
-    color:blue;
-    font-size:15px;
+    line-height: 15px;
+    margin-bottom:4px;
 }
 .video-box .video-right{
     display:inline-block;
     width:60%;
-}
-.video-box .addlike{
-    cursor:pointer;
 }
 .video-box img{
     display:inline-block;
@@ -139,8 +134,7 @@ ul.autocomplete li .title{
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    padding:2px;
-    width:35%;
+    width:33%;
     margin-right:5%;
     vertical-align:top;
 }
@@ -153,12 +147,12 @@ ul.autocomplete li .title{
 }
 .close-button{
     position:absolute;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     right:1px;
     top:1px;
     background:url('../img/close-button.png');
-    background-size: 16px 16px;
+    background-size: 12px 12px;
     cursor:pointer;
 }
 
@@ -210,4 +204,43 @@ ul.autocomplete li .title{
     position:relative;
     width: 100%;
 
+}
+.arrows{
+    float:left;
+    width:16px;
+    height:32px;
+}
+.arrow-up{
+    background:url('../img/arrow-up.png') no-repeat center;
+    width:16px;
+    height:16px;
+    float:left;
+    margin-bottom:2px;
+    cursor:pointer;
+}
+.arrow-down{
+    background:url('../img/arrow-down.png') no-repeat center;
+    width:16px;
+    height:16px;
+    float:left;
+    cursor:pointer;
+}
+.arrow-up.active{
+    background-image:url('../img/arrow-up-active.png');
+}
+.arrow-down.active{
+    background-image:url('../img/arrow-down-active.png');
+}
+.added-by{
+    color:grey;
+    font-style: italic;
+    font-size:12px;
+    float:right;
+    padding-top: 22px;
+    padding-right: 10px;
+}
+.likes{
+    line-height: 34px;
+    float:left;
+    padding: 0px 5px;
 }

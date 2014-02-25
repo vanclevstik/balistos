@@ -99,7 +99,7 @@ function PlaylistModel(){
         });
 
         $("#chat-div").scrollTop($("#chat-div")[0].scrollHeight);
-        setTimeout(self.sync,2000);
+        //setTimeout(self.sync,2000);
     };
 
     self.sync();
