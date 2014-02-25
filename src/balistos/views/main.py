@@ -3,6 +3,8 @@
 
 from balistos.models.clip import Clip
 from balistos.models.clip import PlaylistClip
+from balistos.models.clip import PlaylistClipUser
+from balistos.models.user import User
 from balistos.models.playlist import Playlist
 from balistos.playlist import add_playlist_clip
 from balistos.playlist import add_chat_message
@@ -153,8 +155,8 @@ def like_video(request):
     """
     if not request.is_xhr:
         return HTTPNotFound()
-    username = authenticated_userid(request)
-    if not username:
+    user = User.get_by_username(authenticated_userid(request))
+    if not user:
         return Response()
     like = int(request.GET['like'])
     youtube_video_id = request.GET['video_id']
@@ -163,6 +165,8 @@ def like_video(request):
         playlist,
         Clip.get(youtube_video_id)
     )
+    pclip_user = PlaylistClipUser.get_by_playlist_clip_and_user(pclip, user)
+    pclip_user.liked = like
     pclip.likes += like
     return Response()
 
