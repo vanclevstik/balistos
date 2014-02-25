@@ -29,15 +29,13 @@ def get_playlist_videos(playlist, username=None):
         playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
         playlist_user.last_active = datetime.now()
         Session.flush()
-    try:
-        if check_if_finished(PlaylistClip.get_active_playlist_clip(playlist)):
-            play_next_clip(playlist)
-    except Exception:
-        pass
-    active = PlaylistClip.get_active_playlist_clip(playlist)
-    if active:
-        pclips.append(active)
+    active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
+    if check_if_finished(active_pclip):
+        Session.delete(active_pclip)
+        active_pclip, next_pclip = play_next_clip(playlist, next_pclip)
+    if active_pclip:
+        pclips.append(active_pclip)
     if next_pclip:
         pclips.append(next_pclip)
     else:
@@ -91,20 +89,22 @@ def get_playlist_settings(playlist, username=None):
     }
 
 
-def play_next_clip(playlist):
+def play_next_clip(playlist, next_pclip):
     """
     Play next clip (clip in queue) in playlist
 
     :param    playlist: current playlist
     :type     playlist: balistos.models.playlist.Playlist
     """
-
-    next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
     if next_pclip:
         next_pclip.state = 2
         next_pclip.started = datetime.now()
-        set_next_in_queue(playlist, next_pclip.clip.youtube_video_id)
-        Session.flush()
+        active_pclip = next_pclip
+        next_pclip = set_next_in_queue(
+            playlist,
+            next_pclip.clip.youtube_video_id
+        )
+        return active_pclip, next_pclip
 
 
 def check_if_finished(pclip):
@@ -122,7 +122,6 @@ def check_if_finished(pclip):
     started = pclip.started
     if (datetime.now()-started).total_seconds() > duration:
         Session.delete(pclip)
-        #Session.flush()
         return True
     return False
 
@@ -148,7 +147,6 @@ def set_next_in_queue(playlist, youtube_video_id):
             video['duration'],
             state=1,
         )
-    Session.flush()
     return queue_video
 
 
@@ -236,7 +234,6 @@ def remove_playlist_clip(playlist, youtube_video_id):
         play_next_clip(playlist)
     elif state == 1:
         set_next_in_queue(playlist, youtube_video_id)
-    Session.flush()
     return True
 
 
@@ -276,7 +273,6 @@ def add_chat_message(playlist, username, message):
         posted=datetime.now(),
     )
     Session.add(chat_message)
-    Session.flush()
 
 
 def get_chat_messages(playlist):
