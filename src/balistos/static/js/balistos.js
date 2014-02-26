@@ -5,13 +5,49 @@
     "use strict";
 
 
+    $("#hide-player").click(function(){
+        $(this).hide();
+        $(".player").hide();
+        player.destroy();
+        $("#show-player").fadeIn();
+    });
+    $("#show-player").click(function(){
+        $(this).hide();
+        restorePlayer();
+        $(".player").fadeIn();
+        $("#hide-player").fadeIn();
+    });
+    $("#search-playlist").keyup(function(){
+        $.ajax({
+            type: "GET",
+            url: "/search_playlists",
+            dataType:"json",
+            data:{
+                "query":$(this).val()
+            }
+        }).done(function(data){
+            if(data.length<1){
+                $("#response-playlist").html('No results for this query...');
+                $("#response-playlist").show();
+            }
+            else{
+                $("#response-playlist").html("");
+                $.each(data, function( index, value ) {
+                    $("#response-playlist").append('<li><a href="/playlist/'+
+                        value.uri+'">'+value.title+'</a></li>');
+                });
+                $("#response-playlist").show();
+            }
+        });
+    });
+
     $("form#login-form").on("submit",function(event){
         event.preventDefault();
         if($(this).find("input[name='login-username']").val().length<5 ||
          $(this).find("input[name='login-password']").val().length<5){
             $("#login-message")
                 .text("Your username or password is too short.")
-                .show();
+                .fadeIn();
             setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
         }
         else{
@@ -37,8 +73,8 @@
                     $("#username-string").text(response.success);
                     $(".not-logged-in").hide();
                     $("#hidden-search").hide();
-                    $("#search").slideDown(1000);
-                    $(".logged-in").slideDown(1000);
+                    $("#search").fadeIn(1000);
+                    $(".logged-in").fadeIn(1000);
                 }
             });
         }
@@ -93,8 +129,8 @@
                         $("#username-string").text(response.success);
                         $(".not-logged-in").hide();
                         $("#hidden-search").hide();
-                        $("#search").slideDown(1000);
-                        $(".logged-in").slideDown(1000);
+                        $("#search").fadeIn(1000);
+                        $(".logged-in").fadeIn(1000);
                     }
                 });
             }

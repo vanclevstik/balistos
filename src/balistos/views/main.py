@@ -138,6 +138,7 @@ def set_playlist(request):
         'username': username
     }
 
+
 @view_config(route_name='playlist_add_video')
 def playlist_add_video(request):
     """

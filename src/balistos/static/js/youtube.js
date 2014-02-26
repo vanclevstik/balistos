@@ -152,6 +152,33 @@ function onYouTubeIframeAPIReady() {
     initPlayer();
 }
 
+function restorePlayer(){
+    if(playlist.firstVideoId() && playlist.firstVideoStart()){
+        $("title").text("Balistos - "+playlist.firstVideoTitle());
+        player = new YT.Player("player", {
+            height: "390",
+            width: "640",
+            videoId: playlist.firstVideoId(),
+            playerVars:{
+                controls:0,
+                showinfo:0,
+                start:parseInt(playlist.firstVideoStart()),
+                disablekb:1,
+                iv_load_policy:3,
+                wmode:"transparent",
+                rel:0
+            },
+            events: {
+                "onReady": onPlayerReady
+            }
+        });
+    }
+    else{
+        $("#player").text("No video currently in the queue.");
+        setTimeout(initPlayer,500);
+    }
+}
+
 
 function initPlayer(){
     if(!player){
