@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from balistos.models.clip import PlaylistClip
-from balistos.models.clip import PlaylistClipUser
-from balistos.models.playlist import Playlist
-from balistos.models.playlist import PlaylistUser
+"""Views for user authentication"""
 from balistos.models.user import User
-from datetime import datetime
 from passlib.hash import sha256_crypt
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
@@ -84,20 +79,20 @@ def register(request):
         Session.add(user)
         Session.flush()
         #XXX need to only make clips for public playlists
-        for playlist in Playlist.get_all():
-            playlist_user = PlaylistUser(
-                playlist=playlist,
-                user=user,
-                permission=2,
-                last_active=datetime.min,
-            )
-            Session.add(playlist_user)
-        for pclip in PlaylistClip.get_all():
-            pclipuser = PlaylistClipUser(
-                playlist_clip=pclip,
-                user=user
-            )
-            Session.add(pclipuser)
+        # for playlist in Playlist.get_all():
+        #     playlist_user = PlaylistUser(
+        #         playlist=playlist,
+        #         user=user,
+        #         permission=2,
+        #         last_active=datetime.min,
+        #     )
+        #     Session.add(playlist_user)
+        # for pclip in PlaylistClip.get_all():
+        #     pclipuser = PlaylistClipUser(
+        #         playlist_clip=pclip,
+        #         user=user
+        #     )
+        #     Session.add(pclipuser)
         msg = {'success': username}
         headers = remember(request, username)
         return Response(

@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
@@ -38,6 +39,12 @@ class Playlist(Base, BaseMixin):
         default=600
     )
 
+    public = Column(
+        Boolean,
+        nullable=False,
+        default=True
+    )
+
     @classmethod
     def get(self, uri):
         """Get a Playlist by uri."""
@@ -46,6 +53,17 @@ class Playlist(Base, BaseMixin):
             return None
 
         return result.one()
+
+    @classmethod
+    def search_title(self, search_string):
+        """Get Playlist by searching title."""
+        result = Playlist.query.filter(
+            Playlist.title.like(search_string),
+        )
+        if result.count() < 1:
+            return []
+
+        return result.all()
 
     @classmethod
     def get_all(class_, order_by='title', filter_by=None):
@@ -108,8 +126,19 @@ class PlaylistUser(Base, BaseMixin):
     )
 
     @classmethod
+    def get_by_playlist(self, playlist,):
+        """Get PlaylistClipUser by Playlist"""
+        result = PlaylistUser.query.filter(
+            PlaylistUser.playlist == playlist,
+        )
+        if result.count() < 1:
+            return []
+
+        return result.all()
+
+    @classmethod
     def get_by_playlist_and_user(self, playlist, user):
-        """Get PlaylistClipUser by PlaylistClip and User."""
+        """Get PlaylistClipUser by Playlist and User."""
         result = PlaylistUser.query.filter(
             PlaylistUser.playlist == playlist,
             PlaylistUser.user == user
@@ -124,7 +153,7 @@ class PlaylistUser(Base, BaseMixin):
         """Get a Playlist by uri."""
         result = PlaylistUser.query.filter(
             PlaylistUser.playlist == playlist,
-            PlaylistUser.last_active > datetime.now() - timedelta(0, 3)
+            PlaylistUser.last_active > datetime.now() - timedelta(0, 10)
         )
         if result.count() < 1:
             return []
