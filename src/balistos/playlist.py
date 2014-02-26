@@ -30,9 +30,13 @@ def get_playlist_videos(playlist, username=None):
         playlist_user.last_active = datetime.now()
     active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
-    if check_if_finished(active_pclip):
+    if not playlist.locked and check_if_finished(active_pclip):
+        playlist.locked = True
+        Session.flush()
         Session.delete(active_pclip)
         active_pclip, next_pclip = play_next_clip(playlist, next_pclip)
+        playlist.locked = False
+        Session.flush()
     if active_pclip:
         pclips.append(active_pclip)
     if next_pclip:

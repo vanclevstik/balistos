@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
+from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
@@ -36,6 +37,12 @@ class Playlist(Base, BaseMixin):
         Integer,
         nullable=False,
         default=600
+    )
+
+    locked = Column(
+        Boolean,
+        nullable=False,
+        default=False
     )
 
     @classmethod
