@@ -53,6 +53,7 @@ setup(
         'pyramid_tm',
         'SQLAlchemy',
         'transaction',
+        'unidecode',
         'zope.sqlalchemy',
     ],
     extras_require={

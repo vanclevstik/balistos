@@ -2,6 +2,7 @@
 """Clip model."""
 
 from balistos.models.playlist import Playlist
+from balistos.models.playlist import PlaylistUser
 from balistos.models.user import User
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
@@ -98,11 +99,11 @@ class PlaylistClip(Base, BaseMixin):
             started=started,
         )
         BaseMixin.__init__(self)
-        for user in User.get_all():
-            owner = user.username == username
+        for p_user in PlaylistUser.get_by_playlist(playlist):
+            owner = p_user.user.username == username
             Session.add(PlaylistClipUser(
                 liked=0,
-                user=user,
+                user=p_user.user,
                 playlist_clip=self,
                 owner=owner
             ))

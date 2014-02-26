@@ -297,3 +297,24 @@ def get_chat_messages(playlist):
             'message': chat_message.message
         })
     return messages
+
+
+def create_clips_for_user(playlist_user):
+    """
+    Create all playlistclipusers for playlist user
+
+    :param    playlist_user: playlist user we are making all playlist_clips for
+    :type     playlist_user: balistos.models.playlist.PlaylistUser
+
+    """
+    pclips = PlaylistClip.get_by_playlist(playlist_user.playlist)
+    for pclip in pclips:
+        if not PlaylistClipUser.get_by_playlist_clip_and_user(
+            pclip,
+            playlist_user.user
+                ):
+            pclipuser = PlaylistClipUser(
+                playlist_clip=pclip,
+                user=playlist_user.user
+            )
+            Session.add(pclipuser)
