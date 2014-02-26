@@ -28,7 +28,6 @@ def get_playlist_videos(playlist, username=None):
     if user:
         playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
         playlist_user.last_active = datetime.now()
-        Session.flush()
     active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
     if check_if_finished(active_pclip):
@@ -189,7 +188,6 @@ def add_playlist_clip(
             duration=duration,
         )
         Session.add(clip)
-        Session.flush()
     pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
     if not pclip:
         pclip = PlaylistClip(
@@ -201,7 +199,6 @@ def add_playlist_clip(
             username=username,
         )
         Session.add(pclip)
-        Session.flush()
         return pclip
     else:
         pclip.likes += 1
