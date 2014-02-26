@@ -232,9 +232,11 @@ def remove_playlist_clip(playlist, youtube_video_id):
     Session.delete(pclip)
 
     if state == 2:
-        play_next_clip(playlist)
+        next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
+        play_next_clip(playlist, next_pclip)
     elif state == 1:
-        set_next_in_queue(playlist, youtube_video_id)
+        active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
+        set_next_in_queue(playlist, active_pclip.clip.youtube_video_id)
     return True
 
 
