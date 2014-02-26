@@ -55,8 +55,9 @@ def main(request):
     youtube_assets.need()
     session = request.session
     username = authenticated_userid(request)
-    if not 'playlist' in session or not session['playlist']:
-        session['playlist'] = str(Playlist.get_all()[0].uri)
+    if not username or not 'playlist' in session or not session['playlist']:
+        url = request.route_url('home')
+        return HTTPFound(location=url)
     return {
         'username': username
     }
@@ -111,10 +112,13 @@ def set_playlist(request):
 
     balistos_assets.need()
     youtube_assets.need()
+    username = authenticated_userid(request)
+    if not username:
+        return HTTPNotFound()
     session = request.session
     playlist_uri = request.matchdict.get('playlist')
     playlist = Playlist.get(playlist_uri)
-    user = User.get_by_username(authenticated_userid(request))
+    user = User.get_by_username(username)
     playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
     if not playlist_user and not playlist.public:
         url = request.route_url('home')
@@ -129,9 +133,10 @@ def set_playlist(request):
         Session.add(playlist_user)
         create_clips_for_user(playlist_user)
 
-    session['playlist'] = request.matchdict.get('playlist')
-    return {}
-
+    session['playlist'] = playlist_uri
+    return {
+        'username': username
+    }
 
 @view_config(route_name='playlist_add_video')
 def playlist_add_video(request):
@@ -320,9 +325,9 @@ def search_playlists(request):
         return HTTPNotFound()
     # username = authenticated_userid(request)
     # user = User.get_by_username(username)
-    search_string = request.GET['search_string']
+    query = request.GET['query']
     playlists = []
-    for playlist in Playlist.search_title(search_string):
+    for playlist in Playlist.search_title(query):
         playlists.append({
             'uri': playlist.uri,
             'title': playlist.title
