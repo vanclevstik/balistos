@@ -222,8 +222,9 @@ class ChatMessage(Base, BaseMixin):
         """Get latest Chatmessages of playlist."""
         result = ChatMessage.query.filter(
             ChatMessage.playlist == playlist,
-        ).order_by('posted').limit(20)
+        ).order_by(
+            ChatMessage.posted.desc()).limit(20)
         if result.count() < 1:
             return []
 
-        return result.all()
+        return reversed(result.all())
