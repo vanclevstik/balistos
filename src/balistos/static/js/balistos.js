@@ -17,6 +17,41 @@
         $(".player").fadeIn();
         $("#hide-player").fadeIn();
     });
+
+    $(document).click(function(){
+        $('#response-playlist').hide();
+    });
+    $(document).on("click","#response-playlist",function(event){
+        event.stopPropagation();
+    });
+
+    $(document).on("click",".protected_playlist",function(event){
+        event.preventDefault();
+        $(this).parents("li").find("form").fadeToggle();
+    });
+
+    $(document).on("submit",".protected_playlist_form",function(event){
+        var uri=$(this).find("input").attr("data-uri");
+        var item=$(this).parents("li");
+        event.preventDefault();
+        $.ajax({
+            type: "GET",
+            url: "/authenticate_playlist",
+            dataType:"json",
+            data:{
+                "password":$(this).find("input").val(),
+                "uri":uri
+            }
+        }).done(function(data){
+            if(data.success){
+                window.location.href="/playlist/"+playlisturi;
+            }
+            else if(error){
+                item.find(".playlist_password_error").text(data.error);
+            }
+        });
+    });
+
     $("#search-playlist").keyup(function(){
         $.ajax({
             type: "GET",
@@ -33,13 +68,26 @@
             else{
                 $("#response-playlist").html("");
                 $.each(data, function( index, value ) {
-                    $("#response-playlist").append('<li><a href="/playlist/'+
-                        value.uri+'">'+value.title+'</a></li>');
+                    if(value){
+                        $("#response-playlist").append('<li><a href="'+
+                        '/playlist/'+value.uri+'" class="protected_playlist">'+
+                        value.title+'</a><form class="protected_playlist_form"'+
+                        'style="display:none"><input data-uri="'+value.uri+
+                        '" type="text" class="form-control" placeholder="Enter'+
+                        'playlist password" /><button type="submit">Join'+
+                        '</button></form><div class="playlist_password_error">'+
+                        '</div></li>');
+                    }
+                    else{
+                        $("#response-playlist").append('<li><a href="'+
+                        '/playlist/'+value.uri+'">'+value.title+'</a></li>');
+                    }
                 });
                 $("#response-playlist").show();
             }
         });
     });
+
 
     $("form#login-form").on("submit",function(event){
         event.preventDefault();
@@ -156,6 +204,10 @@
         $(this).find("input").val("");
         return false;
 
+    });
+
+    $("#password_check").change(function(){
+        $("#playlist_password").fadeToggle();
     });
 
 

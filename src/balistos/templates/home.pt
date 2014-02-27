@@ -1,7 +1,7 @@
 <metal:block metal:use-macro="main_template">
     <div metal:fill-slot="content" id="content">
         <div class="col-lg-8">
-            <div class="row">
+            <div class="row playlist-search">
                 <h2>Search playlists</h2>
                 <input type="text" id="search-playlist" class="form-control" placeholder="Playlist's unique tag"/>
                 <ul class="dropdown-menu autocomplete search-playlist" id="response-playlist"></ul>
@@ -9,14 +9,16 @@
 
             <div class="row logged-in" id="create-playlist" tal:attributes="style python: 'display:none' if not username else ''">
                 <h2>Create playlist</h2>
-                <form action="/create_playlist" method="POST">
-                    <input type="text" name="create-playlist-name" class="form-control" placeholder="Playlist's name"/>
-                    <input type="text" name="create-playlist-tag" class="form-control" placeholder="Playlist's unique tag"/>
+                <form action="/create_playlist" method="POST" id="create_playlist">
+                    <input type="text" name="title" class="form-control" placeholder="Playlist title"/>
+                    <input type="text" name="description" class="form-control" placeholder="Playlist short description"/>
                     <div class="form-group">
-                        <label>Setting 1<input type="checkbox" name="settings1" /></label>
-                        <label>Setting 2<input type="checkbox" name="settings2" /></label>
-                        <label>Setting 3<input type="checkbox" name="settings3" /></label>
-                        <label>Setting 4<input type="checkbox" name="settings4" /></label>
+                        <label>Public <input type="checkbox" name="public" checked /></label><br>
+                        <label>Max video duration in seconds <input class="form-control" type="text" name="duration_limit" /></label><br>
+                        <label>Password protected
+                            <input  id="password_check" type="checkbox" name="playlist_protected"  />
+                            <input type="text" class="form-control" name="playlist_password" id="playlist_password" style="display:none;">
+                        </label>
                     </div>
                     <button type="submit" class="btn btn-info">Create</button>
                 <form>

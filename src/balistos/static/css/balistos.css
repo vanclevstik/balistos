@@ -259,3 +259,6 @@ ul.autocomplete li .title{
 .copyright{
     float:left;
 }
+.playlist-search{
+    position:relative;
+}
