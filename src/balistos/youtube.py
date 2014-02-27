@@ -46,7 +46,7 @@ def select_video(videos, max_seconds=600):
     if not videos:
         return None
     video = videos[randrange(len(videos)-1)]
-    title = unicode(video.title.text)
+    title = video.title.text
     image_url = video.media.thumbnail[0].url
     duration = video.media.duration.seconds
     youtube_video_id = video.id.text.split('/')[-1]

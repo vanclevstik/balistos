@@ -179,7 +179,7 @@ class PlaylistClip(Base, BaseMixin):
         result = PlaylistClip.query.filter_by(playlist=playlist)
 
         if result.count() < 1:
-            return None
+            return []
 
         return result.all()
 

@@ -63,8 +63,9 @@ class Playlist(Base, BaseMixin):
     @classmethod
     def search_title(self, search_string):
         """Get Playlist by searching title."""
+        search_string = '%' + search_string + '%'
         result = Playlist.query.filter(
-            Playlist.title.like(search_string),
+            Playlist.title.ilike(search_string),
         )
         if result.count() < 1:
             return []

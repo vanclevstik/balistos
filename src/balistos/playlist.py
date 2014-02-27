@@ -29,7 +29,14 @@ def get_playlist_videos(playlist, username=None):
         playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
         playlist_user.last_active = datetime.now()
     active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
+    if not active_pclip:
+        return []
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
+    if not next_pclip:
+        next_pclip = set_next_in_queue(
+            playlist,
+            active_pclip.clip.youtube_video_id
+        )
     if not playlist.locked and check_if_finished(active_pclip):
         playlist.locked = True
         Session.flush()
@@ -37,12 +44,14 @@ def get_playlist_videos(playlist, username=None):
         active_pclip, next_pclip = play_next_clip(playlist, next_pclip)
         playlist.locked = False
         Session.flush()
-    if active_pclip:
-        pclips.append(active_pclip)
+    pclips.append(active_pclip)
     if next_pclip:
         pclips.append(next_pclip)
     else:
-        pclips.append(set_next_in_queue(playlist))
+        pclips.append(set_next_in_queue(
+            playlist,
+            active_pclip.clip.youtube_video_id)
+        )
     wait_clips = PlaylistClip.get_by_playlist_waiting(playlist)
     if wait_clips:
         pclips = pclips + wait_clips
@@ -194,6 +203,10 @@ def add_playlist_clip(
         Session.add(clip)
     pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
     if not pclip:
+        started = datetime.min
+        if not PlaylistClip.get_active_playlist_clip(playlist):
+            state = 2
+            started = datetime.now()
         pclip = PlaylistClip(
             added=datetime.now(),
             likes=0,
@@ -201,6 +214,7 @@ def add_playlist_clip(
             clip=clip,
             playlist=playlist,
             username=username,
+            started=started,
         )
         Session.add(pclip)
         return pclip

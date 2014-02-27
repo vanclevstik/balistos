@@ -116,8 +116,10 @@ def set_playlist(request):
     if not username:
         return HTTPNotFound()
     session = request.session
-    playlist_uri = request.matchdict.get('playlist')
+    playlist_uri = request.matchdict.get('playlist', None)
     playlist = Playlist.get(playlist_uri)
+    if not playlist:
+        return HTTPNotFound()
     user = User.get_by_username(username)
     playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
     if not playlist_user and not playlist.public:
@@ -263,7 +265,8 @@ def chat_message(request):
 
 
 @view_config(
-    route_name='create_playlist'
+    route_name='create_playlist',
+    permission='user',
 )
 def create_playlist(request):
     """
@@ -274,15 +277,13 @@ def create_playlist(request):
     :returns: success if playlist was added correctly, error otherwise
     :rtype:   pyramid.response.Response
     """
-    if not request.is_xhr:
-        return HTTPNotFound()
     username = authenticated_userid(request)
-    if not username:
-        return Response()
     user = User.get_by_username(username)
-    title = request.GET['title']
-    duration_limit = int(request.GET['duration_limit']) or 600
-    public = request.GET['public'] or True
+    title = request.GET.get('title', None)
+    if not title:
+        return HTTPNotFound()
+    duration_limit = int(request.GET.get('duration_limit', 600))
+    public = request.GET.get('public', True)
     uri = normalized_id(title)
     count = 1
     while Playlist.get(uri):
@@ -303,10 +304,8 @@ def create_playlist(request):
     )
     Session.add(playlist_user)
     create_clips_for_user(playlist_user)
-    return Response(
-        body=json.dumps({'success': 'Succesfully created'}),
-        content_type='application/json'
-    )
+    url = request.route_url('set_playlist', playlist=uri)
+    return HTTPFound(location=url)
 
 
 @view_config(
