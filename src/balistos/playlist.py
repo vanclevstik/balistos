@@ -22,7 +22,6 @@ def get_playlist_videos(playlist, username=None):
     :returns: dict for each clip that is part of playlist
     :rtype:   list of dicts
     """
-    result = []
     pclips = []
     user = User.get_by_username(username)
     if user:
@@ -37,13 +36,14 @@ def get_playlist_videos(playlist, username=None):
             playlist,
             active_pclip.clip.youtube_video_id
         )
-    if not playlist.locked and check_if_finished(active_pclip):
-        playlist.locked = True
-        Session.flush()
-        Session.delete(active_pclip)
-        active_pclip, next_pclip = play_next_clip(playlist, next_pclip)
-        playlist.locked = False
-        Session.flush()
+    if check_if_finished(active_pclip):
+        try:
+            Session.delete(active_pclip)
+            a, b = play_next_clip(playlist, next_pclip)
+            Session.flush()
+            active_pclip, next_pclip = a, b
+        except:
+            pass
     pclips.append(active_pclip)
     if next_pclip:
         pclips.append(next_pclip)
@@ -55,6 +55,21 @@ def get_playlist_videos(playlist, username=None):
     wait_clips = PlaylistClip.get_by_playlist_waiting(playlist)
     if wait_clips:
         pclips = pclips + wait_clips
+
+    return get_clips_information(user, pclips)
+
+
+def get_clips_information(user, pclips):
+    """"
+    Get information about clips to return to view
+
+    :param    pclips: [pclips description]
+    :type     pclips: [pclips type]
+
+    :returns: [return description]
+    :rtype:   [return type]
+    """
+    result = []
     for pclip in pclips:
         clip = pclip.clip
         if pclip.state == 2:
