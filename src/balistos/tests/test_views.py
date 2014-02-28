@@ -39,4 +39,4 @@ class TestHomeFunctional(unittest.TestCase):
 
     def test_home(self):
         res = self.testapp.get('/home', status=200)
-        self.assertIn(u'Join playlist', res.body)
+        self.assertIn(u'Search playlist', res.body)

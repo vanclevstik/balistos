@@ -2,6 +2,7 @@
 """Clip model."""
 
 from balistos.models.playlist import Playlist
+from balistos.models.playlist import PlaylistUser
 from balistos.models.user import User
 from pyramid_basemodel import Base
 from pyramid_basemodel import BaseMixin
@@ -15,6 +16,7 @@ from sqlalchemy import String
 from sqlalchemy import Unicode
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
+from sqlalchemy import Index
 
 
 class Clip(Base, BaseMixin):
@@ -98,11 +100,11 @@ class PlaylistClip(Base, BaseMixin):
             started=started,
         )
         BaseMixin.__init__(self)
-        for user in User.get_all():
-            owner = user.username == username
+        for p_user in PlaylistUser.get_by_playlist(playlist):
+            owner = p_user.user.username == username
             Session.add(PlaylistClipUser(
                 liked=0,
-                user=user,
+                user=p_user.user,
                 playlist_clip=self,
                 owner=owner
             ))
@@ -178,7 +180,7 @@ class PlaylistClip(Base, BaseMixin):
         result = PlaylistClip.query.filter_by(playlist=playlist)
 
         if result.count() < 1:
-            return None
+            return []
 
         return result.all()
 
@@ -230,6 +232,15 @@ class PlaylistClip(Base, BaseMixin):
             return None
 
         return result.all()
+
+Index(
+    'playlist_clip_index_active',
+    PlaylistClip.state, postgresql_where=PlaylistClip.state == 2
+)
+Index(
+    'playlist_clip_index_next',
+    PlaylistClip.state, postgresql_where=PlaylistClip.state == 1
+)
 
 
 class PlaylistClipUser(Base, BaseMixin):

@@ -22,30 +22,54 @@ def get_playlist_videos(playlist, username=None):
     :returns: dict for each clip that is part of playlist
     :rtype:   list of dicts
     """
-    result = []
     pclips = []
     user = User.get_by_username(username)
     if user:
         playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
         playlist_user.last_active = datetime.now()
     active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
+    if not active_pclip:
+        return []
     next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
-    if not playlist.locked and check_if_finished(active_pclip):
-        playlist.locked = True
-        Session.flush()
-        Session.delete(active_pclip)
-        active_pclip, next_pclip = play_next_clip(playlist, next_pclip)
-        playlist.locked = False
-        Session.flush()
-    if active_pclip:
-        pclips.append(active_pclip)
+    if not next_pclip:
+        next_pclip = set_next_in_queue(
+            playlist,
+            active_pclip.clip.youtube_video_id
+        )
+    if check_if_finished(active_pclip):
+        try:
+            Session.delete(active_pclip)
+            a, b = play_next_clip(playlist, next_pclip)
+            Session.flush()
+            active_pclip, next_pclip = a, b
+        except:
+            pass
+    pclips.append(active_pclip)
     if next_pclip:
         pclips.append(next_pclip)
     else:
-        pclips.append(set_next_in_queue(playlist))
+        pclips.append(set_next_in_queue(
+            playlist,
+            active_pclip.clip.youtube_video_id)
+        )
     wait_clips = PlaylistClip.get_by_playlist_waiting(playlist)
     if wait_clips:
         pclips = pclips + wait_clips
+
+    return get_clips_information(user, pclips)
+
+
+def get_clips_information(user, pclips):
+    """"
+    Get information about clips to return to view
+
+    :param    pclips: [pclips description]
+    :type     pclips: [pclips type]
+
+    :returns: [return description]
+    :rtype:   [return type]
+    """
+    result = []
     for pclip in pclips:
         clip = pclip.clip
         if pclip.state == 2:
@@ -194,6 +218,10 @@ def add_playlist_clip(
         Session.add(clip)
     pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
     if not pclip:
+        started = datetime.min
+        if not PlaylistClip.get_active_playlist_clip(playlist):
+            state = 2
+            started = datetime.now()
         pclip = PlaylistClip(
             added=datetime.now(),
             likes=0,
@@ -201,6 +229,7 @@ def add_playlist_clip(
             clip=clip,
             playlist=playlist,
             username=username,
+            started=started,
         )
         Session.add(pclip)
         return pclip
@@ -297,3 +326,24 @@ def get_chat_messages(playlist):
             'message': chat_message.message
         })
     return messages
+
+
+def create_clips_for_user(playlist_user):
+    """
+    Create all playlistclipusers for playlist user
+
+    :param    playlist_user: playlist user we are making all playlist_clips for
+    :type     playlist_user: balistos.models.playlist.PlaylistUser
+
+    """
+    pclips = PlaylistClip.get_by_playlist(playlist_user.playlist)
+    for pclip in pclips:
+        if not PlaylistClipUser.get_by_playlist_clip_and_user(
+            pclip,
+            playlist_user.user
+                ):
+            pclipuser = PlaylistClipUser(
+                playlist_clip=pclip,
+                user=playlist_user.user
+            )
+            Session.add(pclipuser)

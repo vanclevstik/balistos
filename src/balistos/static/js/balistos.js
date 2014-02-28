@@ -5,13 +5,97 @@
     "use strict";
 
 
+    $("#hide-player").click(function(){
+        $(this).hide();
+        $(".player").hide();
+        player.destroy();
+        $("#show-player").fadeIn();
+    });
+    $("#show-player").click(function(){
+        $(this).hide();
+        restorePlayer();
+        $(".player").fadeIn();
+        $("#hide-player").fadeIn();
+    });
+
+    $(document).click(function(){
+        $('#response-playlist').hide();
+    });
+    $(document).on("click","#response-playlist",function(event){
+        event.stopPropagation();
+    });
+
+    $(document).on("click",".protected_playlist",function(event){
+        event.preventDefault();
+        $(this).parents("li").find("form").fadeToggle();
+    });
+
+    $(document).on("submit",".protected_playlist_form",function(event){
+        var uri=$(this).find("input").attr("data-uri");
+        var item=$(this).parents("li");
+        event.preventDefault();
+        $.ajax({
+            type: "GET",
+            url: "/authenticate_playlist",
+            dataType:"json",
+            data:{
+                "password":$(this).find("input").val(),
+                "uri":uri
+            }
+        }).done(function(data){
+            if(data.success){
+                window.location.href="/playlist/"+playlisturi;
+            }
+            else if(error){
+                item.find(".playlist_password_error").text(data.error);
+            }
+        });
+    });
+
+    $("#search-playlist").keyup(function(){
+        $.ajax({
+            type: "GET",
+            url: "/search_playlists",
+            dataType:"json",
+            data:{
+                "query":$(this).val()
+            }
+        }).done(function(data){
+            if(data.length<1){
+                $("#response-playlist").html('No results for this query...');
+                $("#response-playlist").show();
+            }
+            else{
+                $("#response-playlist").html("");
+                $.each(data, function( index, value ) {
+                    if(value){
+                        $("#response-playlist").append('<li><a href="'+
+                        '/playlist/'+value.uri+'" class="protected_playlist">'+
+                        value.title+'</a><form class="protected_playlist_form"'+
+                        'style="display:none"><input data-uri="'+value.uri+
+                        '" type="text" class="form-control" placeholder="Enter'+
+                        'playlist password" /><button type="submit">Join'+
+                        '</button></form><div class="playlist_password_error">'+
+                        '</div></li>');
+                    }
+                    else{
+                        $("#response-playlist").append('<li><a href="'+
+                        '/playlist/'+value.uri+'">'+value.title+'</a></li>');
+                    }
+                });
+                $("#response-playlist").show();
+            }
+        });
+    });
+
+
     $("form#login-form").on("submit",function(event){
         event.preventDefault();
         if($(this).find("input[name='login-username']").val().length<5 ||
          $(this).find("input[name='login-password']").val().length<5){
             $("#login-message")
                 .text("Your username or password is too short.")
-                .show();
+                .fadeIn();
             setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
         }
         else{
@@ -37,8 +121,8 @@
                     $("#username-string").text(response.success);
                     $(".not-logged-in").hide();
                     $("#hidden-search").hide();
-                    $("#search").slideDown(1000);
-                    $(".logged-in").slideDown(1000);
+                    $("#search").fadeIn(1000);
+                    $(".logged-in").fadeIn(1000);
                 }
             });
         }
@@ -93,8 +177,8 @@
                         $("#username-string").text(response.success);
                         $(".not-logged-in").hide();
                         $("#hidden-search").hide();
-                        $("#search").slideDown(1000);
-                        $(".logged-in").slideDown(1000);
+                        $("#search").fadeIn(1000);
+                        $(".logged-in").fadeIn(1000);
                     }
                 });
             }
@@ -120,6 +204,10 @@
         $(this).find("input").val("");
         return false;
 
+    });
+
+    $("#password_check").change(function(){
+        $("#playlist_password").fadeToggle();
     });
 
 

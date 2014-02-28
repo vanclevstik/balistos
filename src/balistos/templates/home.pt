@@ -1,27 +1,50 @@
 <metal:block metal:use-macro="main_template">
     <div metal:fill-slot="content" id="content">
-        <div class="row">
-            <h2>Join playlist</h2>
-            <form action="/join_playlist" method="POST">
-                <input type="text" name="join-playlist" class="form-control" placeholder="Playlist's unique tag"/>
-                 <label>I want to see the video<input type="checkbox" name="join-player" /></label>
-                <button type="submit" class="btn btn-info">Join</button>
-            <form>
-        </div>
+        <div class="col-lg-8">
+            <div class="row playlist-search">
+                <h2>Search playlists</h2>
+                <input type="text" id="search-playlist" class="form-control" placeholder="Playlist's unique tag"/>
+                <ul class="dropdown-menu autocomplete search-playlist" id="response-playlist"></ul>
+            </div>
 
-        <div class="row logged-in" id="create-playlist" tal:attributes="style python: 'display:none' if not username else ''">
-            <h2>Create playlist</h2>
-            <form action="/create_playlist" method="POST">
-                <input type="text" name="create-playlist-name" class="form-control" placeholder="Playlist's name"/>
-                <input type="text" name="create-playlist-tag" class="form-control" placeholder="Playlist's unique tag"/>
-                <div class="form-group">
-                    <label>Setting 1<input type="checkbox" name="settings1" /></label>
-                    <label>Setting 2<input type="checkbox" name="settings2" /></label>
-                    <label>Setting 3<input type="checkbox" name="settings3" /></label>
-                    <label>Setting 4<input type="checkbox" name="settings4" /></label>
+            <div class="row logged-in" id="create-playlist" tal:attributes="style python: 'display:none' if not username else ''">
+                <h2>Create playlist</h2>
+                <form action="/create_playlist" method="POST" id="create_playlist">
+                    <input type="text" name="title" class="form-control" placeholder="Playlist title"/>
+                    <input type="text" name="description" class="form-control" placeholder="Playlist short description"/>
+                    <div class="form-group">
+                        <label>Public <input type="checkbox" name="public" checked /></label><br>
+                        <label>Max video duration in seconds <input class="form-control" type="text" name="duration_limit" /></label><br>
+                        <label>Password protected
+                            <input  id="password_check" type="checkbox" name="playlist_protected"  />
+                            <input type="text" class="form-control" name="playlist_password" id="playlist_password" style="display:none;">
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-info">Create</button>
+                <form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div clas="row logged-in" tal:attributes="style python: 'display:none' if not username else ''">
+                <div class="sidebox">
+                    <div class="header" >Your recent playlists</div>
+                    <ul data-bind="foreach: users" class="content">
+                        <li class="user">
+                            <div class="username" data-bind="text: username"></div>
+                        </li>
+                    </ul>
                 </div>
-                <button type="submit" class="btn btn-info">Create</button>
-            <form>
+            </div>
+            <div clas="row">
+                <div class="sidebox">
+                    <div class="header" >Popular playlists</div>
+                    <ul class="content">
+                        <li class="user"><a href="/playlist/123">Playlist for veseljaks</a></li>
+                        <li class="user"><a href="/playlist/231">Playlist for pederos</a></li>
+                        <li class="user"><a href="/playlist/21">Rainbow maistors</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </metal:block>

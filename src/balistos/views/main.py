@@ -6,6 +6,7 @@ from balistos.models.clip import PlaylistClip
 from balistos.models.clip import PlaylistClipUser
 from balistos.models.user import User
 from balistos.models.playlist import Playlist
+from balistos.models.playlist import PlaylistUser
 from balistos.playlist import add_playlist_clip
 from balistos.playlist import add_chat_message
 from balistos.playlist import get_playlist_videos
@@ -13,13 +14,17 @@ from balistos.playlist import remove_playlist_clip
 from balistos.playlist import get_playlist_settings
 from balistos.playlist import get_active_users
 from balistos.playlist import get_chat_messages
+from balistos.playlist import create_clips_for_user
 from balistos.static import balistos_assets
 from balistos.static import youtube_assets
+from balistos.utils import normalized_id
+from datetime import datetime
+from pyramid_basemodel import Session
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.security import authenticated_userid
 from pyramid.view import view_config
-
+from pyramid.httpexceptions import HTTPFound
 
 import json
 import isodate
@@ -50,8 +55,9 @@ def main(request):
     youtube_assets.need()
     session = request.session
     username = authenticated_userid(request)
-    if not 'playlist' in session or not session['playlist']:
-        session['playlist'] = str(Playlist.get_all()[0].uri)
+    if not username or not 'playlist' in session or not session['playlist']:
+        url = request.route_url('home')
+        return HTTPFound(location=url)
     return {
         'username': username
     }
@@ -90,6 +96,7 @@ def playlist_videos(request):
 @view_config(
     route_name='set_playlist',
     renderer='balistos:templates/main.pt',
+    permission='user',
     layout='default',
 )
 def set_playlist(request):
@@ -105,9 +112,33 @@ def set_playlist(request):
 
     balistos_assets.need()
     youtube_assets.need()
+    username = authenticated_userid(request)
+    if not username:
+        return HTTPNotFound()
     session = request.session
-    session['playlist'] = request.matchdict.get('playlist')
-    return {}
+    playlist_uri = request.matchdict.get('playlist', None)
+    playlist = Playlist.get(playlist_uri)
+    if not playlist:
+        return HTTPNotFound()
+    user = User.get_by_username(username)
+    playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+    if not playlist_user and not playlist.public:
+        url = request.route_url('home')
+        return HTTPFound(location=url)
+    if not playlist_user:
+        playlist_user = PlaylistUser(
+            playlist=playlist,
+            user=user,
+            permission=2,
+            last_active=datetime.now(),
+        )
+        Session.add(playlist_user)
+        create_clips_for_user(playlist_user)
+
+    session['playlist'] = playlist_uri
+    return {
+        'username': username
+    }
 
 
 @view_config(route_name='playlist_add_video')
@@ -219,7 +250,6 @@ def chat_message(request):
 
     :param    request: current request
     :type     request: pyramid.request.Request
-
     :returns: success if video was remove correctly, error otherwise
     :rtype:   pyramid.response.Response
     """
@@ -232,3 +262,107 @@ def chat_message(request):
     playlist = Playlist.get(request.session['playlist'])
     add_chat_message(playlist, username, message)
     return Response()
+
+
+@view_config(
+    route_name='create_playlist',
+    permission='user',
+)
+def create_playlist(request):
+    """
+    Add new playlist
+    :param    request: current request
+    :type     request: pyramid.request.Request
+
+    :returns: success if playlist was added correctly, error otherwise
+    :rtype:   pyramid.response.Response
+    """
+    username = authenticated_userid(request)
+    user = User.get_by_username(username)
+    title = request.GET.get('title', None)
+    if not title:
+        return HTTPNotFound()
+    duration_limit = int(request.GET.get('duration_limit', 600))
+    public = request.GET.get('public', True)
+    uri = normalized_id(title)
+    count = 1
+    while Playlist.get(uri):
+        uri = uri + str(count)
+        count += 1
+    playlist = Playlist(
+        uri=uri,
+        title=title,
+        duration_limit=duration_limit,
+        public=public,
+    )
+    Session.add(playlist)
+    playlist_user = PlaylistUser(
+        playlist=playlist,
+        user=user,
+        permission=3,
+        last_active=datetime.now(),
+    )
+    Session.add(playlist_user)
+    create_clips_for_user(playlist_user)
+    url = request.route_url('set_playlist', playlist=uri)
+    return HTTPFound(location=url)
+
+
+@view_config(
+    route_name='search_playlists'
+)
+def search_playlists(request):
+    """
+    Search and return playlists with similar name
+
+    :param    request: current request
+    :type     request: pyramid.request.Request
+
+    :returns: playlists that search returned
+    :rtype:   list of dicts
+    """
+    if not request.is_xhr:
+        return HTTPNotFound()
+    # username = authenticated_userid(request)
+    # user = User.get_by_username(username)
+    query = request.GET['query']
+    playlists = []
+    for playlist in Playlist.search_title(query):
+        playlists.append({
+            'uri': playlist.uri,
+            'title': playlist.title
+        })
+
+    return Response(
+        body=json.dumps(playlists),
+        content_type='application/json'
+    )
+
+
+@view_config(
+    route_name='add_user_to_playlist'
+)
+def add_user_to_playlist(request):
+    """
+    Adds user as member of playlist
+
+    :param    request: current request
+    :type     request: pyramid.request.Request
+    """
+    if not request.is_xhr:
+        return HTTPNotFound()
+    username = request.GET['username']
+    playlist = request.GET['playlist']
+    user = User.get_by_username(username)
+    playlist_user = PlaylistUser(
+        playlist=playlist,
+        user=user,
+        permission=2,
+        last_active=datetime.now(),
+    )
+    Session.add(playlist_user)
+    create_clips_for_user(playlist_user)
+    return Response(
+        body=json.dumps({'success': 'Succesfully added user'}),
+        content_type='application/json'
+    )

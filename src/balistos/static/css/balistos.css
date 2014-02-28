@@ -79,6 +79,10 @@ ul.autocomplete{
     overflow-y: scroll;
     height: 428px;
 }
+ul.autocomplete.search-playlist{
+    height:auto;
+    overflow:visible;
+}
 ul.autocomplete li{
     width:100%;
     padding:1px 10px;
@@ -254,4 +258,7 @@ ul.autocomplete li .title{
 }
 .copyright{
     float:left;
+}
+.playlist-search{
+    position:relative;
 }
