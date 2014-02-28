@@ -252,7 +252,7 @@ class TestPlaylistClip(unittest.TestCase):
         from balistos.models.playlist import Playlist
 
         playlist = Playlist(uri='test', title=u'Test')
-        self.assertIsNone(PlaylistClip.get_by_playlist(playlist))
+        self.assertEqual([], PlaylistClip.get_by_playlist(playlist))
 
     def test_pclip_get_all_filter_by(self):
         from balistos.models.clip import PlaylistClip
