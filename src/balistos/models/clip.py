@@ -233,13 +233,20 @@ class PlaylistClip(Base, BaseMixin):
 
         return result.all()
 
+
 Index(
     'playlist_clip_index_active',
-    PlaylistClip.state, postgresql_where=PlaylistClip.state == 2
+    PlaylistClip.playlist_id,
+    postgresql_where=PlaylistClip.state == 2,
+    unique=True,
 )
+
+
 Index(
     'playlist_clip_index_next',
-    PlaylistClip.state, postgresql_where=PlaylistClip.state == 1
+    PlaylistClip.playlist_id,
+    postgresql_where=PlaylistClip.state == 1,
+    unique=True,
 )
 
 
