@@ -89,6 +89,9 @@ def main(argv=sys.argv):
     if not db_url:
         print 'DATABASE_URL not set, using default SQLite db.'  # noqa
         db_url = 'sqlite:///./balistos-app.db'
+    else:
+        # import on production (postgresql)
+        import balistos.models.postgres_indexes  # noqa
 
     settings = {'sqlalchemy.url': db_url}
     engine = engine_from_config(settings, 'sqlalchemy.')
@@ -96,7 +99,6 @@ def main(argv=sys.argv):
     Base.metadata.create_all(engine)
 
     insert_data()
-
     print 'DB populated with dummy data: {0}'.format(db_url)  # noqa
 
 

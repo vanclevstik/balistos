@@ -16,7 +16,6 @@ from sqlalchemy import String
 from sqlalchemy import Unicode
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
-from sqlalchemy import Index
 
 
 class Clip(Base, BaseMixin):
@@ -232,22 +231,6 @@ class PlaylistClip(Base, BaseMixin):
             return None
 
         return result.all()
-
-
-Index(
-    'playlist_clip_index_active',
-    PlaylistClip.playlist_id,
-    postgresql_where=PlaylistClip.state == 2,
-    unique=True,
-)
-
-
-Index(
-    'playlist_clip_index_next',
-    PlaylistClip.playlist_id,
-    postgresql_where=PlaylistClip.state == 1,
-    unique=True,
-)
 
 
 class PlaylistClipUser(Base, BaseMixin):
