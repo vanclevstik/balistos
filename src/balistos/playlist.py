@@ -27,6 +27,7 @@ def get_playlist_videos(playlist, username=None):
     if user:
         playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
         playlist_user.last_active = datetime.now()
+        Session.flush()
     active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
     if not active_pclip:
         return []
