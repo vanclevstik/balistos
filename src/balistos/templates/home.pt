@@ -24,6 +24,7 @@
                 <form>
             </div>
         </div>
+
         <div class="col-lg-4">
             <div clas="row logged-in" tal:attributes="style python: 'display:none' if not username else ''">
                 <div class="sidebox">
@@ -35,6 +36,7 @@
                     </ul>
                 </div>
             </div>
+
             <div clas="row">
                 <div class="sidebox">
                     <div class="header" >Popular playlists</div>
