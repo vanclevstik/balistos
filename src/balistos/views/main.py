@@ -74,7 +74,7 @@ def playlist_videos(request):
     :returns: json listing all videos as http response
     :rtype:   pyramid.response.Response
     """
-    if not request.is_xhr:
+    if not request.is_xhr or not 'playlist' in request.session:
         return HTTPNotFound()
     playlist = Playlist.get(request.session['playlist'])
     username = authenticated_userid(request)
@@ -118,9 +118,10 @@ def set_playlist(request):
     session = request.session
     playlist_uri = request.matchdict.get('playlist', None)
     playlist = Playlist.get(playlist_uri)
-    if not playlist:
-        return HTTPNotFound()
     user = User.get_by_username(username)
+    if not playlist or not user:
+        return HTTPNotFound()
+
     playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
     if not playlist_user and not playlist.public:
         url = request.route_url('home')

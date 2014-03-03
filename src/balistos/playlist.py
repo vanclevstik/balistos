@@ -11,6 +11,8 @@ from balistos.models.clip import Clip
 from balistos.models.user import User
 from pyramid_basemodel import Session
 
+import transaction
+
 
 def get_playlist_videos(playlist, username=None):
     """
@@ -39,20 +41,12 @@ def get_playlist_videos(playlist, username=None):
         )
     if check_if_finished(active_pclip):
         try:
-            Session.delete(active_pclip)
-            a, b = play_next_clip(playlist, next_pclip)
-            Session.flush()
+            a, b = play_next_clip(playlist, active_pclip, next_pclip)
             active_pclip, next_pclip = a, b
-        except:
-            pass
+        except Exception:
+            transaction.abort()
     pclips.append(active_pclip)
-    if next_pclip:
-        pclips.append(next_pclip)
-    else:
-        pclips.append(set_next_in_queue(
-            playlist,
-            active_pclip.clip.youtube_video_id)
-        )
+    pclips.append(next_pclip)
     wait_clips = PlaylistClip.get_by_playlist_waiting(playlist)
     if wait_clips:
         pclips = pclips + wait_clips
@@ -117,7 +111,7 @@ def get_playlist_settings(playlist, username=None):
     }
 
 
-def play_next_clip(playlist, next_pclip):
+def play_next_clip(playlist, active_pclip, next_pclip):
     """
     Play next clip (clip in queue) in playlist
 
@@ -125,13 +119,18 @@ def play_next_clip(playlist, next_pclip):
     :type     playlist: balistos.models.playlist.Playlist
     """
     if next_pclip:
-        next_pclip.state = 2
-        next_pclip.started = datetime.now()
+        youtube_video_id = next_pclip.clip.youtube_video_id
+        Session.delete(active_pclip)
+        Session.flush()
         active_pclip = next_pclip
+        active_pclip.state = 2
+        active_pclip.started = datetime.now()
+        Session.flush()
         next_pclip = set_next_in_queue(
             playlist,
-            next_pclip.clip.youtube_video_id
+            youtube_video_id,
         )
+        Session.flush()
         return active_pclip, next_pclip
 
 
@@ -149,7 +148,6 @@ def check_if_finished(pclip):
     duration = pclip.clip.duration
     started = pclip.started
     if (datetime.now()-started).total_seconds() > duration:
-        Session.delete(pclip)
         return True
     return False
 
@@ -173,6 +171,7 @@ def set_next_in_queue(playlist, youtube_video_id):
             video['image_url'],
             video['youtube_video_id'],
             video['duration'],
+            username='related',
             state=1,
         )
     return queue_video
@@ -220,9 +219,6 @@ def add_playlist_clip(
     pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
     if not pclip:
         started = datetime.min
-        if not PlaylistClip.get_active_playlist_clip(playlist):
-            state = 2
-            started = datetime.now()
         pclip = PlaylistClip(
             added=datetime.now(),
             likes=0,
@@ -263,7 +259,7 @@ def remove_playlist_clip(playlist, youtube_video_id):
 
     if state == 2:
         next_pclip = PlaylistClip.get_queue_playlist_clip(playlist)
-        play_next_clip(playlist, next_pclip)
+        play_next_clip(playlist, pclip, next_pclip)
     elif state == 1:
         active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
         set_next_in_queue(playlist, active_pclip.clip.youtube_video_id)

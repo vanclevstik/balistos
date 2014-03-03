@@ -220,7 +220,7 @@ class PlaylistClip(Base, BaseMixin):
     @classmethod
     def get_by_playlist_waiting(self, playlist):
         """Get all PlaylistClip that are not active or next in queue."""
-        result = result = PlaylistClip.query.filter(
+        result = PlaylistClip.query.filter(
             PlaylistClip.playlist == playlist,
             PlaylistClip.state == 0,
         ).order_by(
