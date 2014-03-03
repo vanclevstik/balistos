@@ -44,6 +44,7 @@ setup(
         'js.deform',
         'js.jquery',
         'passlib',
+        'psycopg2',
         'pyramid',
         'pyramid_basemodel',
         'pyramid_debugtoolbar',

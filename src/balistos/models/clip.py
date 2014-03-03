@@ -16,7 +16,6 @@ from sqlalchemy import String
 from sqlalchemy import Unicode
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
-from sqlalchemy import Index
 
 
 class Clip(Base, BaseMixin):
@@ -221,7 +220,7 @@ class PlaylistClip(Base, BaseMixin):
     @classmethod
     def get_by_playlist_waiting(self, playlist):
         """Get all PlaylistClip that are not active or next in queue."""
-        result = result = PlaylistClip.query.filter(
+        result = PlaylistClip.query.filter(
             PlaylistClip.playlist == playlist,
             PlaylistClip.state == 0,
         ).order_by(
@@ -232,15 +231,6 @@ class PlaylistClip(Base, BaseMixin):
             return None
 
         return result.all()
-
-Index(
-    'playlist_clip_index_active',
-    PlaylistClip.state, postgresql_where=PlaylistClip.state == 2
-)
-Index(
-    'playlist_clip_index_next',
-    PlaylistClip.state, postgresql_where=PlaylistClip.state == 1
-)
 
 
 class PlaylistClipUser(Base, BaseMixin):

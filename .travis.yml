@@ -15,4 +15,6 @@ deploy:
   strategy: git
   api_key:
     secure: gFjVK437+u4IYDbVq+n6bT6UTDHWL7iQjV3wAqcRrxcNg9p+vOAhz2ZQ2AV2fxY4BwXOaeuAjGSNfq8yVLiamAIsmm4b1OQ7NMMRfPfzRSGdkqF/kr99ubfm1b2zzupOpvRMe60CXW2tfZgrE5Q/FjV/fE+K8gUskyClKMq7vOI=
-  app: balistos
+  app:
+    master: balistos
+    staging: balistos-staging

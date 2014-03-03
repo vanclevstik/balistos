@@ -37,10 +37,11 @@ def insert_data():
             title=u'Test Playlist',
         )
         Session.add(test_playlist)
+        Session.flush()
         test_playlist_user = PlaylistUser(
             playlist=test_playlist,
             user=test_user,
-            permission=0
+            permission=0,
         )
 
         Session.add(test_playlist_user)
@@ -61,6 +62,7 @@ def insert_data():
         )
         Session.add(test_clip)
         Session.add(test_clip2)
+        Session.flush()
         test_playlist_clip = PlaylistClip(
             likes=0,
             added=datetime.now(),
@@ -89,6 +91,9 @@ def main(argv=sys.argv):
     if not db_url:
         print 'DATABASE_URL not set, using default SQLite db.'  # noqa
         db_url = 'sqlite:///./balistos-app.db'
+    else:
+        # import on production (postgresql)
+        import balistos.models.postgres_indexes  # noqa
 
     settings = {'sqlalchemy.url': db_url}
     engine = engine_from_config(settings, 'sqlalchemy.')
@@ -96,7 +101,6 @@ def main(argv=sys.argv):
     Base.metadata.create_all(engine)
 
     insert_data()
-
     print 'DB populated with dummy data: {0}'.format(db_url)  # noqa
 
 
