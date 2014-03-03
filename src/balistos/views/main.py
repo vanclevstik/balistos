@@ -162,6 +162,9 @@ def playlist_add_video(request):
     youtube_video_id = request.GET['id']
     duration = isodate.parse_duration(request.GET['duration']).total_seconds()
     playlist = Playlist.get(request.session['playlist'])
+    state = 0
+    if not PlaylistClip.get_active_playlist_clip(playlist):
+        state = 2
     add_playlist_clip(
         playlist,
         title,
@@ -169,6 +172,7 @@ def playlist_add_video(request):
         youtube_video_id,
         duration,
         username=username,
+        state=state,
     )
     return Response()
 
@@ -280,8 +284,8 @@ def create_playlist(request):
     """
     username = authenticated_userid(request)
     user = User.get_by_username(username)
-    title = request.GET.get('title', None)
-    if not title:
+    title = request.POST.get('title', None)
+    if not title or not user:
         return HTTPNotFound()
     duration_limit = int(request.GET.get('duration_limit', 600))
     public = request.GET.get('public', True)

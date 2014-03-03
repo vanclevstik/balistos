@@ -218,7 +218,10 @@ def add_playlist_clip(
         Session.add(clip)
     pclip = PlaylistClip.get_by_playlist_and_clip(playlist, clip)
     if not pclip:
-        started = datetime.min
+        if state == 2:
+            started = datetime.now()
+        else:
+            started = datetime.min
         pclip = PlaylistClip(
             added=datetime.now(),
             likes=0,

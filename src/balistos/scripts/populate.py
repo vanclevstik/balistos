@@ -90,7 +90,8 @@ def main(argv=sys.argv):
     db_url = os.environ.get('DATABASE_URL')
     if not db_url:
         print 'DATABASE_URL not set, using default SQLite db.'  # noqa
-        db_url = 'postgresql://balistos:balistos@localhost:5432/balistos'
+        db_url = 'sqlite:///./balistos-app.db'
+    else:
         # import on production (postgresql)
         import balistos.models.postgres_indexes  # noqa
 
