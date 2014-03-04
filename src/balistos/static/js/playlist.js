@@ -44,7 +44,7 @@ function PlaylistModel(){
                 url: "/playlist_add_video",
                 dataType:"json",
                 data: videoarray,
-            }).done(function(data ){
+            }).done(function(data){
                 self.sync();
             });
         });
@@ -52,10 +52,12 @@ function PlaylistModel(){
         $("#search").val("");
     };
 
+    //Function get total of users connected on current playlist.
     self.getUsersTotal=function(){
         return self.users().length;
     };
 
+    //Function getSetting function help us get settings from model and simplify the call.
     self.getSetting=function(key){
         if(self.settings()[key])
             return self.settings()[key];
@@ -63,6 +65,10 @@ function PlaylistModel(){
             return false;
     };
 
+
+    /* Each video has a button to delete a video. When user clicks on that
+    button, we send a AJAX request with video_id as only argument. We expect no
+    response. After the request is done, we sync the model. */
     self.removeFirstVideo=function(model,item){
         video=self.videos()[0].id();
         $.ajax({
@@ -74,6 +80,29 @@ function PlaylistModel(){
             self.sync();
         });
     };
+
+    /*Sync function is on the the main parts of the application. We call a
+    AJAX request with no paramters and expect to recieve data for the whole
+    model, which is videos, settings,user and messages.
+    With videos we expect:
+        title: title of the video
+        id: youtube id of the video
+        image: thumbnail image of vide
+        likes: number of likes that video has recieved
+        liked: the status of the like that current user made - 0 for neutral,
+        1 for like and -1 for dislike
+        owner: username of the user, who added it to queue
+        start_time: where the video should start (only first in queue)
+    settings:
+        author: username of author
+        time: time in format HH:mm:ss of when user posted message
+        message: string containing message
+    users:
+        username: username of the user connected to playlist
+        type: type of user - 0 for normal user , 1 for administrator
+    settings:
+        TODO
+    */
 
     self.sync=function(){
         $.ajax({
@@ -99,18 +128,22 @@ function PlaylistModel(){
         });
 
         $("#chat-div").scrollTop($("#chat-div")[0].scrollHeight);
-        setTimeout(self.sync,2000);
     };
 
-    self.sync();
+    /* we call sync function a period specified in miliseconds */
+    self.syncInterval=function(period){
+        self.sync();
+        setTimeout(self.syncinterval,period);
+    };
+    self.syncInterval(2000);
 
-
+    /*for easier access we compute some of the data for the first video*/
     self.firstVideoTitle=ko.computed(function(){
         if(self.videos()[0]){
             return self.videos()[0].title();
         }
         else{
-            return "Not yet chosen";
+            return "Not yet chosen.";
         }
     },self);
 
@@ -143,6 +176,7 @@ function Video(data){
     this.owner=ko.observable(data.owner);
     this.start_time=ko.observable(data.start_time);
 
+    /* for sending like, we simply send status of like along with id of video.*/
     this.addLike=function(){
         $.ajax({
             type: "GET",
@@ -151,10 +185,10 @@ function Video(data){
             data: {"video_id":this.id,
                    "like":1  //for like I will send 1, for unlike -1
                 },
-        }).done(function(data ){});
-        playlist.sync();
+        }).done(function(data ){
+            playlist.sync();
+        });
     };
-
 
     this.removeLike=function(){
         $.ajax({
@@ -164,18 +198,21 @@ function Video(data){
             data: {"video_id":this.id,
                    "like":-1 //for like I will send 1, for unlike -1
             },
-        }).done(function(data ){});
-        playlist.sync();
+        }).done(function(data ){
+            playlist.sync();
+        });
     };
 
+    /* to delete a video, we again send a simple AJAX request with video id. */
     this.removeVideo=function(model,item){
         $.ajax({
             type: "GET",
             url: "/remove_video",
             dataType:"json",
             data: {"video_id":this.id},
-        }).done(function(data ){});
-        playlist.sync();
+        }).done(function(data ){
+            playlist.sync();
+        });
         $("#response").hide();
         $("#search").val("");
     };
@@ -192,8 +229,9 @@ function User(data){
             data: {
                 "user_id":this.id
             },
-        }).done(function(data ){});
-        playlist.sync();
+        }).done(function(data ){
+            playlist.sync();
+        });
     };
 }
 
@@ -201,7 +239,6 @@ function Message(data){
     this.author = ko.observable(data.author);
     this.time=ko.observable(data.time);
     this.message=ko.observable(data.message);
-
 }
 
 
