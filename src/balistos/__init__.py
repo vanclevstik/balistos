@@ -79,6 +79,7 @@ def main(global_config, **settings):
         secret=settings.get('authtkt.secret', 'secret'),
         hashalg='sha512',
         callback=groupfinder,
+        max_age=86400,
     )
     authorization_policy = ACLAuthorizationPolicy()
     config = Configurator(

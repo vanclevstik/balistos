@@ -44,7 +44,6 @@ def login(request):
         return Response(
             body=json.dumps(msg),
             content_type='application/json',
-            headers=headers
         )
 
 
@@ -65,8 +64,11 @@ def register(request):
         return HTTPNotFound()
     username = request.POST['register-username']
     email = request.POST['register-email']
-    if User.get_by_username(username) or User.get_by_email(email):
-        msg = {'error': 'User with that username or email already exist'}
+    if User.get_by_username(username):
+        msg = {'error': 'User with that username already exist'}
+        return Response(body=json.dumps(msg), content_type='application/json')
+    if User.get_by_email(email):
+        msg = {'error': 'User with that email already exist'}
         return Response(body=json.dumps(msg), content_type='application/json')
     password = sha256_crypt.encrypt(request.POST['register-password'])
 
@@ -78,21 +80,6 @@ def register(request):
         )
         Session.add(user)
         Session.flush()
-        #XXX need to only make clips for public playlists
-        # for playlist in Playlist.get_all():
-        #     playlist_user = PlaylistUser(
-        #         playlist=playlist,
-        #         user=user,
-        #         permission=2,
-        #         last_active=datetime.min,
-        #     )
-        #     Session.add(playlist_user)
-        # for pclip in PlaylistClip.get_all():
-        #     pclipuser = PlaylistClipUser(
-        #         playlist_clip=pclip,
-        #         user=user
-        #     )
-        #     Session.add(pclipuser)
         msg = {'success': username}
         headers = remember(request, username)
         return Response(
@@ -116,8 +103,8 @@ def logout(request):
     :param    request: current request
     :type     request: pyramid.request.Request
 
-    :returns: json with message about login
-    :rtype:   pyramid.response.Response
+    :returns: redirects to home page
+    :rtype:   pyramid.httpexceptions.HTTPFound
     """
     headers = forget(request)
     url = request.route_url('home')
