@@ -33,6 +33,11 @@ class Playlist(Base, BaseMixin):
         nullable=False
     )
 
+    description = Column(
+        Unicode(200),
+        nullable=True,
+    )
+
     duration_limit = Column(
         Integer,
         nullable=False,

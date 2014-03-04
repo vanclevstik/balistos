@@ -296,6 +296,7 @@ def create_playlist(request):
     if not title or not user:
         return HTTPNotFound()
     duration_limit = int(request.GET.get('duration_limit', 600))
+    description = request.GET.get('duration_limit', None)
     public = request.GET.get('public', True)
     uri = normalized_id(title)
     count = 1
@@ -307,6 +308,7 @@ def create_playlist(request):
         title=title,
         duration_limit=duration_limit,
         public=public,
+        description=description,
     )
     Session.add(playlist)
     playlist_user = PlaylistUser(
