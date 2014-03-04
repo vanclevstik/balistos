@@ -94,9 +94,8 @@ class PlaylistUser(Base, BaseMixin):
 
     # permission on playlist
     # 0 - no permission
-    # 1 - view and play playlist
-    # 2 - add, vote, chat on playlist
-    # 3 - admin rights on playlist
+    # 1 - add, vote, chat on playlist
+    # 2 - admin rights on playlist
     permission = Column(
         Integer,
         nullable=False
@@ -164,6 +163,20 @@ class PlaylistUser(Base, BaseMixin):
         )
         if result.count() < 1:
             return []
+
+        return result.all()
+
+    @classmethod
+    def get_by_user_latest(self, user, limit=1):
+        """Get PlaylistClipUser by Playlist and User."""
+        result = PlaylistUser.query.filter(
+            PlaylistUser.user == user
+        ).order_by(PlaylistUser.last_active.desc()).limit(limit)
+
+        if result.count() < 1:
+            return None
+        if result.count() == 1:
+            return result.one
 
         return result.all()
 

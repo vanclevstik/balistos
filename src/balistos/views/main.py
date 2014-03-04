@@ -15,6 +15,7 @@ from balistos.playlist import get_playlist_settings
 from balistos.playlist import get_active_users
 from balistos.playlist import get_chat_messages
 from balistos.playlist import create_clips_for_user
+from balistos.playlist import get_latest_playlists
 from balistos.static import balistos_assets
 from balistos.static import youtube_assets
 from balistos.utils import normalized_id
@@ -39,8 +40,11 @@ def home(request):
     """The home page."""
     balistos_assets.need()
     username = authenticated_userid(request)
+    user = User.get_by_username(username)
+    playlists = get_latest_playlists(user) if user else None
     return {
-        'username': username
+        'username': username,
+        'playlists': playlists
     }
 
 
@@ -55,9 +59,17 @@ def main(request):
     youtube_assets.need()
     session = request.session
     username = authenticated_userid(request)
-    if not username or not 'playlist' in session or not session['playlist']:
-        url = request.route_url('home')
-        return HTTPFound(location=url)
+    user = User.get_by_username(username)
+    if not 'playlist' in session or not session['playlist']:
+        if not user:
+            url = request.route_url('home')
+            return HTTPFound(location=url)
+        latest = PlaylistUser.get_by_user_latest(user)
+        if latest:
+            session['playlist'] = latest.playlist.uri
+        if not latest:
+            url = request.route_url('home')
+            return HTTPFound(location=url)
     return {
         'username': username
     }
@@ -113,24 +125,20 @@ def set_playlist(request):
     balistos_assets.need()
     youtube_assets.need()
     username = authenticated_userid(request)
-    if not username:
-        return HTTPNotFound()
     session = request.session
     playlist_uri = request.matchdict.get('playlist', None)
     playlist = Playlist.get(playlist_uri)
     user = User.get_by_username(username)
-    if not playlist or not user:
+    if not playlist:
         return HTTPNotFound()
 
     playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
-    if not playlist_user and not playlist.public:
-        url = request.route_url('home')
-        return HTTPFound(location=url)
-    if not playlist_user:
+    if not playlist_user and user:
+        permission = 1 if playlist.public else 0
         playlist_user = PlaylistUser(
             playlist=playlist,
             user=user,
-            permission=2,
+            permission=permission,
             last_active=datetime.now(),
         )
         Session.add(playlist_user)
@@ -338,6 +346,33 @@ def search_playlists(request):
             'title': playlist.title
         })
 
+    return Response(
+        body=json.dumps(playlists),
+        content_type='application/json'
+    )
+
+
+@view_config(route_name='latest_playlists')
+def latest_playlists(request):
+    """
+    return latest playlists that users listened to
+
+    :param    request: current request
+    :type     request: pyramid.request.Request
+
+    :returns: list of playlist dicts
+    :rtype:   list of dicts
+    """
+    if not request.is_xhr:
+        return HTTPNotFound()
+    username = authenticated_userid(request)
+    user = User.get_by_username(username)
+    if not user:
+        return Response(
+            body=json.dumps({'error': 'No user'}),
+            content_type='application/json'
+        )
+    playlists = get_latest_playlists(user)
     return Response(
         body=json.dumps(playlists),
         content_type='application/json'
