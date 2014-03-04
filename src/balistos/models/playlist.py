@@ -179,9 +179,7 @@ class PlaylistUser(Base, BaseMixin):
         ).order_by(PlaylistUser.last_active.desc()).limit(limit)
 
         if result.count() < 1:
-            return None
-        if result.count() == 1:
-            return result.one
+            return []
 
         return result.all()
 
