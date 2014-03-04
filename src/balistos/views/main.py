@@ -163,13 +163,17 @@ def playlist_add_video(request):
     :rtype:   list of dicts
     """
     username = authenticated_userid(request)
-    if not request.is_xhr or not username:
+    user = User.get_by_username(username)
+    if not request.is_xhr or not user:
         return HTTPNotFound()
     title = unicode(request.GET['title'])
     image_url = request.GET['image']
     youtube_video_id = request.GET['id']
     duration = isodate.parse_duration(request.GET['duration']).total_seconds()
     playlist = Playlist.get(request.session['playlist'])
+    playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+    if not playlist_user or playlist_user.permission < 1:
+        return Response()
     state = 0
     if not PlaylistClip.get_active_playlist_clip(playlist):
         state = 2
@@ -205,6 +209,9 @@ def like_video(request):
     like = int(request.GET['like'])
     youtube_video_id = request.GET['video_id']
     playlist = Playlist.get(request.session['playlist'])
+    playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+    if not playlist_user or playlist_user.permission < 1:
+        return Response()
     pclip = PlaylistClip.get_by_playlist_and_clip(
         playlist,
         Clip.get(youtube_video_id)
@@ -236,8 +243,14 @@ def remove_video(request):
     if not request.is_xhr:
         return HTTPNotFound()
     username = authenticated_userid(request)
+    user = User.get_by_username(username)
+    if not user:
+        return Response()
     youtube_video_id = request.GET['video_id']
     playlist = Playlist.get(request.session['playlist'])
+    playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+    if not playlist_user or playlist_user.permission < 2:
+        return Response()
     if not username or not youtube_video_id:
         return Response(
             body=json.dumps({'error': ''}),
@@ -269,10 +282,14 @@ def chat_message(request):
     if not request.is_xhr:
         return HTTPNotFound()
     username = authenticated_userid(request)
-    if not username:
+    user = User.get_by_username(username)
+    if not user:
         return Response()
     message = request.POST['message']
     playlist = Playlist.get(request.session['playlist'])
+    playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+    if not playlist_user or playlist_user.permission < 1:
+        return Response()
     add_chat_message(playlist, username, message)
     return Response()
 
