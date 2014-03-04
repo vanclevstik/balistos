@@ -26,6 +26,7 @@ class TestHomeFunctional(unittest.TestCase):
 
     def setUp(self):
         from balistos import configure
+        Session.remove()
         createTestDB()
         self.config = testing.setUp()
         configure(self.config)
