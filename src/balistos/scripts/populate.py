@@ -41,7 +41,7 @@ def insert_data():
         test_playlist_user = PlaylistUser(
             playlist=test_playlist,
             user=test_user,
-            permission=0,
+            permission=1,
         )
 
         Session.add(test_playlist_user)
