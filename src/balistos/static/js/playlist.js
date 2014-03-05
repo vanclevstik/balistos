@@ -133,7 +133,7 @@ function PlaylistModel(){
     /* we call sync function a period specified in miliseconds */
     self.syncInterval=function(period){
         self.sync();
-        setTimeout(self.syncinterval,period);
+        setTimeout(self.syncInterval,period);
     };
     self.syncInterval(2000);
 
