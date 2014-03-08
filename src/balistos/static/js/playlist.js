@@ -134,7 +134,7 @@ function PlaylistModel(){
     self.syncInterval=function(period){
         self.sync();
         alert(period);
-        setTimeout(function(){self.syncInterval(period)},period);
+        setTimeout(function(){self.syncInterval(period);},period);
     };
     self.syncInterval(2000);
 
