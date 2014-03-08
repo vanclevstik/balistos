@@ -155,11 +155,11 @@
                 $("#hidden-search").hide();
                 $("#search").fadeIn(1000);
                 $(".logged-in").fadeIn(1000);
-                 $.ajax({
-                        type: "GET",
-                        url: "/latest_playlists",
-                        dataType:"json",
-                    });
+                $.ajax({
+                    type: "GET",
+                    url: "/latest_playlists",
+                    dataType:"json",
+                });
             }
         });
         $("#login-form").find("input[type='password']").val("");
