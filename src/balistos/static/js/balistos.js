@@ -131,42 +131,37 @@
     */
 
     $("form#login-form").on("submit",function(event){
-        event.preventDefault();
-        if($(this).find("input[name='login-username']").val().length<5 ||
-         $(this).find("input[name='login-password']").val().length<5){
-            $("#login-message")
-                .text("Your username or password is too short.")
-                .fadeIn();
-            setTimeout(function(){$("#login-message").fadeOut(1000);},2000);
-        }
-        else{
-            $.ajax({
-                type: "POST",
-                url: "/login",
-                dataType:"json",
-                data:{
-                    "login-username": $(this)
-                        .find("input[name='login-username']").val(),
-                    "login-password": hex_sha256($(this)
-                        .find("input[name='login-password']").val())
-                },
-            }).done(function(response){
-                if(response.error){
-                    $("#login-message").text(response.error).show();
-                    $("#login-form").find("input").val("");
-                    setTimeout(function(){
-                        $("#login-message").fadeOut(1000);
-                    },2000);
-                }
-                else{
-                    $("#username-string").text(response.success);
-                    $(".not-logged-in").hide();
-                    $("#hidden-search").hide();
-                    $("#search").fadeIn(1000);
-                    $(".logged-in").fadeIn(1000);
-                }
-            });
-        }
+        $.ajax({
+            type: "POST",
+            url: "/login",
+            dataType:"json",
+            data:{
+                "login-username": $(this)
+                    .find("input[name='login-username']").val(),
+                "login-password": hex_sha256($(this)
+                    .find("input[name='login-password']").val())
+            },
+        }).done(function(response){
+            if(response.error){
+                $("#login-message").text(response.error).show();
+                $("#login-form").find("input").val("");
+                setTimeout(function(){
+                    $("#login-message").fadeOut(1000);
+                },2000);
+            }
+            else{
+                $("#username-string").text(response.success);
+                $(".not-logged-in").hide();
+                $("#hidden-search").hide();
+                $("#search").fadeIn(1000);
+                $(".logged-in").fadeIn(1000);
+                $.ajax({
+                    type: "GET",
+                    url: "/latest_playlists",
+                    dataType:"json",
+                });
+            }
+        });
         $("#login-form").find("input[type='password']").val("");
     });
 

@@ -21,7 +21,7 @@
                         </label>
                     </div>
                     <button type="submit" class="btn btn-info">Create</button>
-                <form>
+                </form>
             </div>
         </div>
 
@@ -36,7 +36,6 @@
                     </ul>
                 </div>
             </div>
-
             <div clas="row">
                 <div class="sidebox">
                     <div class="header" >Popular playlists</div>
@@ -46,6 +45,17 @@
                         <li class="user"><a href="/playlist/21">Rainbow maistors</a></li>
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <h2>What is Balistos?</h2>
+                <p>Balistos is a simple application that uses the power of YouTube to let you share your music taste with your friends or people with the same ideas. Balistos lets you add music videos you like to the common playlist, where all connected users can listen to them together and vote up the ones they like</p>
+            </div>
+            <div class="col-lg-6  col-md-6 col-sm-12 col-xs-12">
+                <h2>How do I use Balistos?</h2>
+                <p>Using Balistos is very simple. You may search all the playlists and select the one you like by simply clicking on it. To be able to use full functionality of Balistos such as adding songs and voting you are required to register an account. If you don't like any of the playlist you may also create your own and share it with your friends. If you want to make it exclusive for your friends, make sure you protect it with password.</p>
             </div>
         </div>
     </div>
