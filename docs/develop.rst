@@ -45,3 +45,17 @@ Now you can run a variety of commands::
     $ make tests  # run all tests
     $ make coverage  # generate HTML report of test coverage
     $ make clean  # clean up if something is broken and start from scratch
+
+
+Running migration script
+------------------------
+
+For database migration we are using alembic scripts
+
+Add a new alembic upgrade script::
+
+    $ bin/alembic -c etc/development.ini -n app:main revision --autogenerate -m "YOUR REVISION INFO"
+
+Run the script::
+
+    $ bin/alembic -c etc/development.ini -n app:main upgrade head
