@@ -2,18 +2,21 @@
 """Application initiallization"""
 
 from balistos.models.user import User
-from pyramid.security import Allow
-from pyramid.security import Everyone
-from pyramid.security import Authenticated
-from pyramid.security import ALL_PERMISSIONS
-from pyramid_basemodel import Session
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
 from pyramid.renderers import render_to_response
+from pyramid.security import ALL_PERMISSIONS
+from pyramid.security import Allow
+from pyramid.security import Authenticated
+from pyramid.security import Everyone
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.view import notfound_view_config
+from pyramid_basemodel import Base
+from pyramid_basemodel import Session
+from social.apps.pyramid_app.models import init_social
 from sqlalchemy import engine_from_config
+
 
 DEVELOPER_KEY = ''
 
@@ -48,6 +51,7 @@ def configure(config, sqlite=True):
     config.include('pyramid_fanstatic')
     # routing
     config.add_static_view('static', 'static', cache_max_age=3600)
+    config.add_request_method('balistos.utils.get_user', 'user', reify=True)
     config.add_route('home', '/home')
     config.add_route('users', '/users')
     config.add_route('login', '/login')
@@ -86,6 +90,20 @@ def main(global_config, **settings):
         max_age=86400,
     )
     authorization_policy = ACLAuthorizationPolicy()
+
+    SOCIAL_AUTH_SETTINGS = {
+        'SOCIAL_AUTH_LOGIN_URL': '/',
+        'SOCIAL_AUTH_LOGIN_REDIRECT_URL': '/home',
+        'SOCIAL_AUTH_USER_MODEL': 'balistos.models..user.User',
+        'SOCIAL_AUTH_LOGIN_FUNCTION': 'balistos.social.login',
+        'SOCIAL_AUTH_LOGGEDIN_FUNCTION': 'balistos.social.loggedin',
+        'SOCIAL_AUTH_AUTHENTICATION_BACKENDS': (
+            'social.backends.google.GoogleOAuth2',
+            'social.backends.facebook.FacebookOAuth2',
+            )
+    }
+    settings.update(SOCIAL_AUTH_SETTINGS)
+
     config = Configurator(
         settings=settings,
         root_factory=RootFactory,
@@ -98,4 +116,8 @@ def main(global_config, **settings):
     DEVELOPER_KEY = settings['balistos.youtube_key']  # noqa
     config.include('pyramid_basemodel')
     config.include('pyramid_tm')
+    config.include('social.apps.pyramid_app')
+    config.scan('social.apps.pyramid_app')
+    init_social(config, Base, Session)
+
     return config.make_wsgi_app()
