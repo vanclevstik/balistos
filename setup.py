@@ -37,6 +37,7 @@ setup(
     zip_safe=False,
     paster_plugins=['pyramid'],
     install_requires=[
+        'alembic',
         'fanstatic',
         'gdata',
         'isodate',
