@@ -10,6 +10,7 @@ from balistos.models.clip import PlaylistClipUser
 from balistos.models.clip import Clip
 from balistos.models.user import User
 from pyramid_basemodel import Session
+from sqlalchemy.exc import IntegrityError
 
 import transaction
 
@@ -43,7 +44,7 @@ def get_playlist_videos(playlist, username=None):
         try:
             a, b = play_next_clip(playlist, active_pclip, next_pclip)
             active_pclip, next_pclip = a, b
-        except Exception:
+        except IntegrityError:
             transaction.abort()
     pclips.append(active_pclip)
     pclips.append(next_pclip)
@@ -106,8 +107,14 @@ def get_playlist_settings(playlist, username=None):
     :returns: settings of playlist
     :rtype:   dict
     """
+    user = User.get_by_username(username)
+    if not user:
+        permission = 0
+    else:
+        playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
+        permission = playlist_user.permission
     return {
-        'duration_limit': playlist.duration_limit
+        'permission': permission
     }
 
 
@@ -347,3 +354,22 @@ def create_clips_for_user(playlist_user):
                 user=playlist_user.user
             )
             Session.add(pclipuser)
+
+
+def get_latest_playlists(user, limit=5):
+    """
+    get latest listened playlists by user
+
+    :param    user: current user
+    :type     user: balistos.models.balistos
+
+    :returns: uris and titles of latest playlists
+    :rtype:   [return type]
+    """
+    playlists = []
+    for playlist_user in PlaylistUser.get_by_user_latest(user, limit=limit):
+        playlists.append({
+            'uri': playlist_user.playlist.uri,
+            'title': playlist_user.playlist.title
+        })
+    return playlists

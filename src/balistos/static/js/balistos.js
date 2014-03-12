@@ -131,6 +131,7 @@
     */
 
     $("form#login-form").on("submit",function(event){
+        event.preventDefault();
         $.ajax({
             type: "POST",
             url: "/login",

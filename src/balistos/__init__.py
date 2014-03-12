@@ -59,6 +59,7 @@ def configure(config):
     config.add_route('remove_video', '/remove_video')
     config.add_route('create_playlist', '/create_playlist')
     config.add_route('search_playlists', '/search_playlists')
+    config.add_route('latest_playlists', '/latest_playlists')
     config.add_route('add_user_to_playlist', '/add_user_to_playlist')
     config.add_route('main', '/')
     config.add_route('set_playlist', '/playlist/{playlist}')
@@ -79,6 +80,7 @@ def main(global_config, **settings):
         secret=settings.get('authtkt.secret', 'secret'),
         hashalg='sha512',
         callback=groupfinder,
+        max_age=86400,
     )
     authorization_policy = ACLAuthorizationPolicy()
     config = Configurator(

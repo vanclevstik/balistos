@@ -8,6 +8,6 @@ from sqlalchemy import create_engine
 
 def createTestDB():
     engine = create_engine('sqlite:///:memory:')
-    Base.metadata.create_all(engine)
     Session.configure(bind=engine)
+    Base.metadata.create_all(engine)
     insert_data()

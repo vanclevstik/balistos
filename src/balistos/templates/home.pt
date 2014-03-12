@@ -38,11 +38,9 @@
             </div>
             <div clas="row">
                 <div class="sidebox">
-                    <div class="header" >Popular playlists</div>
-                    <ul class="content">
-                        <li class="user"><a href="/playlist/123">Playlist for veseljaks</a></li>
-                        <li class="user"><a href="/playlist/231">Playlist for pederos</a></li>
-                        <li class="user"><a href="/playlist/21">Rainbow maistors</a></li>
+                    <div class="header" >Latest listened playlists</div>
+                    <ul class="content" tal:repeat="playlist playlists">
+                        <li class="user"><a tal:attributes="href python: '/playlist/' + str(playlist.uri)">${playlist.title}</a></li>
                     </ul>
                 </div>
             </div>
