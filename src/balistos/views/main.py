@@ -108,7 +108,6 @@ def playlist_videos(request):
 @view_config(
     route_name='set_playlist',
     renderer='balistos:templates/main.pt',
-    permission='user',
     layout='default',
 )
 def set_playlist(request):
