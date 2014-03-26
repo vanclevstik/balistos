@@ -95,6 +95,8 @@ def main(global_config, **settings):
 
     SOCIAL_AUTH_SETTINGS['SOCIAL_AUTH_FACEBOOK_KEY'] = settings['social.facebook_key']  # noqa
     SOCIAL_AUTH_SETTINGS['SOCIAL_AUTH_FACEBOOK_SECRET'] = settings['social.facebook_secret']  # noqa
+    SOCIAL_AUTH_SETTINGS['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY'] = settings['social.google_key']  # noqa
+    SOCIAL_AUTH_SETTINGS['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET'] = settings['social.google_secret']  # noqa
     settings.update(SOCIAL_AUTH_SETTINGS)
 
     config = Configurator(
