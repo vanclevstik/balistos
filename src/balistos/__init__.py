@@ -92,6 +92,8 @@ def main(global_config, **settings):
     )
     authorization_policy = ACLAuthorizationPolicy()
 
+    SOCIAL_AUTH_SETTINGS['SOCIAL_AUTH_FACEBOOK_KEY'] = settings['social.facebook_key']  # noqa
+    SOCIAL_AUTH_SETTINGS['SOCIAL_AUTH_FACEBOOK_SECRET'] = settings['social.facebook_secret']  # noqa
     settings.update(SOCIAL_AUTH_SETTINGS)
 
     config = Configurator(
