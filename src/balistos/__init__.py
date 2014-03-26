@@ -50,6 +50,7 @@ def configure(config, sqlite=True):
     config.include('pyramid_layout')
 
     config.include('pyramid_fanstatic')
+    config.include('social.apps.pyramid_app')
     # routing
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_request_method('balistos.utils.get_user', 'user', reify=True)
@@ -108,7 +109,6 @@ def main(global_config, **settings):
     DEVELOPER_KEY = settings['balistos.youtube_key']  # noqa
     config.include('pyramid_basemodel')
     config.include('pyramid_tm')
-    config.include('social.apps.pyramid_app')
     init_social(config, Base, Session)
     config.scan('social.apps.pyramid_app')
 
