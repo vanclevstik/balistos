@@ -2,6 +2,7 @@
 """Application initiallization"""
 
 from balistos.models.user import User
+from balistos.socialauth import SOCIAL_AUTH_SETTINGS
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.config import Configurator
@@ -91,17 +92,6 @@ def main(global_config, **settings):
     )
     authorization_policy = ACLAuthorizationPolicy()
 
-    SOCIAL_AUTH_SETTINGS = {
-        'SOCIAL_AUTH_LOGIN_URL': '/',
-        'SOCIAL_AUTH_LOGIN_REDIRECT_URL': '/home',
-        'SOCIAL_AUTH_USER_MODEL': 'balistos.models..user.User',
-        'SOCIAL_AUTH_LOGIN_FUNCTION': 'balistos.social.login',
-        'SOCIAL_AUTH_LOGGEDIN_FUNCTION': 'balistos.social.loggedin',
-        'SOCIAL_AUTH_AUTHENTICATION_BACKENDS': (
-            'social.backends.google.GoogleOAuth2',
-            'social.backends.facebook.FacebookOAuth2',
-            )
-    }
     settings.update(SOCIAL_AUTH_SETTINGS)
 
     config = Configurator(
@@ -117,7 +107,7 @@ def main(global_config, **settings):
     config.include('pyramid_basemodel')
     config.include('pyramid_tm')
     config.include('social.apps.pyramid_app')
-    config.scan('social.apps.pyramid_app')
     init_social(config, Base, Session)
+    config.scan('social.apps.pyramid_app')
 
     return config.make_wsgi_app()
