@@ -55,7 +55,7 @@ class User(Base, BaseMixin):
     __tablename__ = 'users'
 
     username = Column(
-        String,
+        String(50),
         unique=True,
         nullable=False,
     )
