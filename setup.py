@@ -56,6 +56,7 @@ setup(
         'SQLAlchemy',
         'transaction',
         'unidecode',
+        'waitress',
         'zope.sqlalchemy',
     ],
     extras_require={
@@ -72,7 +73,6 @@ setup(
         'development': [
             'pyramid_debugtoolbar',
             'Sphinx',
-            'waitress',
         ],
     },
     entry_points="""\
