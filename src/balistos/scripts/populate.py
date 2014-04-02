@@ -11,6 +11,8 @@ from balistos.models.playlist import PlaylistUser
 from balistos.models.clip import Clip
 from balistos.models.clip import PlaylistClip
 from sqlalchemy import engine_from_config
+from pyramid.paster import bootstrap
+
 
 import os
 import sys
@@ -88,12 +90,12 @@ def main(argv=sys.argv):
 
     # TODO: check for DB existance etc.? this fails if run more than once
     db_url = os.environ.get('DATABASE_URL')
+    if not db_url and len(argv) > 1:
+        env = bootstrap(argv[1])
+        db_url = env['app'].registry.settings['sqlalchemy.url']
     if not db_url:
-        print 'DATABASE_URL not set, using default SQLite db.'  # noqa
-        db_url = 'sqlite:///./balistos-app.db'
-    else:
-        # import on production (postgresql)
-        import balistos.models.postgres_indexes  # noqa
+        print 'Set your database url in environment or provide .ini file'  # noqa
+        return
 
     settings = {'sqlalchemy.url': db_url}
     engine = engine_from_config(settings, 'sqlalchemy.')

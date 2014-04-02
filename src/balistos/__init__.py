@@ -42,7 +42,7 @@ def notfound(request):
     return render_to_response('templates/404.pt', {})
 
 
-def configure(config):
+def configure(config, sqlite=True):
     config.include('pyramid_layout')
 
     config.include('pyramid_fanstatic')
@@ -64,7 +64,10 @@ def configure(config):
     config.add_route('main', '/')
     config.add_route('set_playlist', '/playlist/{playlist}')
     config.add_route('chat_message', '/chat_message')
-    config.scan('balistos', ignore=['balistos.tests', 'balistos.testing'])
+    ignores = ['balistos.tests', 'balistos.testing', ]
+    if sqlite:
+        ignores.append('balistos.models.postgres_indexes')
+    config.scan('balistos', ignore=ignores)
 
 
 def main(global_config, **settings):
@@ -90,7 +93,8 @@ def main(global_config, **settings):
         authorization_policy=authorization_policy,
         session_factory=session_factory,
     )
-    configure(config)
+    is_sqlite = 'sqlite' in settings['sqlalchemy.url']
+    configure(config, sqlite=is_sqlite)
     DEVELOPER_KEY = settings['balistos.youtube_key']  # noqa
     config.include('pyramid_basemodel')
     config.include('pyramid_tm')

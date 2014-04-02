@@ -26,7 +26,10 @@ bin/sphinx-build: .installed.cfg
 
 db: .installed.cfg
 	@if [ -f balistos-app.db ]; then rm -rf balistos-app.db; fi;
-	@bin/py -m balistos.scripts.populate
+	@bin/py -m balistos.scripts.populate etc/development.ini
+
+db_production: .installed.cfg
+	@bin/py -m balistos.scripts.populate etc/vps_production.ini
 
 .installed.cfg: bin/buildout buildout.cfg buildout.d/*.cfg setup.py
 	bin/buildout $(options)
