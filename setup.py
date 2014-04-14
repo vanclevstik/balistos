@@ -38,6 +38,7 @@ setup(
     paster_plugins=['pyramid'],
     install_requires=[
         'alembic',
+        'celery[redis]',
         'fanstatic',
         'gdata',
         'isodate',
