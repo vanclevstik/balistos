@@ -52,6 +52,9 @@
                             </form>
                         </div>
                     </li>
+                     <a tal:attributes="style python: 'display:none' if username else ''" href="${request.route_url('social.auth', backend='google-oauth2')}">Google OAuth2</a> <br />
+
+                    <a tal:attributes="style python: 'display:none' if username else ''" href="${request.route_url('social.auth', backend='facebook')}">Facebook OAuth2</a> <br />
                     <li class="dropdown logged-in" tal:attributes="style python: 'display:none' if not username else ''">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">You are logged in as <b id="username-string">${username}</b></a>
                         <div class="dropdown-menu">

@@ -10,6 +10,8 @@ from balistos.models.playlist import Playlist
 from balistos.models.playlist import PlaylistUser
 from balistos.models.clip import Clip
 from balistos.models.clip import PlaylistClip
+from social.apps.pyramid_app.models import init_social
+from balistos.socialauth import SOCIAL_AUTH_SETTINGS
 from sqlalchemy import engine_from_config
 from pyramid.paster import bootstrap
 
@@ -99,6 +101,8 @@ def main(argv=sys.argv):
 
     settings = {'sqlalchemy.url': db_url}
     engine = engine_from_config(settings, 'sqlalchemy.')
+    init_social(SOCIAL_AUTH_SETTINGS, Base, Session)
+
     Session.configure(bind=engine)
     Base.metadata.create_all(engine)
 

@@ -53,6 +53,7 @@ setup(
         'pyramid_fanstatic',
         'pyramid_layout',
         'pyramid_tm',
+        'python-social-auth',
         'SQLAlchemy',
         'transaction',
         'unidecode',
