@@ -56,6 +56,12 @@ class Playlist(Base, BaseMixin):
         default=True
     )
 
+    last_active = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.now()
+    )
+
     @classmethod
     def get(self, uri):
         """Get a Playlist by uri."""
@@ -71,6 +77,17 @@ class Playlist(Base, BaseMixin):
         search_string = '%' + search_string + '%'
         result = Playlist.query.filter(
             Playlist.title.ilike(search_string),
+        )
+        if result.count() < 1:
+            return []
+
+        return result.all()
+
+    @classmethod
+    def get_active_playlists(self):
+        """Get active playlists"""
+        result = Playlist.query.filter(
+            Playlist.last_active > datetime.now() - timedelta(0, 10)
         )
         if result.count() < 1:
             return []

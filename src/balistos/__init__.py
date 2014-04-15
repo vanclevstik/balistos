@@ -111,6 +111,7 @@ def main(global_config, **settings):
     DEVELOPER_KEY = settings['balistos.youtube_key']  # noqa
     config.include('pyramid_basemodel')
     config.include('pyramid_tm')
+    config.include('social.apps.pyramid_app')
     init_social(config, Base, Session)
     config.scan('social.apps.pyramid_app')
 

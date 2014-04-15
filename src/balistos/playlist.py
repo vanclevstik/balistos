@@ -10,9 +10,6 @@ from balistos.models.clip import PlaylistClipUser
 from balistos.models.clip import Clip
 from balistos.models.user import User
 from pyramid_basemodel import Session
-from sqlalchemy.exc import IntegrityError
-
-import transaction
 
 
 def get_playlist_videos(playlist, username=None):
@@ -30,6 +27,7 @@ def get_playlist_videos(playlist, username=None):
     if user:
         playlist_user = PlaylistUser.get_by_playlist_and_user(playlist, user)
         playlist_user.last_active = datetime.now()
+        playlist.last_active = datetime.now()
         Session.flush()
     active_pclip = PlaylistClip.get_active_playlist_clip(playlist)
     if not active_pclip:
@@ -40,12 +38,12 @@ def get_playlist_videos(playlist, username=None):
             playlist,
             active_pclip.clip.youtube_video_id
         )
-    if check_if_finished(active_pclip):
-        try:
-            a, b = play_next_clip(playlist, active_pclip, next_pclip)
-            active_pclip, next_pclip = a, b
-        except IntegrityError:
-            transaction.abort()
+    # if check_if_finished(active_pclip):
+    #     try:
+    #         a, b = play_next_clip(playlist, active_pclip, next_pclip)
+    #         active_pclip, next_pclip = a, b
+    #     except IntegrityError:
+    #         transaction.abort()
     pclips.append(active_pclip)
     pclips.append(next_pclip)
     wait_clips = PlaylistClip.get_by_playlist_waiting(playlist)

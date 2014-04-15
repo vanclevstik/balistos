@@ -10,6 +10,7 @@ Prerequisites
 * virtualenv (``apt-get install python-virtualenv``)
 * pip (``apt-get install python-pip``)
 * git (``apt-get install git``)
+* Redis (``apt-get install redis-server``)or RabbitMQ server for celery broker
 * Heroku Toolbelt (https://toolbelt.heroku.com/)
 
 Code style guide
@@ -32,10 +33,21 @@ Prepare the environment::
     # build development environment
     $ make
 
+    # Set environment variable to .ini you want to use
+    $ export BALISTOS_CONFIG=etc/development.ini  # you can use different .ini if you want
+
+    # Set correct broker url in celeryconfig.py
+
 Now you can run a variety of commands::
 
     # if your DB is empty, populate it with demo content
     $ make db
+
+    # Run redis server
+    $ redis-server
+
+    # Start the celery workers
+    $ bin/celery -A balistos.tasks worker -loglevel=debug
 
     # Start the development instance of Pyramid
     $ bin/pserve etc/development.ini --reload
