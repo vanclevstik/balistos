@@ -6,21 +6,9 @@ function PlaylistModel(){
         {duration_limit:600}
     ]);
     self.videos=ko.observableArray([]);
-    self.users=ko.observableArray([
-        { username: "Bungle", type: "2"},
-        { username: "George", type: "1"},
-        { username: "Zippy", type: "0"}
-    ]);
+    self.users=ko.observableArray([]);
 
-    self.messages=ko.observableArray([
-        { author: "neykomir", time: "12:12",message:"ti si peder"},
-        { author: "jerry", time: "12:32",message:"ti si tud peder"},
-        { author: "vanč", time: "12:33",message:"ti si pa čist peder hoho"},
-        { author: "lasč", time: "13:23",message:"ti si pa čist peder za čist"},
-        { author: "košir", time: "14:13",message:"ti si pa čist peder nea"},
-        { author: "jurc", time: "12:31",message:"ti si pa čist peder kaj ti je"},
-        { author: "dasd", time: "12:31",message:"ti si pa čist peder tak"},
-    ]);
+    self.messages=ko.observableArray([]);
 
     //function for adding videos to the array.
     self.addVideo=function(model,item){
@@ -124,10 +112,8 @@ function PlaylistModel(){
                return new Message(item);
             });
             self.messages(mappedMessages);
-
         });
 
-        $("#chat-div").scrollTop($("#chat-div")[0].scrollHeight);
     };
 
     /* we call sync function a period specified in miliseconds */

@@ -78,7 +78,6 @@
     response:
         -title: title of the playlist
         -uri: unique identifier of playlist eg. best_playlist
-        -protected: boolean which say whether playlist is password protected
         -description: short description of playlist
     */
     $("#search-playlist").keyup(function(){
@@ -97,20 +96,10 @@
             else{
                 $("#response-playlist").html("");
                 $.each(data, function( index, value ) {
-                    if(value.protected){
-                        $("#response-playlist").append('<li><a href="'+
-                        '/playlist/'+value.uri+'" class="protected_playlist">'+
-                        value.title+'</a><form class="protected_playlist_form"'+
-                        'style="display:none"><input data-uri="'+value.uri+
-                        '" type="text" class="form-control" placeholder="Enter'+
-                        'playlist password" /><button type="submit">Join'+
-                        '</button></form><div class="playlist_password_error">'+
-                        '</div></li>');
-                    }
-                    else{
-                        $("#response-playlist").append('<li><a href="'+
-                        '/playlist/'+value.uri+'">'+value.title+'</a></li>');
-                    }
+                    $("#response-playlist").append('<a href="'+
+                    '/playlist/'+value.uri+'"><div class="title">'+
+                    value.title+'</div><div class="'+
+                    'description">'+value.description+'</div></a>');
                 });
                 $("#response-playlist").show();
             }
@@ -130,7 +119,9 @@
         success: on successful attemp we recieve username
     */
 
-    $("form#login-form").on("submit",function(event){
+    $("#login-form").on("submit",function(event){
+        $("#login-form input").removeClass("red");
+        $("#login-form .error").text("");
         event.preventDefault();
         $.ajax({
             type: "POST",
@@ -138,32 +129,21 @@
             dataType:"json",
             data:{
                 "login-username": $(this)
-                    .find("input[name='login-username']").val(),
+                    .find("#login-username").val(),
                 "login-password": hex_sha256($(this)
-                    .find("input[name='login-password']").val())
+                    .find("#login-password").val())
             },
         }).done(function(response){
             if(response.error){
-                $("#login-message").text(response.error).show();
-                $("#login-form").find("input").val("");
-                setTimeout(function(){
-                    $("#login-message").fadeOut(1000);
-                },2000);
+                $("#login-username-error").text(response.error).show();
+                $("#login-form input").addClass("red");
+                $("#login-password").val("");
             }
             else{
-                $("#username-string").text(response.success);
-                $(".not-logged-in").hide();
-                $("#hidden-search").hide();
-                $("#search").fadeIn(1000);
-                $(".logged-in").fadeIn(1000);
-                $.ajax({
-                    type: "GET",
-                    url: "/latest_playlists",
-                    dataType:"json",
-                });
+                window.location.reload();
             }
         });
-        $("#login-form").find("input[type='password']").val("");
+
     });
 
     /* Standard registration form that works the same way as login form. We
@@ -177,69 +157,62 @@
         -success: on successful attemp we recieve username
     */
 
-    $("form#register-form").on("submit",function(event){
+    $("#register-form").on("submit",function(event){
         event.preventDefault();
-        if($(this).find("input[name='register-username']").val().length<5 ||
-          $(this).find("input[name='register-password']").val().length<5){
-            $("#register-message")
-                .text("Your username or password is too short.")
-                .show();
-            setTimeout(function(){
-                $("#register-message").fadeOut(1000);
-            },2000);
+        $("#register-form input").removeClass("red");
+        $("#register-form .error").text("");
+
+        if($(this).find("input[name='register-password']").val().length<5){
+            $("#registration-password-error")
+                .text("Your password is too short.");
+            $("#register-password").addClass("red");
+            $("#register-form").find("input[type='password']").val("");
+        }
+        else if($(this).find("input[name='register-username']").val().length<5){
+            $("#registration-username-error")
+                .text("Your username is too short.");
+            $("#register-username").addClass("red");
         }
         else if(!validateEmail($(this).find("input[name='register-email']")
             .val())){
-            $("#register-message")
-                .text("You have entered invalid email adress.")
-                .show();
-            setTimeout(function(){
-                $("#register-message").fadeOut(1000);
-            },2000);
+            $("#registration-email-error")
+                .text("Your email is not valid.");
+            $("#register-email").addClass("red");
         }
         else{
-            if($(this).find("input[name='register-password']").val()==
-            $(this).find("input[name='register-repeat']").val()){
-                $(this).find("input[name='register-repeat']").val("");
+            if($(this).find("#register-password").val()==
+                $(this).find("#register-repeat").val()){
                 $.ajax({
                     type: "POST",
                     url: "/register",
                     dataType:"json",
                     data:{
                         "register-username": $(this)
-                            .find("input[name='register-username']").val(),
+                            .find("#register-username").val(),
                         "register-password":
-            hex_sha256($(this).find("input[name='register-password']").val()),
+            hex_sha256($(this).find("#register-password").val()),
                         "register-email": $(this).
-                            find("input[name='register-email']").val(),
+                            find("#register-email").val(),
                     },
                 }).done(function(response){
                     if(response.error){
-                        $("#login-message").text(response.error).show();
-                        $("#login-form").find("input").val("");
-                        setTimeout(function(){
-                            $("#login-message").fadeOut(1000);
-                        },2000);
+                        $("#registration-email-error")
+                        .text(response.error);
+                        $("#register-email").addClass("red");
                     }
                     else{
-                        $("#username-string").text(response.success);
-                        $(".not-logged-in").hide();
-                        $("#hidden-search").hide();
-                        $("#search").fadeIn(1000);
-                        $(".logged-in").fadeIn(1000);
+                        window.location.reload();
                     }
                 });
             }
             else{
-                $("#register-message")
-                    .text("Your passwords don't match.")
-                    .show();
-                setTimeout(function(){
-                    $("#register-message").fadeOut(1000);
-                },2000);
+                $("#registration-repeat-error")
+                .text("Passwords don't match.");
+                $("#register-repeat").addClass("red");
+                $("#register-form").find("input[type='password']").val("");
             }
         }
-        $("#register-form").find("input[type='password']").val("");
+
     });
 
     /* Simple chat AJAX request that sends a short message to server to be
@@ -259,16 +232,65 @@
         }).done(function(data ){
             playlist.sync();
         });
-        $(this).find("input").val("");
+        $(this).find("textarea").val("");
         return false;
     });
 
+    /* controls for volume slider. We use a simple plugin, which we first
+    initialize, then create a listener which sets player's volume according to
+    sliders value. */
+    $("#volume-slider").simpleSlider();
+    $("#volume-slider").bind("slider:changed", function (event, data) {
+        if(player){
+            player.setVolume(parseInt(data.value*100));
+        }
+    });
+
+    /* clicking on speaker icon mutes the player by setting the volume to 0. */
+    $(".speaker").click(function(){
+        $("#volume-slider").simpleSlider("setValue",0);
+        if(player){
+            player.setVolume(0);
+        }
+    });
+
+    /* email validation function for front-end email verification. */
+    function validateEmail(email){
+        return /^.+@.+\..+$/.test(email);
+    }
+
+    /* on create playlist
     $("#password_check").change(function(){
         $("#playlist_password").fadeToggle();
     });
 
 
-    function validateEmail(email){
-        return /^.+@.+\..+$/.test(email);
-    }
+
+    /* dropdown menu for the login authentication functionality. */
+    $(".user").click(function(e){
+        e.stopPropagation();
+        $("#logout").slideDown();
+    });
+    $(".open-login").click(function(e){
+        e.stopPropagation();
+        $(".menu-button").removeClass("active");
+        $(".open-login").addClass("active");
+        $(".dropdown").hide();
+        $("#login").slideDown();
+    });
+    $(".open-register").click(function(e){
+        e.stopPropagation();
+        $(".menu-button").removeClass("active");
+        $(".open-register").addClass("active");
+        $(".dropdown").hide();
+        $("#register").slideDown();
+    });
+    $(".dropdown").click(function(e){
+        e.stopPropagation();
+    });
+    $(document).click(function(){
+        $(".menu-button").removeClass("active");
+        $(".dropdown").hide();
+    });
+
 }(jQuery));
