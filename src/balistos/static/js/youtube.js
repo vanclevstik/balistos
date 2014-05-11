@@ -13,7 +13,7 @@ $(document).on("click","#response",function(event){
 function showResponse(response) {
     $("#response").html("");
     $.each(response.items, function( index, value ) {
-        $("#response").append('<li data-title="'+value.snippet.title+
+        $("#response").append('<li data-title="'+value.snippet.title.replace("'","\'")+
         '" data-image="'+value.snippet.thumbnails.default.url+'"" title="Add '+
         value.snippet.title+' to playlist" data-bind="click: addVideo" data-id="'+
         value.id.videoId+'" id="video-'+value.id.videoId+'"><img src="'+
@@ -42,7 +42,7 @@ function search(query) {
         part: 'snippet',
         q:query,
         type:'video',
-        maxResults:20,
+        maxResults:12,
         format:5,
         videoEmbeddable:true,
         key:'AIzaSyCnR3Vv-Erxjaa-IJapIXCnvgTOuXLXItA'
@@ -191,10 +191,9 @@ data from player object and assignes css properties that reflect it. This
 function is called every second. */
 function updateProgress(){
     var percent=player.getCurrentTime()/player.getDuration()*100;
-    $(".progress-bar").width(percent+"%")
-    .text(convertToTime(
-        player.getCurrentTime())+" / "+convertToTime(player.getDuration())
-    );
+    $(".progress .bar").width(percent+"%");
+    $(".elapsed").text(convertToTime(player.getCurrentTime()));
+    $(".total").text(" / "+convertToTime(player.getDuration()));
     setTimeout(updateProgress,1000);
 }
 

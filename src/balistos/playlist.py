@@ -368,6 +368,7 @@ def get_latest_playlists(user, limit=5):
     for playlist_user in PlaylistUser.get_by_user_latest(user, limit=limit):
         playlists.append({
             'uri': playlist_user.playlist.uri,
-            'title': playlist_user.playlist.title
+            'title': playlist_user.playlist.title,
+            'description': playlist_user.playlist.description
         })
     return playlists

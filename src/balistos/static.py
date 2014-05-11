@@ -4,7 +4,6 @@
 from fanstatic import Group
 from fanstatic import Library
 from fanstatic import Resource
-from js.bootstrap import bootstrap
 from js.jquery import jquery
 from js.modernizr import modernizr
 
@@ -17,10 +16,9 @@ lib_balistos = Library('balistos', 'static')
 
 balistos_css = Resource(
     library=lib_balistos,
-    relpath='css/balistos.css',
-    minified='css/balistos.min.css',
+    relpath='css/style.css',
+    minified='css/style.min.css',
     minifier='cssmin',
-    depends=[bootstrap],
 )
 
 balistos_js = Resource(
@@ -35,6 +33,12 @@ balistos_js = Resource(
 knockout_js = Resource(
     library=lib_balistos,
     relpath='js/knockout.js',
+    bottom=True,
+)
+
+slider_js = Resource(
+    library=lib_balistos,
+    relpath='js/simple-slider.min.js',
     bottom=True,
 )
 
@@ -63,11 +67,11 @@ sha_js = Resource(
 
 balistos_assets = Group([
     jquery,
-    bootstrap,
     modernizr,
     balistos_js,
     balistos_css,
-    sha_js
+    sha_js,
+    slider_js
 ])
 youtube_assets = Group([
     knockout_js,

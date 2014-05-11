@@ -45,6 +45,7 @@ setup(
         'js.bootstrap',
         'js.deform',
         'js.jquery',
+        'js.lesscss',
         'passlib',
         'psycopg2',
         'pyramid',
