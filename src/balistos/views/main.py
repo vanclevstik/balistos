@@ -71,7 +71,8 @@ def main(request):
             url = request.route_url('home')
             return HTTPFound(location=url)
     return {
-        'username': username
+        'username': username,
+        'title': Playlist.get(session['playlist']).title
     }
 
 
@@ -145,7 +146,8 @@ def set_playlist(request):
 
     session['playlist'] = playlist_uri
     return {
-        'username': username
+        'username': username,
+        'title': playlist.title
     }
 
 
@@ -312,7 +314,7 @@ def create_playlist(request):
     if not title or not user:
         return HTTPNotFound()
     duration_limit = int(request.GET.get('duration_limit', 600))
-    description = request.GET.get('duration_limit', None)
+    description = request.POST.get('description', None)
     public = request.GET.get('public', True)
     uri = normalized_id(title)
     count = 1
@@ -361,7 +363,8 @@ def search_playlists(request):
     for playlist in Playlist.search_title(query):
         playlists.append({
             'uri': playlist.uri,
-            'title': playlist.title
+            'title': playlist.title,
+            'description': playlist.description
         })
 
     return Response(

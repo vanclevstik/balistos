@@ -1,91 +1,196 @@
 <metal:block metal:use-macro="main_template">
     <div metal:fill-slot="content" id="content">
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="search">
-                    <div class="message" id="hidden-search" tal:attributes="style python: 'display:none' if username else ''">To search and add videos to the queue, please login.</div>
-                    <input type="text" class="form-control" id="search" placeholder="Search video" autocomplete="off" tal:attributes="style python: 'display:none' if not username else ''" />
-                    <ul class="dropdown-menu autocomplete" id="response"></ul>
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <div class="video-player">
-                    <div class="title">Now playing: <span data-bind="text: firstVideoTitle"></span></div>
-                    <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
-                    <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
-                    <div data-bind="click: removeFirstVideo" class="close-button"></div>
-                    <div id="hide-player">Hide player</div>
-                    <div id="show-player">Show player</div>
-                    <div class="player">
-                        <div class="overlay mute"></div>
-                        <div id="player"></div>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar"></div>
-                        </div>
+        <header>
+            <div class="container">
+                <h1 class="logo">Balistos</h1>
+                <div class="menu">
+                    <div class="menu-button border-left open-login" tal:condition="not username">Log in</div>
+                    <div tal:condition="not username" class="menu-button open-register">Register</div>
+                    <div class="user" tal:condition="username">
+                        <img src="/static/img/user.png" />
+                        <div class="text">Hello</div>
+                        <div class="username">${username}</div>
+                        <div class="arrow_down"></div>
                     </div>
                 </div>
+                <div class="dropdown small" id="logout"  style="display:none;">
+                    <a href="/logout" class="button green logout">Log Out</a>
+                </div>
+                <div class="dropdown" id="login"  style="display:none;">
+                    <form role="form" id="login-form">
+                        <label>
+                            <div class="title">Username</div>
+                            <div class="error" id="login-username-error"></div>
+                            <input type="text" id="login-username" name="login-username">
+                        </label>
+                        <label>
+                            <div class="title" >Password</div>
+                            <div class="forgot">Forgot password?</div>
+                            <input type="password" id="login-password" name="login-password">
+                        </label>
+                        <button type="submit" class="button green">Log In</button>
+                        <div class="noaccount">No account yet? <span class="link open-register">Create one now!</span>
+                        </div>
+                    </form>
+                    <div class="social">
+                        <h2>Login with:</h2>
+                        <a class="google-login" href="${request.route_url('social.auth', backend='google-oauth2')}"></a>
+                        <a class="facebook-login" href="${request.route_url('social.auth', backend='facebook')}"></a>
+                    </div>
+                </div>
+                <div class="dropdown" id="register"  style="display:none;">
+                    <form role="form" id="register-form">
+                        <label>
+                            <div class="title">Username</div>
+                            <div class="error" id="registration-username-error"></div>
+                            <input type="text" id="register-username" name="register-username">
+                        </label>
+                        <label>
+                            <div class="title">Email address</div>
+                            <div class="error" id="registration-email-error"></div>
+                            <input type="text" id="register-email" name="register-email">
+                        </label>
+                        <label>
+                            <div class="title">Password</div>
+                            <div class="error" id="registration-password-error"></div>
+                            <input type="password" id="register-password" name="register-password">
+                        </label>
+                        <label>
+                            <div class="title">Repeat password</div>
+                            <div class="error" id="registration-repeat-error"></div>
+                            <input type="password" id="register-repeat" name="register-repeat">
+                        </label>
+                        <button class="button green" type="submit">Register</button>
+                        <div class="noaccount">Already have an account? <span class="link open-login">Log in now!</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="search">
+                    <input type="text" name="search" id="search" placeholder="search video" autocomplete="off" />
+                    <ul class="results" id="response">
+                    </ul>
+                </div>
             </div>
-            <div class="col-lg-4 col-md-12 col-sm-12">
-                <div class="col-lg-12 col-md-4 col-sm-6 col-xs-12  playlist" >
-                    <div class="playlist-title">Playlist</div>
-                    <div data-bind="foreach: videos">
-                        <div data-bind="if: $index()>0">
-                            <div class="video-box" data-bind="css: {'second': $index()==1}">
-                                <img data-bind="attr: { src: image }" />
-                                <div class="video-right">
-                                    <div data-bind="text: title" class="title"></div>
-                                    <div class="arrows logged-in" data-bind="if: liked() > -2">
-                                        <div data-bind="click: addLike, css: { 'active': liked()>0 }" class="arrow-up"></div>
-                                        <div data-bind="click: removeLike , css: { 'active': liked()<0 }" class="arrow-down"></div>
-                                    </div>
-                                    <div data-bind="text: likes" class="likes"></div>
-                                    <div class="added-by">
-                                        added by  
-                                        <span data-bind="text: owner"></span>
-                                    </div>
-                                    <span class="close-button" data-bind="click: removeVideo" ></span>
+            <div class="clearfix"></div>
+        </header>
+        <main>
+            <div class="container">
+                <div class="col-lg-7 col-md-6 col-sm-12 no-gutter">
+                    <div class="main_window">
+                        <div class="video_player">
+                            <div class="subtitle">Now playing:</div>
+                            <div class="title" data-bind="text: firstVideoTitle"></div>
+                            <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
+                            <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
+                            <div class="player">
+                                <div class="overlay"></div>
+                                <div id="player"></div>
+                            </div>
+                            <div class="progress">
+                                <div class="bar" role="progressbar"></div>
+                            </div>
+                            <div class="toolbar">
+                                <div class="controls" tal:condition="username">
+                                    <div class="control play"></div>
+                                    <div class="control pause"></div>
+                                    <div class="control stop"></div>
+                                </div>
+                                <div class="timer">
+                                    <div class="elapsed"></div>
+                                    <div class="total"> / </div>
+                                </div>
+                                <div class="volume">
+                                    <div class="speaker"></div>
+                                    <input type="hidden" id="volume-slider" value="100" />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-12 col-md-4 col-sm-6 col-xs-12 playlist pull-right" >
-                    <div class="sidebox">
-                        <div class="header" >
-                            <span class="badge pull-right" data-bind="text: getUsersTotal()"></span>
-                            Active users
-                        </div>
-                        <ul data-bind="foreach: users" class="content">
-                            <li class="user">
-                                <div class="username" data-bind="text: username"></div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-12 col-md-4 col-sm-6 col-xs-12 playlist pull-right" >
-                    <div class="sidebox">
-                        <div class="header">Chat</div>
-                        <div class="chat-container" id="chat-div">
-                            <ul data-bind="foreach: messages" class="chat" >
-                                <li class="line">
-                                    [<span class="type" data-bind="text: time"></span>] 
-                                    <span class="username" style="font-weight:700;" data-bind="text: author"></span>:
-                                    <span class="username" data-bind="text: message"></span>
-                                </li>
-                            </ul>
-                        </div>
-                        <form id="chat-form" class="form-inline logged-in" role="form" style="padding:10px 20px;" tal:attributes="style python: 'display:none' if not username else ''">
-                            <div class="input-group">
-                                <input name="message" type="text" class="form-control" />
-                                <span class="input-group-btn">
-                                    <button class="btn btn-info send-icon" type="submit"></button>
-                                </span>
+                        <div class="button_menu">
+                            <div class="button grey delete" data-bind="click: removeFirstVideo" tal:condition="username">
+                                <i class="icon delete"></i>
+                                Delete video
                             </div>
-                        </form>
+                            <div class="button red hide" id="hide-player">
+                                <i class="icon hide"></i>
+                                Hide player
+                            </div>
+                            <div class="button blue share">
+                                <i class="icon share"></i>
+                                Share playlist
+                            </div>
+                        </div>
                     </div>
-                </div> 
+                </div>
+                <div class="sidebar col-lg-5 col-md-6 col-sm-7 col-xs-12 left-gutter">
+                    <div class="box first">
+                        <div class="header">
+                            <i class="icon note"></i>
+                            <div class="title">${title}</div>
+                        </div>
+                        <div class="body">
+                           <div data-bind="foreach: videos">
+                                <div data-bind="if: $index()>0">
+                                    <div class="playlist_item" data-bind="css: {'even': $index()==1}">
+                                        <div class="vote">
+                                            <div class="up active" data-bind="click: addLike, css: { 'active': liked()>0 }"></div>
+                                            <div class="number" data-bind="text: likes">245</div>
+                                            <div class="down" data-bind="click: removeLike , css: { 'active': liked()<0 }" ></div>
+                                        </div>
+                                        <img data-bind="attr: { src: image }" />
+                                        <div class="info">
+                                            <div class="title" data-bind="text: title"></div>
+                                            <div class="addedby">added by <span class="black" data-bind="text: owner"></span></div>
+                                        </div>
+                                        <div class="delete-column">
+                                            <div class="delete" data-bind="click: removeVideo"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="empty_item" data-bind="if: videos().length==0">Playlist is empty. Please search and add a video.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-sidebar col-lg-5 col-md-6 col-sm-5 col-xs-12 left-gutter middle-gutter">
+                    <div class="users">
+                        <div class="header">
+                            <div class="title">Users online</div>
+                            <div class="number" data-bind="text: getUsersTotal()">0</div>
+                        </div>
+                        <div class="body" data-bind="foreach: users">
+                            <div class="user green" data-bind="text: username"></div>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="header">
+                            <i class="icon chat"></i>
+                            <div class="title">Chat with your buddies</div>
+                        </div>
+                        <div class="chatbox" data-bind="foreach: messages">
+                            <div class="message">
+                                <span class="author red"  data-bind="text: author">AdminGuy</span>: <span data-bind="text: message">Exercitation ullamco laboris nisi ut aliquip ex :)</span>
+                            </div>
+                        </div>
+                        <div class="send"  tal:condition="username">
+                            <form id="chat-form" role="form">
+                                <textarea name="message" placeholder="Send a message"></textarea>
+                                <button type="submit" class="button green chat">
+                                    <i class="icon message"></i>
+                                    Chat
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
+        <footer>
+            <div class="container">
+                <a href="https://www.youtube.com" target="_blank" class="youtube" alt="Powered by YouTube"></a>
+                <a href="/privacy" target="_blank" class="privacy">Privacy policy</a>
+                <div class="copyright">&copy; Balistos 2014</div>
+            </div>
+        </footer>
         <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
     </div>
 </metal:block>
