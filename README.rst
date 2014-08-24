@@ -2,9 +2,7 @@
 balistos Pyramid App
 ====================
 
-A Heroku-deployable Pyramid app to display 'balistos!` on front page.
-
-Web application that lets users edit and play shared Youtube playlists
+A Heroku-deployable Pyramid app that lets users edit and play shared Youtube playlists
 
 * `Source code @ GitHub <https://github.com/ferewuz/balistos>`_
 * `Dev Docs @ GitHub <https://github.com/ferewuz/balistos/blob/master/docs/develop.rst>`_
@@ -24,5 +22,17 @@ Web application that lets users edit and play shared Youtube playlists
 How it works
 ============
 
-balistos acts as a skeleton for a Pyramid project that is continuously deployed
+Balistos is automatically deployable
 to Heroku (via GitHub and Travis CI).
+
+Local development
+=================
+
+Run Makefile:
+  `make`
+
+Start app with:
+  `bin/pserve etc/development.ini`
+
+Run tests with:
+  `make tests`

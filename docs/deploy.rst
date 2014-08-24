@@ -72,14 +72,3 @@ If you want, you can deploy the entire app to your own Heroku account::
 To redeploy, manually push latest changes to Heroku (not GitHub)::
 
     $ git push heroku master
-
-
-IRC deploy notifications
-------------------------
-
-On every deploy we get an IRC notification in irc.freenode.org#ferewuz. It's configured with::
-
-    $ heroku addons:add deployhooks:irc \
-        --server=irc.freenode.org
-        --room=ferewuz
-        --message="{{user}} deployed {{app}} to {{url}}"
