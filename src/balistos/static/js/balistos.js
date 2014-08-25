@@ -9,18 +9,21 @@
     $("#hide-player").click(function(){
         $(this).hide();
         $(".player").hide();
-        player.destroy();
-        player=null;
-        $("#show-player").fadeIn();
+        $("#show-player").show();
+        if(player){
+            player.destroy();
+            player=null;
+        }
     });
 
     /* When user clicks on show player, we initialize it again at the correct
     point and show it to user along with hide button. */
     $("#show-player").click(function(){
         $(this).hide();
-        initPlayer();
         $(".player").fadeIn();
-        $("#hide-player").fadeIn();
+        $("#hide-player").show();
+        initPlayer();
+
     });
 
     /* We catch when user clicks outside of search playlist result area and
@@ -80,7 +83,7 @@
         -uri: unique identifier of playlist eg. best_playlist
         -description: short description of playlist
     */
-    $("#search-playlist").keyup(function(){
+    $("#search_playlist").keyup(function(){
         $.ajax({
             type: "GET",
             url: "/search_playlists",
@@ -284,6 +287,13 @@
         $(".open-register").addClass("active");
         $(".dropdown").hide();
         $("#register").slideDown();
+    });
+    $(".open-create").click(function(e){
+        e.stopPropagation();
+        $(".menu-button").removeClass("active");
+        $(".open-register").addClass("active");
+        $(".dropdown").hide();
+        $("#create").slideDown();
     });
     $(".dropdown").click(function(e){
         e.stopPropagation();
