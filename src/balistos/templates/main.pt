@@ -114,9 +114,17 @@
                                 <i class="icon hide"></i>
                                 Hide player
                             </div>
-                            <div class="button blue share">
-                                <i class="icon share"></i>
-                                Share playlist
+                             <div class="button green show" id="show-player">
+                                <i class="icon show"></i>
+                                Show player
+                            </div>
+                            <div class="share-row">
+                                <div class="share-left"></div>
+                                <div class="share-icon facebook"></div>
+                                <div class="share-icon twitter"></div>
+                                <div class="share-icon google"></div>
+                                <div class="share-icon email"></div>
+                                <div class="share-right"></div>
                             </div>
                         </div>
                     </div>
@@ -168,7 +176,7 @@
                         </div>
                         <div class="chatbox" data-bind="foreach: messages">
                             <div class="message">
-                                <span class="author red"  data-bind="text: author">AdminGuy</span>: <span data-bind="text: message">Exercitation ullamco laboris nisi ut aliquip ex :)</span>
+                                <span class="author red"  data-bind="text: author"></span>: <span data-bind="text: message"></span>
                             </div>
                         </div>
                         <div class="send"  tal:condition="username">

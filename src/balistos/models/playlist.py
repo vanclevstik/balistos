@@ -109,6 +109,22 @@ class Playlist(Base, BaseMixin):
             q = q.filter_by(**filter_by)
         return q
 
+    @classmethod
+    def get_popular(class_, order_by='title', filter_by=None):
+        """Return all Playlists.
+
+        filter_by: dict -> {'name': 'foo'}
+
+        By default, order by Playlist.title.
+        """
+        Playlist = class_
+        q = Playlist.query
+        #TODO popular mechanism
+        q = q.order_by(getattr(Playlist, order_by)).limit(10)
+        if filter_by:
+            q = q.filter_by(**filter_by)
+        return q
+
 
 class PlaylistUser(Base, BaseMixin):
 

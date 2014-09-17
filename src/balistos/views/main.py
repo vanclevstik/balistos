@@ -41,7 +41,7 @@ def home(request):
     balistos_assets.need()
     username = authenticated_userid(request)
     user = User.get_by_username(username)
-    playlists = get_latest_playlists(user) if user else None
+    playlists = get_latest_playlists(user) if user else Playlist.get_popular()
     return {
         'username': username,
         'playlists': playlists
