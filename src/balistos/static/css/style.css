@@ -1234,6 +1234,7 @@ footer .privacy {
   width: 50%;
   background: #ff4f00;
   height: 5px;
+  max-width: 100%;
 }
 .video_player .toolbar {
   width: 100%;
@@ -1876,6 +1877,7 @@ h1 {
   padding: 5px;
 }
 .play-list .square .title {
+  width: 100%;
   float: left;
   font-size: 20px;
   color: #333333;
@@ -2049,11 +2051,11 @@ h1 {
   .search_playlist {
     width: 270px;
   }
-  .search_playlist input {
+  .search_playlist .inner input {
     width: 250px;
     border-radius: 5px;
   }
-  .search_playlist .search_icon {
+  .search_playlist .inner .search_icon {
     display: none;
   }
   .presentation h2 {
@@ -2071,6 +2073,9 @@ h1 {
   }
   footer .copyright {
     display: none;
+  }
+  .homeback {
+    margin-top: 30px;
   }
 }
 @media (min-width: 480px) and (max-width: 767px) {
@@ -2153,7 +2158,7 @@ h1 {
   .search_playlist {
     width: 450px;
   }
-  .search_playlist input {
+  .search_playlist .inner input {
     width: 376px;
   }
 }

@@ -101,74 +101,23 @@
                     <div class="col-lg-6 col-md-6">
                         <div class="presentation">
                             <h2>How do I use Balistos?</h2>
-                            <div class="text">Simple! You may search all the playlists and select the one you like by simply clicking on it. To be able to use full functionality of Balistos such as adding songs and voting you are required to register an account. If you don’t like any of the playlist you may also create your own and share it with your friends. If you want to make it exclusive for your friends, make sure you protect it with password.</div>
+                            <div class="text">Simple! You may search all the playlists and select the one you like by simply clicking on it. To be able to use full functionality of Balistos such as adding songs and voting you are required to register an account. If you don't like any of the playlist you may also create your own and share it with your friends. If you want to make it exclusive for your friends, make sure you protect it with password.</div>
                         </div>
                     </div>
                     <div class="col-lg-12 col-md-12">
-                        <div class="popular">
+                        <div  class="popular">
                             <div class="icon-note"></div>
                             <h3>Popular playlists</h3>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="play-list">
-                            <div class="number">1</div>
+                    <div class="col-lg-6 col-md-6" tal:repeat="playlist playlists">
+                        <a href="/playlist/${playlist.uri}" class="play-list">
+                            <div class="number" tal:content="repeat.playlist.number"></div>
                             <div class="square">
-                                <div class="title">Ulverbite playlist</div>
+                                <div class="title" tal:content="playlist.title"></div>
                                 <div class="created">created by <span class="black">Ulverbite</span></div>
                             </div>
-                        </div>
-                        <div class="play-list">
-                            <div class="number">1</div>
-                            <div class="square">
-                                <div class="title">Ulverbite playlist</div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
-                            </div>
-                        </div>
-                        <div class="play-list">
-                            <div class="number">1</div>
-                            <div class="square">
-                                <div class="title">Ulverbite playlist</div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
-                            </div>
-                        </div>
-                        <div class="play-list">
-                            <div class="number">1</div>
-                            <div class="square">
-                                <div class="title">Ulverbite playlist</div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="play-list">
-                            <div class="number">1</div>
-                            <div class="square">
-                                <div class="title">Ulverbite playlist</div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
-                            </div>
-                        </div>
-                        <div class="play-list">
-                            <div class="number">1</div>
-                            <div class="square">
-                                <div class="title">Ulverbite playlist</div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
-                            </div>
-                        </div>
-                        <div class="play-list">
-                            <div class="number">1</div>
-                            <div class="square">
-                                <div class="title">Ulverbite playlist</div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
-                            </div>
-                        </div>
-                        <div class="play-list">
-                            <div class="number">1</div>
-                            <div class="square">
-                                <div class="title">Ulverbite playlist</div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
