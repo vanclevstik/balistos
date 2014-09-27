@@ -39,5 +39,5 @@ class TestHomeFunctional(unittest.TestCase):
         testing.tearDown()
 
     def test_home(self):
-        res = self.testapp.get('/home', status=200)
+        res = self.testapp.get('/', status=200)
         self.assertIn(u'What is Balistos?', res.body)

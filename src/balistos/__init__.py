@@ -54,7 +54,7 @@ def configure(config, sqlite=True):
     # routing
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_request_method('balistos.utils.get_user', 'user', reify=True)
-    config.add_route('home', '/home')
+    config.add_route('home', '/')
     config.add_route('users', '/users')
     config.add_route('login', '/login')
     config.add_route('logout', '/logout')
@@ -68,7 +68,7 @@ def configure(config, sqlite=True):
     config.add_route('latest_playlists', '/latest_playlists')
     config.add_route('add_user_to_playlist', '/add_user_to_playlist')
     config.add_route('main', '/')
-    config.add_route('set_playlist', '/playlist/{playlist}')
+    config.add_route('play_playlist', '/playlist/{playlist}')
     config.add_route('chat_message', '/chat_message')
     ignores = ['balistos.tests', 'balistos.testing', ]
     if sqlite:

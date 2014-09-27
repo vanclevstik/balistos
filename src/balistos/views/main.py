@@ -48,34 +48,6 @@ def home(request):
     }
 
 
-@view_config(
-    route_name='main',
-    renderer='balistos:templates/main.pt',
-    layout='default',
-)
-def main(request):
-    """Main page view"""
-    balistos_assets.need()
-    youtube_assets.need()
-    session = request.session
-    username = authenticated_userid(request)
-    user = User.get_by_username(username)
-    if not 'playlist' in session or not session['playlist']:
-        if not user:
-            url = request.route_url('home')
-            return HTTPFound(location=url)
-        latest = PlaylistUser.get_by_user_latest(user)
-        if latest:
-            session['playlist'] = latest.playlist.uri
-        if not latest:
-            url = request.route_url('home')
-            return HTTPFound(location=url)
-    return {
-        'username': username,
-        'title': Playlist.get(session['playlist']).title
-    }
-
-
 @view_config(route_name='playlist_videos')
 def playlist_videos(request):
     """
@@ -107,13 +79,13 @@ def playlist_videos(request):
 
 
 @view_config(
-    route_name='set_playlist',
+    route_name='play_playlist',
     renderer='balistos:templates/main.pt',
     layout='default',
 )
-def set_playlist(request):
+def play_playlist(request):
     """
-    View that sets playlist in our session
+    View that plays selected playlist
 
     :param    request: current request
     :type     request: pyramid.request.Request
@@ -125,7 +97,6 @@ def set_playlist(request):
     balistos_assets.need()
     youtube_assets.need()
     username = authenticated_userid(request)
-    session = request.session
     playlist_uri = request.matchdict.get('playlist', None)
     playlist = Playlist.get(playlist_uri)
     user = User.get_by_username(username)
@@ -144,7 +115,6 @@ def set_playlist(request):
         Session.add(playlist_user)
         create_clips_for_user(playlist_user)
 
-    session['playlist'] = playlist_uri
     return {
         'username': username,
         'title': playlist.title
@@ -337,7 +307,7 @@ def create_playlist(request):
     )
     Session.add(playlist_user)
     create_clips_for_user(playlist_user)
-    url = request.route_url('set_playlist', playlist=uri)
+    url = request.route_url('play_playlist', playlist=uri)
     return HTTPFound(location=url)
 
 
