@@ -2,7 +2,7 @@
     <div metal:fill-slot="content" id="content">
         <header>
             <div class="container">
-                <h1 class="logo">Balistos</h1>
+                <a href="/home"><h1 class="logo">Balistos</h1></a>
                 <div class="menu">
                     <div class="menu-button border-left open-login" tal:condition="not username">Log in</div>
                     <div tal:condition="not username" class="menu-button open-register">Register</div>
@@ -65,7 +65,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="search">
+                <div class="search" tal:condition="username">
                     <input type="text" name="search" id="search" placeholder="search video" autocomplete="off" />
                     <ul class="results" id="response">
                     </ul>
@@ -78,10 +78,15 @@
                 <div class="col-lg-7 col-md-6 col-sm-12 no-gutter">
                     <div class="main_window">
                         <div class="video_player">
-                            <div class="subtitle">Now playing:</div>
+                            <!-- ko if: firstVideoId() -->
+                            <div class="subtitle">
+                                <div class="now-playing">Now playing:</div>
+                                <div class="added-by">Added by: <span class="black" data-bind="text: firstVideoOwner()"></span></div>
+                            </div>
                             <div class="title" data-bind="text: firstVideoTitle"></div>
                             <div class="video-id" data-bind="text: firstVideoId" id="video-id"></div>
                             <div class="video-id" data-bind="text: firstVideoStart" id="video-start"></div>
+
                             <div class="player">
                                 <div class="overlay"></div>
                                 <div id="player"></div>
@@ -104,12 +109,19 @@
                                     <input type="hidden" id="volume-slider" value="100" />
                                 </div>
                             </div>
+                            <!-- /ko -->
+                            <!-- ko ifnot: firstVideoId() -->
+                            <h2>Playlist is empty. Please search and add a video.</h2>
+                            <!-- /ko -->
                         </div>
                         <div class="button_menu">
-                            <div class="button grey delete" data-bind="click: removeFirstVideo" tal:condition="username">
+                            <!-- ko if: getPermission()>1 -->
+                            <div class="button grey delete" data-bind="click: removeFirstVideo">
                                 <i class="icon delete"></i>
                                 Delete video
                             </div>
+                            <!-- /ko -->
+                            <!-- ko if: firstVideoId()>0 -->
                             <div class="button red hide" id="hide-player">
                                 <i class="icon hide"></i>
                                 Hide player
@@ -118,9 +130,10 @@
                                 <i class="icon show"></i>
                                 Show player
                             </div>
+                            <!-- /ko -->
                             <div class="share-row">
                                 <div class="share-left"></div>
-                                <div class="share-icon facebook"></div>
+                                <div class="share-icon facebook" ></div>
                                 <div class="share-icon twitter"></div>
                                 <div class="share-icon google"></div>
                                 <div class="share-icon email"></div>
@@ -165,9 +178,21 @@
                             <div class="title">Users online</div>
                             <div class="number" data-bind="text: getUsersTotal()">0</div>
                         </div>
+                        <!-- ko if: getPermission()>1 -->
                         <div class="body" data-bind="foreach: users">
-                            <div class="user green" data-bind="text: username"></div>
+                            <div class="user" data-bind="css: permissionClass(),click: grantRights">
+                                <div class="name" data-bind="text: username"></div>
+                                <div class="key"></div>
+                            </div>
                         </div>
+                        <!-- /ko -->
+                        <!-- ko if: getPermission()<2 -->
+                        <div class="body" data-bind="foreach: users">
+                            <div class="user" data-bind="css: permissionClass()">
+                                <div class="name" data-bind="text: username"></div>
+                            </div>
+                        </div>
+                        <!-- /ko -->
                     </div>
                     <div class="box">
                         <div class="header">
@@ -181,7 +206,7 @@
                         </div>
                         <div class="send"  tal:condition="username">
                             <form id="chat-form" role="form">
-                                <textarea name="message" placeholder="Send a message"></textarea>
+                                <textarea name="message" id="chat-message" placeholder="Send a message"></textarea>
                                 <button type="submit" class="button green chat">
                                     <i class="icon message"></i>
                                     Chat

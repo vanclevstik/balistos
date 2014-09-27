@@ -2,9 +2,7 @@
 function PlaylistModel(){
     var self=this;
 
-    self.settings=ko.observableArray([
-        {duration_limit:600}
-    ]);
+    self.settings=ko.observableArray([]);
     self.videos=ko.observableArray([]);
     self.users=ko.observableArray([]);
 
@@ -53,6 +51,14 @@ function PlaylistModel(){
             return false;
     };
 
+    self.getPermission=function(){
+        if(self.settings()['permission']){
+            return self.settings()['permission'];
+        }
+        else{
+            return 0;
+        }
+    }
 
     /* Each video has a button to delete a video. When user clicks on that
     button, we send a AJAX request with video_id as only argument. We expect no
@@ -146,8 +152,15 @@ function PlaylistModel(){
         if(self.videos()[0]){
             return parseInt(self.videos()[0].start_time());
         }
-        else
+        else{
             return 0;
+        }
+    },self);
+
+    self.firstVideoOwner=ko.computed(function(){
+        if(self.videos()[0]){
+            return self.videos()[0].owner();
+        }
     },self);
 
 }
@@ -206,7 +219,23 @@ function Video(data){
 
 function User(data){
     this.username = ko.observable(data.username);
-    //this.type=ko.observable(data.type);
+    this.permission=ko.observable(data.permission);
+
+    this.permissionClass=ko.computed(function(){
+        if(this.permission()==0){
+            return "grey";
+        }
+        if(this.permission()==1){
+            return "green";
+        }
+        else if(this.permission()==2){
+            return "red";
+        }
+        else{
+            return "";
+        }
+    },this);
+
     this.grantRights=function(model,item){
         $.ajax({
             type: "GET",

@@ -239,6 +239,15 @@
         return false;
     });
 
+    /* we allow users to submit chat message with only enter key */
+    $("#chat-message").keydown(function (event) {
+        var keypressed = event.keyCode || event.which;
+        if (keypressed == 13) {
+            event.preventDefault();
+            $("#chat-form").submit();
+        }
+    });
+
     /* controls for volume slider. We use a simple plugin, which we first
     initialize, then create a listener which sets player's volume according to
     sliders value. */
@@ -302,5 +311,19 @@
         $(".menu-button").removeClass("active");
         $(".dropdown").hide();
     });
+
+
+    /* actions of share icons, which open new popup window with appropriate share interface */
+    $(".share-icon.facebook").click(function(){
+        window.open('http://www.facebook.com/sharer.php?u='+$(location).attr('href'),encodeURI($(document).attr('title')),'width=600,height=300');
+    });
+    $(".share-icon.twitter").click(function(){
+        window.open('http://twitter.com/home?status='+$(location).attr('href')+'+'+encodeURI($(document).attr('title')), $(location).attr('href'), 'width=600,height=300');
+    });
+    $(".share-icon.google").click(function(){
+        window.open('https://plus.google.com/share?url='+$(location).attr('href'), encodeURI($(document).attr('title')), 'width=600,height=300');
+    });
+
+
 
 }(jQuery));

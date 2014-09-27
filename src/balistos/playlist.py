@@ -288,6 +288,7 @@ def get_active_users(playlist):
     for playlist_user in PlaylistUser.get_active_users_for_playlist(playlist):
         user = {}
         user['username'] = playlist_user.user.username
+        user['permission'] = playlist_user.permission
         users.append(user)
     return users
 

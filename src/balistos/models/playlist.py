@@ -29,7 +29,7 @@ class Playlist(Base, BaseMixin):
     )
 
     title = Column(
-        Unicode(200),
+        Unicode(100),
         nullable=False
     )
 
@@ -93,6 +93,14 @@ class Playlist(Base, BaseMixin):
             return []
 
         return result.all()
+
+
+    def get_user_count(self):
+        result = PlaylistUser.query.filter(
+            PlaylistUser.playlist_id == self.id,
+            PlaylistUser.last_active > datetime.now() - timedelta(0, 100)
+        )
+        return result.count()
 
     @classmethod
     def get_all(class_, order_by='title', filter_by=None):

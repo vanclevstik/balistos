@@ -363,7 +363,15 @@ footer{
         font-style:italic;
         color:@light;
         line-height:25px;
+        float:left;
+        .now-playing{
+            float:left;
+        }
+        .added-by{
+            float:right;
+        }
     }
+
     .title{
         width:100%;
         font-size:24px;
@@ -765,10 +773,29 @@ footer{
             border-radius:3px;
             float:left;
             margin-right:5px;
-            font-size:12px;
-            font-style:italic;
-            line-height:24px;
             padding:0px 10px;
+            cursor:pointer;
+            .name{
+                line-height:24px;
+                font-size:12px;
+                float:left;
+                font-style:italic;
+            }
+            .key{
+                height:24px;
+                float:left;
+                background:url("../img/key-white.png");
+                background-position:center center;
+                background-size:100% 24px;
+                margin-left:8px;
+                width:0px;
+                .transition(width 200ms ease-in 0s);
+            }
+        }
+        &.green:hover{
+            .key{
+                width:24px;
+            }
         }
         .user.green{
             background:@usergreen;
@@ -932,7 +959,7 @@ h1{
         .playlist_results{
             display:none;
             position:absolute;
-            top: 43px;
+            top: 35px;
             width:100%;
             background:white;
             z-index:20;
@@ -1023,6 +1050,7 @@ h1{
         float:left;
     }
     .square{
+        width: 526px;
         float:left;
         padding: 5px;
         .title{

@@ -2,7 +2,7 @@
     <div metal:fill-slot="content" id="content">
         <header>
             <div class="container">
-                <h1 class="logo">Balistos</h1>
+                <a href="/home"><h1 class="logo">Balistos</h1></a>
                 <div class="menu">
                     <div class="menu-button border-left open-login" tal:condition="not username">Log in</div>
                     <div tal:condition="not username" class="menu-button open-register">Register</div>
@@ -115,7 +115,7 @@
                             <div class="number" tal:content="repeat.playlist.number"></div>
                             <div class="square">
                                 <div class="title" tal:content="playlist.title"></div>
-                                <div class="created">created by <span class="black">Ulverbite</span></div>
+                                <div class="created">${playlist.get_user_count()} users connected today</div>
                             </div>
                         </a>
                     </div>

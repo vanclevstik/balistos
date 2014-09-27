@@ -41,10 +41,12 @@ def home(request):
     balistos_assets.need()
     username = authenticated_userid(request)
     user = User.get_by_username(username)
-    playlists = get_latest_playlists(user) if user else Playlist.get_popular()
+    user_playlists = get_latest_playlists(user) if user else []
+    playlists=Playlist.get_popular()
     return {
         'username': username,
-        'playlists': playlists
+        'playlists': playlists,
+        'user_playlists' : user_playlists
     }
 
 
@@ -332,7 +334,7 @@ def create_playlist(request):
     playlist_user = PlaylistUser(
         playlist=playlist,
         user=user,
-        permission=3,
+        permission=2,
         last_active=datetime.now(),
     )
     Session.add(playlist_user)

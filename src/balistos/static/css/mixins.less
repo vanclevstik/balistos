@@ -92,6 +92,8 @@
 
 
 
+
+
 // CSS3 PROPERTIES
 // --------------------------------------------------
 
@@ -126,7 +128,10 @@
 // Transitions
 .transition(@transition) {
   -webkit-transition: @transition;
+     -moz-transition: @transition;
+       -o-transition: @transition;
           transition: @transition;
+
 }
 .transition-property(@transition-property) {
   -webkit-transition-property: @transition-property;

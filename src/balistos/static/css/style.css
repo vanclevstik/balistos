@@ -1211,6 +1211,13 @@ footer .privacy {
   font-style: italic;
   color: #666666;
   line-height: 25px;
+  float: left;
+}
+.video_player .subtitle .now-playing {
+  float: left;
+}
+.video_player .subtitle .added-by {
+  float: right;
 }
 .video_player .title {
   width: 100%;
@@ -1620,10 +1627,30 @@ footer .privacy {
   border-radius: 3px;
   float: left;
   margin-right: 5px;
-  font-size: 12px;
-  font-style: italic;
-  line-height: 24px;
   padding: 0px 10px;
+  cursor: pointer;
+}
+.users .body .user .name {
+  line-height: 24px;
+  font-size: 12px;
+  float: left;
+  font-style: italic;
+}
+.users .body .user .key {
+  height: 24px;
+  float: left;
+  background: url("../img/key-white.png");
+  background-position: center center;
+  background-size: 100% 24px;
+  margin-left: 8px;
+  width: 0px;
+  -webkit-transition: width 200ms ease-in 0s;
+  -moz-transition: width 200ms ease-in 0s;
+  -o-transition: width 200ms ease-in 0s;
+  transition: width 200ms ease-in 0s;
+}
+.users .body.green:hover .key {
+  width: 24px;
 }
 .users .body .user.green {
   background: #b1bb00;
@@ -1784,7 +1811,7 @@ h1 {
 .search_playlist .inner .playlist_results {
   display: none;
   position: absolute;
-  top: 43px;
+  top: 35px;
   width: 100%;
   background: white;
   z-index: 20;
@@ -1873,6 +1900,7 @@ h1 {
   float: left;
 }
 .play-list .square {
+  width: 526px;
   float: left;
   padding: 5px;
 }
@@ -1931,7 +1959,7 @@ h1 {
   background: url('../img/share-gp.png') no-repeat 0px 0px;
 }
 .share-row .share-icon:hover {
-  background-position: 0px -36px;
+  background-position: 0px -35.99999999px;
 }
 .clearfix,
 .container,
