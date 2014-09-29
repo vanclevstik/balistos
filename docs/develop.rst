@@ -48,6 +48,7 @@ Now you can run a variety of commands::
 
     # Start the celery workers
     $ bin/celery -A balistos.tasks worker -loglevel=debug
+    $ bin/celery -A balistos.tasks beat --loglevel=debug
 
     # Start the development instance of Pyramid
     $ bin/pserve etc/development.ini --reload
